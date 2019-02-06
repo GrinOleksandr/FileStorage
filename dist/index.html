@@ -46,12 +46,13 @@
 			<form id="upload-container" method="POST"   enctype="multipart/form-data"   action='http://localhost:8000/upload'  > <!--action="http://127.0.0.1:8000/upload"-->
 				<img id="upload-image" src="img/upload.png">
 				<div>
-					<input id="file-input" type="file" name="sampleFile" multiple>
+					<input id="file-input" type="file" name="fileInput" multiple>
 					<label for="file-input">Выберите файл</label>
 					<span>или перетащите его сюда</span>
 					<input type="submit" value=" UPLOAD!!!">
 				</div>
 			</form>
+
 			<form id = test method="POST"   enctype="multipart/form-data"   action='http://localhost:8000/test'  >
 			<input type="file" id =filefile multiple>
 			<button id = filefilebtn>ADD</button>

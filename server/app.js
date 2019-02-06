@@ -16,6 +16,7 @@ const http = require('http'),
 
 
 app.use(bodyParser.json());
+
 app.use(fileUpload());
 
 app.use('/upload', function(req, res) {
@@ -23,20 +24,17 @@ app.use('/upload', function(req, res) {
         return res.status(400).send('No files were uploaded.');
     }
 
-    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     console.log(req.files);
-    let sampleFile = req.files.sampleFile;
-    console.log(sampleFile.name);
-    // console.log(sampleFile);
-    // console.log(req.files[2]);
-    // console.log(req.files[3]);
-    // Use the mv() method to place the file somewhere on your server
-    sampleFile.mv(`${__dirname}/filestorage/${req.files.sampleFile.name}`, function(err) {
-        if (err)
-            return res.status(500).send(err);
-
-        res.send('File uploaded!');
+    let uploadedFiles = req.files.fileInput;
+    console.log(uploadedFiles);
+    uploadedFiles.forEach(function (item) {
+        item.mv(`${__dirname}/filestorage/${item.name}`, function (err) {
+            if (err)
+                return res.status(500).send(err);
+        });
+        console.log(item)
     });
+    res.send('File uploaded!');
 });
 
 

@@ -44,6 +44,7 @@ FileInput.addEventListener('change', function(){
     // let files = this.files;
     // sendFiles(files);
     DropZone.submit();
+
 });
 
 //upload via drag&drop
