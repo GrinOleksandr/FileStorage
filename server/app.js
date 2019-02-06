@@ -26,10 +26,10 @@ app.use('/upload', function(req, res) {
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     console.log(req.files);
     let sampleFile = req.files.sampleFile;
-    console.log(req.files[0]);
-    console.log(req.files[1]);
-    console.log(req.files[2]);
-    console.log(req.files[3]);
+    console.log(sampleFile.name);
+    // console.log(sampleFile);
+    // console.log(req.files[2]);
+    // console.log(req.files[3]);
     // Use the mv() method to place the file somewhere on your server
     sampleFile.mv(`${__dirname}/filestorage/${req.files.sampleFile.name}`, function(err) {
         if (err)

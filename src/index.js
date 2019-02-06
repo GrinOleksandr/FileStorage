@@ -53,46 +53,67 @@ DropZone.addEventListener('drop', function(e){
     sendFiles(e.dataTransfer.files)
     // FileInput.value = e.dataTransfer.files;
 });
-///////////////////////////////////////////////////////////////////////////////TESTTTTT
-const form = document.getElementById('test');
-const input = document.getElementById('filefile');
-const inputBtn = document.getElementById('filefilebtn');
-inputBtn.addEventListener('click', add);
 
-function add(){
-    console.log(input.files);
-    // fetch("http://127.0.0.1:8000/test", {
-    //         method: 'POST',
-    //         body:input.files[0]
-    //     }).then(function (response) {
-    //         return response.text()
-    //     }).then(function(response){
-    //         console.log(response)
-    //     })
-    form.submit();
 
-}
-//////new SENDFILES
-function sendFiles(file){
+
+function sendFiles(file) {
     console.log(file);
+
 
     DropZone.classList.remove('dragover');
     let temp = new ClipboardEvent('').clipboardData || // Firefox < 62 workaround exploiting https://bugzilla.mozilla.org/show_bug.cgi?id=1422655
         new DataTransfer(); // specs compliant (as of March 2018 only Chrome)
-    // [].forEach.call(file, function(item, i, arr){
-    temp.items.add(new File([file], file.name));
-    // });
+    [].forEach.call(file, function(item, i, arr){
+    temp.items.add(new File([item], item.name));
+    });
     console.log(temp.files);
     FileInput.files = temp.files;
+    DropZone.submit();
+}
 
-    fetch("http://127.0.0.1:8000/test", {
-        method: 'POST',
-        body:file
-    }).then(function (response) {
-        return response.text()
-    }).then(function(response){
-        console.log(response)
-    })
+
+
+
+///////////////////////////////////////////////////////////////////////////////TESTTTTT
+// const form = document.getElementById('test');
+// const input = document.getElementById('filefile');
+// const inputBtn = document.getElementById('filefilebtn');
+// inputBtn.addEventListener('click', add);
+//
+// function add(){
+//     console.log(input.files);
+//     // fetch("http://127.0.0.1:8000/test", {
+//     //         method: 'POST',
+//     //         body:input.files[0]
+//     //     }).then(function (response) {
+//     //         return response.text()
+//     //     }).then(function(response){
+//     //         console.log(response)
+//     //     })
+//     form.submit();
+//
+// }
+//////new SENDFILES
+// function sendFiles(file){
+//     console.log(file);
+//
+//     DropZone.classList.remove('dragover');
+//     let temp = new ClipboardEvent('').clipboardData || // Firefox < 62 workaround exploiting https://bugzilla.mozilla.org/show_bug.cgi?id=1422655
+//         new DataTransfer(); // specs compliant (as of March 2018 only Chrome)
+//     // [].forEach.call(file, function(item, i, arr){
+//     temp.items.add(new File([file], file.name));
+//     // });
+//     console.log(temp.files);
+//     FileInput.files = temp.files;
+//
+//     fetch("http://127.0.0.1:8000/test", {
+//         method: 'POST',
+//         body:file
+//     }).then(function (response) {
+//         return response.text()
+//     }).then(function(response){
+//         console.log(response)
+//     })
 
 //////////////////////////////////////////////////
 
@@ -108,7 +129,7 @@ function sendFiles(file){
 
 
 
-
+//
 // function sendFiles(file){
 //     console.log(file);
 //
@@ -116,11 +137,12 @@ function sendFiles(file){
 //     let temp = new ClipboardEvent('').clipboardData || // Firefox < 62 workaround exploiting https://bugzilla.mozilla.org/show_bug.cgi?id=1422655
 //         new DataTransfer(); // specs compliant (as of March 2018 only Chrome)
 //     // [].forEach.call(file, function(item, i, arr){
-//         temp.items.add(new File([file], file.name));
+//     temp.items.add(new File([file], file.name));
 //     // });
 //     console.log(temp.files);
 //     FileInput.files = temp.files;
 //     DropZone.submit();
+
 
 
 
@@ -153,7 +175,7 @@ function sendFiles(file){
     // xhr.open("post","/upload",true);
     // xhr.send(form);
 
-}
+// }
 
 
 
@@ -171,9 +193,6 @@ function listFiles(){
     console.log("listed");
     renderList();
 }
-
-
-
 
 function renderList () {
     fetch("http://127.0.0.1:8000/getfiles?", {
