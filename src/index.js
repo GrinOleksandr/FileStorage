@@ -33,8 +33,9 @@ FileInput.addEventListener('focus', ()=> DropZone.querySelector('label').classLi
 FileInput.addEventListener('blur', ()=> DropZone.querySelector('label').classList.remove('focus'));
 
 //upload via input field
-FileInput.addEventListener('change', function(){
-  DropZone.submit();
+FileInput.addEventListener('change', function(e){
+    e.preventDefault();
+    ajaxSendFiles();
 });
 
 //upload via drag&drop
@@ -44,17 +45,21 @@ DropZone.addEventListener('drop', function(e){
     sendFiles(e.dataTransfer.files)
 });
 
-function sendFiles(file) {
-    console.log(file);
+function sendFiles(files) {
+    console.log(files);
     DropZone.classList.remove('dragover');
-    let temp = new ClipboardEvent('').clipboardData || new DataTransfer();
-    [].forEach.call(file, function(item){
-    temp.items.add(new File([item], item.name));
-    });
-    console.log(temp.files);
-    FileInput.files = temp.files;
-    DropZone.submit();
+    FileInput.files = files;
+    ajaxSendFiles();
 }
+/////SUBMITTING via AJAX
+function ajaxSendFiles(){
+    let request = new XMLHttpRequest();
+    request.open('POST', 'http://127.0.0.1:8000/upload', true);
+    request.setRequestHeader('accept', 'application/json');
+    let formData = new FormData(DropZone);
+    request.send(formData);
+}
+
 /////////////////////////////////////----------!LIST-FILES!----------/////////////////////////////////////
 // function postFile(name,type){
 //     let urlString = `http://127.0.0.1:8000/add?name=${name}&type=${type}`;
@@ -87,6 +92,7 @@ function renderList () {
 }
 
 function addAllToList(array) {
+    ListOfFiles.innerHTML = "";
     array.forEach(function (item) {
         addFromBase(item)
     });

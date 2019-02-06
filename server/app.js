@@ -38,7 +38,9 @@ app.use('/upload', function(req, res) {
                 return res.status(500).send(err);
         });
     }
-    res.send('File uploaded!');
+    console.log('***File uploaded');
+    res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': "*"});
+    res.end('File uploaded!');
 });
 
 app.use ('/getfiles', function(request, response) {
