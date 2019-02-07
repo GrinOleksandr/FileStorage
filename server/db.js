@@ -13,7 +13,13 @@ mongoose.connect(config.mongoUrl, {
 
 const fileStorage = new mongoose.Schema({
     name : String,
-    type : String
+    mimetype : String,
+    link: String,
+    uploadDate: String,
+    owner: String,
+    access: String,
+    parent: String,
+    folder: Boolean
 });
 
 module.exports = mongoose.model('TestFilesDb1', fileStorage );

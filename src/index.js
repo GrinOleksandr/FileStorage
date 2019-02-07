@@ -42,15 +42,13 @@ FileInput.addEventListener('change', function(e){
 DropZone.addEventListener('drop', function(e){
     e.stopPropagation();
     e.preventDefault();
-    sendFiles(e.dataTransfer.files)
-});
-
-function sendFiles(files) {
-    console.log(files);
+    let files = e.dataTransfer.files;
     DropZone.classList.remove('dragover');
     FileInput.files = files;
     ajaxSendFiles();
-}
+});
+
+
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let request = new XMLHttpRequest();
@@ -104,12 +102,35 @@ function addFromBase(element) {
     let itemName = document.createElement("span");
     itemName.innerText = element.name;
 
-    let itemCalories = document.createElement("span");
-    itemCalories.innerText = `(${element.mimetype} Ккал.)`;
-    itemCalories.style.color = "blue";
-    itemCalories.style.fontWeight = "400";
+    let itemMimeType = document.createElement("span");
+    itemMimeType.innerText = `type: ${element.mimetype}`;
+
+
+    let itemLink = document.createElement("span");
+    itemLink.innerText = `link: ${element.link}`;
+
+    let itemUploadDate = document.createElement("span");
+    itemUploadDate.innerText = `date: ${element.uploadDate}`;
+
+    let itemOwner = document.createElement("span");
+    itemOwner.innerText =`owner: ${element.owner}`;
+
+    let itemAccess = document.createElement("span");
+    itemAccess.innerText =`access: ${element.access}` ;
+
+    let itemParent = document.createElement("span");
+    itemParent.innerText =`parent: ${element.parent}` ;
+
+    let itemFolder = document.createElement("span");
+    itemFolder.innerText = `folder: ${element.folder}`;
 
     newItem.appendChild(itemName);
-    newItem.appendChild(itemCalories);
+    newItem.appendChild(itemMimeType);
+    newItem.appendChild(itemLink);
+    newItem.appendChild(itemUploadDate);
+    newItem.appendChild(itemOwner);
+    newItem.appendChild(itemAccess);
+    newItem.appendChild(itemParent);
+    newItem.appendChild(itemFolder);
     ListOfFiles.appendChild(newItem);
 }
