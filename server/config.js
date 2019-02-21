@@ -1,7 +1,7 @@
 'use strict';
 
 const host = 'localhost',
-      dbName = 'test3';
+      dbName = 'test4';
 
 module.exports = {
     port:8000,

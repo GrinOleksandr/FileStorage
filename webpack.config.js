@@ -7,9 +7,9 @@ let ExtractTextPlugin = require("extract-text-webpack-plugin");
 let conf = {
     entry: './src/index.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'public'),
         filename: 'js/main.js',
-        publicPath: 'dist/'
+        publicPath: 'public/'
     },
     devServer: {
         overlay: true
@@ -19,7 +19,7 @@ let conf = {
             {
                 test:/\.js$/,
                 loader: 'babel-loader',
-                // exclude: '/node_modules/'
+                exclude: '/node_modules/'
             },
             {
                 test:/\.css$/,
