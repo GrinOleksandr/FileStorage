@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
+import Header from './Components/Header/Header.js';
+import Content from './Components/Content/Content.js';
 
 
 class App extends Component {
@@ -7,7 +9,8 @@ class App extends Component {
         return (
             <div className="root">
 
-            <h1> Hello!!!</h1>
+            <Header />
+                <Content />
 
             </div>
         );
