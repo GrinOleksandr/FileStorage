@@ -18,9 +18,6 @@ DropZone.addEventListener('dragenter', function(e) {
     DropZone.classList.add('dragover');
 });
 
-
-
-
 DropZone.addEventListener('dragleave', function(e) {
     e.stopPropagation();
     e.preventDefault();
@@ -63,22 +60,13 @@ DropZone.addEventListener('drop', function(e){
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let request = new XMLHttpRequest();
-    request.open('POST', 'http://127.0.0.1:8000/upload', true);
+    request.open('POST', 'http://127.0.0.1:8000/file/upload', true);
     request.setRequestHeader('accept', 'application/json');
     let formData = new FormData(DropZone);
     request.send(formData);
 }
 
 /////////////////////////////////////----------!LIST-FILES!----------/////////////////////////////////////
-// function postFile(name,type){
-//     let urlString = `http://127.0.0.1:8000/add?name=${name}&type=${type}`;
-//     fetch(urlString, {
-//         method: 'GET'
-//     })
-//         .catch(error => console.log("Данные не отправленны: " + error));
-//
-//     console.log(`${name}.${type}   OK`)
-// }
 
 function listFiles(){
     console.log("listed");
@@ -86,7 +74,7 @@ function listFiles(){
 }
 
 function renderList () {
-    fetch("http://127.0.0.1:8000/getfiles?", {
+    fetch("http://127.0.0.1:8000/file/getfiles?", {
         method: 'GET'
     }).then(function (response) {
         return response.text()
@@ -107,24 +95,27 @@ function addAllToList(array) {
     });
 }
 
-function fileClick(ev){
-    console.log(ev.target)
+function fileClick(target){
+    let fileName = target.getElementsByClassName("file-name")[0].innerText;
+    console.log(target.getElementsByClassName("file-name")[0].innerText);
+    downloadFile(fileName);
 }
 
 function addFromBase(element) {
     let newItem = document.createElement("li");
+    newItem.addEventListener('click', (ev) =>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        fileClick(ev.currentTarget);
+    });
 
     let itemName = document.createElement("span");
     itemName.innerText = element.name;
     itemName.className = "file-name";
-    addEventListener('click', fileClick);
 
     let fileIcon = document.createElement("span");
     fileIcon.className = "file-icon";
     fileIcon.style.backgroundImage = `url(./img/file-type-icons/doc.png)`;
-
-
-
 
     // let itemMimeType = document.createElement("span");
     // itemMimeType.innerText = `type: ${element.mimetype}`;
@@ -160,22 +151,22 @@ function addFromBase(element) {
     ListOfFiles.appendChild(newItem);
 }
 
+
+//////////////////////////////////////////////////////--------------Download------------/////////////////////////////////
 let readFileBtn = document.getElementById('readfile');
-readFileBtn.addEventListener('click', readFile);
-function readFile(){
+readFileBtn.addEventListener('click', downloadFile);
+function downloadFile(file){
     console.log('reading file');
-    fetch("http://127.0.0.1:8000/readfile?name=TASK.txt", {
+    fetch(`http://127.0.0.1:8000/file/download?name=${file}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
              'Access-Control-Allow-Origin': "*"
-
-
         }
     })
         .then(response => response.blob())
-        .then((blob) => saveAs(blob, '12332132.JPG'))
+        .then((blob) => saveAs(blob, file))
         .catch(error => console.log("Данные не получены: " + error));
-
-
 }
+
+
 
