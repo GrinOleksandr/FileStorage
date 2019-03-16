@@ -1,0 +1,57 @@
+/************************CONTENT*****************************/
+
+#container1 {
+    display:flex;
+    justify-content: space-evenly;
+    width: 100%;
+    height:100%;
+}
+
+#content {
+    width:100%;
+    height:800px;
+    background-color:yellow;
+    border:1px solid black;
+}
+
+#sidebar {
+    min-width: 300px;
+    height:800px;
+    border:1px solid black;
+    background-color: blue;
+
+}
+
+#files-list{
+    display:flex;
+}
+
+#files-list li{
+    width:100px;
+    height: 130px;
+    border:1px solid black;
+    padding: 2px;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content: center;
+    margin:10px;
+    cursor:pointer;
+
+}
+
+/*#files-list li span {*/
+/*margin:2px;*/
+/*}*/
+
+.file-name {
+
+}
+
+.file-icon {
+    height: 83px;
+    width: 75px;
+    background-size:contain;
+    background-repeat:no-repeat;
+}
+

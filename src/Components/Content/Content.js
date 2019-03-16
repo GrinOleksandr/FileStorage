@@ -1,26 +1,29 @@
 import React, {Component} from 'react';
-import UploadFiles from "../UploadFiles/UploadFiles.js";
-
 import './Content.css';
 
 class Content extends Component {
-    constructor(props){
-        super(props);
-
-        // this.downloadFile = this.downloadFile.bind(this);
-        // this.fileClick = this.fileClick.bind(this);
-        this.state = { MyFiles: "" };
-    }
-
     render() {
         return (
 
             <div id='container1'>
-                <UploadFiles/>
 
+    <div id='sidebar'>Sidebar</div>
+    <div id='content'>Content
+        <form id="upload-container" method="POST" encType="multipart/form-data"
+              action='http://localhost:8000/upload'>
+            <img id="upload-image" src="img/upload.png" />
+                <div>
+                    <input id="file-input" type="file" name="fileInput" multiple allowdirs />
+                        <label htmlFor="file-input">Выберите файл</label>
+                        <span>или перетащите его сюда</span>
+                </div>
+        </form>
+        <button id="readfile">ReadFile</button>
+        <button id="get-files">GET</button>
+        <ul id='files-list'></ul>
 
-            </div>
-
+    </div>
+</div>
 
         );
     }
@@ -28,7 +31,4 @@ class Content extends Component {
 
 
 
-
-
-
-export default Content;
+    export default Content;

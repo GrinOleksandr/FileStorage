@@ -1,28 +1,38 @@
 {
-  "name": "client",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "file-saver": "^2.0.1",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.5"
-  },
+  "name": "filex",
+  "version": "1.1.0",
+  "description": "Grin O. FileX",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "npm-run-all -p serv react",
+    "build": "webpack --mode production",
+    "dev": "webpack-dev-server --mode development --open",
+    "react": "cd client && npm run start",
+    "serv": "nodemon --inspect server.js"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "keywords": [
+    "webpack",
+    "Config"
+  ],
+  "author": "Grin.Oleksandr<sasha.lisove@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "express-fileupload": "^1.1.1-alpha.1",
+    "filestorage": "^1.7.1",
+    "jquery": "^3.1.1",
+    "moment": "^2.24.0",
+    "mongoose": "^4.7.6",
+    "multer": "^1.4.1",
+    "npm-run-all": "^4.1.5",
+    "socket.io": "^1.7.2",
+    "tmp": "0.0.33",
+    "type-is": "^1.6.16"
   },
-  "proxy": "http://localhost:8000",
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "devDependencies": {
+    "path": "^0.12.7",
+    "style-loader": "^0.23.1",
+    "nodemon": "^1.11.0"
+  }
 }
