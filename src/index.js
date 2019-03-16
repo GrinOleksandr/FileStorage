@@ -60,7 +60,7 @@ DropZone.addEventListener('drop', function(e){
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let request = new XMLHttpRequest();
-    request.open('POST', 'http://127.0.0.1:8000/file/upload', true);
+    request.open('POST', 'http://localhost:8000/file/upload', true);
     request.setRequestHeader('accept', 'application/json');
     let formData = new FormData(DropZone);
     request.send(formData);
