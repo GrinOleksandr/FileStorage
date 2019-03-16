@@ -4,8 +4,8 @@ const host = 'localhost',
       dbName = 'test4';
 
 module.exports = {
-    port: process.env.PORT || 8000,
-    ip: 'localhost',
+    port:8000,
+    ip: '127.0.0.1',
     mongoUrl: `mongodb://${host}/${dbName}`,
-    fileStoragePath: `${__dirname}/fileStorage/`
+    fileStoragePath: `${__dirname}/filestorage/`
 };
