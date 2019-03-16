@@ -10,15 +10,21 @@
     "react": "cd client && npm run start",
     "serv": "nodemon --inspect server.js"
   },
-  "keywords": [
-    "webpack",
-    "Config"
-  ],
-  "author": "Grin.Oleksandr<sasha.lisove@gmail.com>",
+  "engines": {
+    "node": "10.13.0"
+  },
+  "author": "Oleksandr Grin",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GrinOleksandr/GeekHub_JS"
+  },
+  "homepage": "https://github.com/GrinOleksandr/GeekHub_JS",
   "dependencies": {
+    "express": "^4.16.4",
+    "express-formidable": "^1.2.0",
+    "heroku-logger": "^0.3.3",
+    "mailgun-js": "^0.22.0",
     "body-parser": "^1.15.2",
-    "express": "^4.14.0",
     "express-fileupload": "^1.1.1-alpha.1",
     "filestorage": "^1.7.1",
     "jquery": "^3.1.1",
@@ -31,16 +37,6 @@
     "type-is": "^1.6.16"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
-    "babel-loader": "^8.0.5",
-    "css-loader": "^2.1.0",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
-    "mini-css-extract-plugin": "^0.5.0",
-    "path": "^0.12.7",
-    "style-loader": "^0.23.1",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14",
     "nodemon": "^1.11.0"
   }
 }
