@@ -9,17 +9,15 @@ class MyFiles extends Component {
     render() {
         return (
             <div id='MyFiles'>
-                <ul className="CityList-list">
-                    {
-                        this.props.files.map((file, key) => {
-                            return (
-                                <li key={key}>
-                                    <File file={file}/>
-                                </li>
-                            )
-                        })
-                    }
-                </ul>
+                {
+                    this.props.files.map((file, key) => {
+                        return (
+                            <li key={key}>
+                                <h2>  file={file} </h2>
+                            </li>
+                        )
+                    })
+                }
             </div>
         );
     }

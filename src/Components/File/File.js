@@ -6,7 +6,6 @@ const FileSaver = require('file-saver');
 class File extends Component {
     constructor(props) {
         super(props);
-
         this.downloadFile = this.downloadFile.bind(this);
     }
 
@@ -17,8 +16,7 @@ class File extends Component {
     }
 
     //Download------------//
-    // let readFileBtn = document.getElementById('readfile');
-    // readFileBtn.addEventListener('click', downloadFile);
+   
     downloadFile(fileName){
         console.log('reading file');
         fetch(`http://127.0.0.1:8000/file/download?name=${fileName}`, {
@@ -37,7 +35,6 @@ class File extends Component {
         ev.stopPropagation();
         this.fileClick(ev.currentTarget);
     }
-
     render() {
         const {fileName, fileIcon} = this.props.file;
         return (
@@ -48,7 +45,6 @@ class File extends Component {
         );
     }
 }
-
 
 export default File;
 
