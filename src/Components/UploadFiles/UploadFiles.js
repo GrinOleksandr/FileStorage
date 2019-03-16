@@ -45,7 +45,7 @@ class UploadFiles extends Component {
     // Submitting via AJAX
     ajaxSendFiles(){
         let request = new XMLHttpRequest();
-        request.open('POST', 'http://127.0.0.1:8000/file/upload', true);
+        request.open('POST', 'http://127.0.0.1:3000/file/upload', true);
         request.setRequestHeader('accept', 'application/json');
         let formData = new FormData(this.DropZone);
         request.send(formData);
