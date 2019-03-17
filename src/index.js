@@ -1,4 +1,3 @@
-
 const ListFiles = document.getElementById('get-files');
 ListFiles.addEventListener('click', listFiles );
 
@@ -166,6 +165,24 @@ function downloadFile(file){
         .then(response => response.blob())
         .then((blob) => saveAs(blob, file))
         .catch(error => console.log("Данные не получены: " + error));
+}
+
+//*********************************************REGISTRATION HANLER**************************************
+const RegistrationForm = document.getElementById("registration-form");
+RegistrationForm.addEventListener('submit', formSubmit);
+
+const LoginField = document.getElementById("login");
+const EmailField = document.getElementById("email");
+const PasswordField = document.getElementById("password");
+
+function formSubmit(ev){
+    ev.preventDefault();
+    alert("FORM IS SENT");
+    console.log("***********FORM SUBMITTED***********");
+    console.log(`Full Name: ${RegistrationForm.elements['login'].value}`);
+    console.log(`Email: ${RegistrationForm.elements['email'].value}`);
+    console.log(`Phone: ${RegistrationForm.elements['password'].value}`);
+    console.log("************************************");
 }
 
 

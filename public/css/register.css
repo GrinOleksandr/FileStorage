@@ -1,0 +1,37 @@
+.registration_title {
+    text-align:center;
+}
+
+
+#registration-form {
+    border:1px solid black;
+    width:600px;
+    height:900px;
+    margin:50px auto;
+    background-color: #fcf5b3;
+}
+
+#registration-wrapper {
+    width:500px;
+    height:600px;
+    margin:50px auto;
+    display:flex;
+    flex-direction: column;
+    border:1px solid black;
+    padding:10px;
+    background-color: #edb26c82;;
+}
+
+#registration-form input{
+    width: 100%;
+}
+
+#registration-wrapper li {
+    list-style:none;
+    padding: 10px 20px;
+}
+
+#registration-wrapper span{
+    padding: 5px;
+    display: block;
+}
