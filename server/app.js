@@ -10,6 +10,7 @@ const FileStorageDb = require('./db'),
     tmp = require('tmp'),
     util = require('util'),
     fileRouter = require('./fileRouter.js'),
+    userRouter = require('./userRouter.js'),
     http = require('http'),
     url = require('url'),
     fs = require('fs'),
@@ -31,6 +32,7 @@ app.get("/testtest", function(req,res){
 });
 app.use(bodyParser.json());
 app.use("/file", fileRouter);
+app.use("/user", userRouter);
 
 //////////////////////////////////////////////////////////////////////////////////////
 

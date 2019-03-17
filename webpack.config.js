@@ -5,10 +5,13 @@ let ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 
 let conf = {
-    entry: './src/index.js',
+    entry: {
+        main: './src/index.js',
+        register: './src/register.js'
+    },
     output: {
-        path: path.resolve(__dirname, 'public'),
-        filename: 'js/main.js',
+        path: path.resolve(__dirname, 'public/js/'),
+        filename: '[name].js',
         publicPath: 'public/'
     },
     devServer: {
