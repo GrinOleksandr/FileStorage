@@ -1,7 +1,7 @@
 //DB setup
 'use strict';
 const mongoose = require('mongoose'),
-      config = require('./config');
+      config = require('../config');
 
 mongoose.Promise = global.Promise;
 

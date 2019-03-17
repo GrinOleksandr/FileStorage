@@ -1,0 +1,36 @@
+.login_title {
+    text-align:center;
+}
+
+#login-form {
+    border:1px solid black;
+    width:300px;
+    height:550px;
+    margin:50px auto;
+    background-color: #fcf5b3;
+}
+
+#login-wrapper {
+    width:200px;
+    height:300px;
+    margin:50px auto;
+    display:flex;
+    flex-direction: column;
+    border:1px solid black;
+    padding:10px;
+    background-color: #edb26c82;;
+}
+
+#login-form input{
+    width: 100%;
+}
+
+#login-wrapper li {
+    list-style:none;
+    padding: 10px 20px;
+}
+
+#login-wrapper span{
+    padding: 5px;
+    display: block;
+}

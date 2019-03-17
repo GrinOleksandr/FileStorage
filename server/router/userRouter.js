@@ -1,5 +1,5 @@
-const UsersDB = require('./usersDB'),
-    config = require('./config'),
+const UsersDB = require('../DB/usersDB'),
+    config = require('../config'),
     express = require('express'),
     bodyParser = require('body-parser'),
     fileUpload = require('express-fileupload'),

@@ -1,6 +1,6 @@
 
-const FileStorageDb = require('./fileStorageDB.js'),
-    config = require('./config'),
+const FileStorageDb = require('../DB/fileStorageDB.js'),
+    config = require('../config'),
     express = require('express'),
     bodyParser = require('body-parser'),
     fileUpload = require('express-fileupload'),
@@ -110,6 +110,7 @@ fileRouter.use ('/getfiles', function(request, response) {
             response.end(responseString);
         });
 });
+
 
 
 module.exports = fileRouter;
