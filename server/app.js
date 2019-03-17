@@ -15,7 +15,7 @@ const FileStorageDb = require('./db'),
     fs = require('fs'),
     path = require('path');
 
-// Serve static files from the React app
+// Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/', (req, res) => {

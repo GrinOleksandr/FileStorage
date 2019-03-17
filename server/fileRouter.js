@@ -17,6 +17,8 @@ fileRouter.use('/download', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
+
+
     res.writeHead(200);
     console.log('Try to download');
     fs.readFile(`${config.fileStoragePath}${parsedUrl.query.name}`, function (err, data) {
