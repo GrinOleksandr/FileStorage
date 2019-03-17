@@ -1,11 +1,12 @@
-const FileStorageDb = require('./db'),
+const UsersDB = require('./usersDB'),
     config = require('./config'),
     express = require('express'),
     bodyParser = require('body-parser'),
     fileUpload = require('express-fileupload'),
     moment = require('moment'),
     url = require('url'),
-    fs = require('fs');
+    fs = require('fs'),
+    mongoose = require('mongoose'),
     formidableMiddleware = require('express-formidable');
 
 const userRouter = express.Router();

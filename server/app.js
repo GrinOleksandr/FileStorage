@@ -1,5 +1,5 @@
 'use strict';
-const FileStorageDb = require('./db'),
+const DB = require('./db'),
     config = require('./config'),
     express = require('express'),
     app =express(),
@@ -14,7 +14,10 @@ const FileStorageDb = require('./db'),
     http = require('http'),
     url = require('url'),
     fs = require('fs'),
+    mongoose = require('mongoose'),
     path = require('path');
+
+mongoose.Promise = global.Promise;
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));

@@ -1,12 +1,14 @@
 
-const FileStorageDb = require('./db'),
+const FileStorageDb = require('./fileStorageDB.js'),
     config = require('./config'),
     express = require('express'),
     bodyParser = require('body-parser'),
     fileUpload = require('express-fileupload'),
     moment = require('moment'),
     url = require('url'),
-    fs = require('fs');
+    fs = require('fs'),
+    mongoose = require('mongoose');
+
 
 
 const fileRouter = express.Router();
