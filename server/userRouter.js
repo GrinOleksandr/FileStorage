@@ -17,52 +17,35 @@ userRouter.use('/register', function (req, res) {
     console.log(req.fields); // contains non-file fields
     console.log(req.files); // contains files
 
-    let name = req.fields.name;
+    let login = req.fields.login;
     let email = req.fields.email;
-    // res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
-    // res.setHeader('Access-Control-Allow-Origin', '*');
+    let password = req.fields.password;
 
     res.writeHead(200);
     console.log('Registering user');
-    // fs.readFile(`${config.fileStoragePath}${parsedUrl.query.name}`, function (err, data) {
-    //     if (err) {
-    //         return res.status(500).send(err);
-    //     }
+    registerUser(login, email, password);
+    // sendRegistrationEmail(login, email, password);
 
-        res.end(data);
-        console.log('')
-    // });
+
+    res.end();
 });
 
-function registerUser(target) {
-    let name = target.name || "unnamed",
-        mimetype = target.mimetype || "",
-        link = target.link || `${config.ip}:${config.port}/${target.name}`,
-        date = moment().format('MMMM Do YYYY, h:mm:ss a'),
-        owner = target.owner || "SashaGrin",
-        access = target.access || owner,
-        isFolder = target.folder || false,
-        parent = target.parent || "/";
+function registerUser(login, email, password) {
+
 
     FileStorageDb.create(
         {
-            name: name,
-            mimetype: mimetype,
-            link: link,
-            uploadDate: date,
-            owner: owner,
-            access: access,
-            parent: parent,
-            folder: isFolder,
-
+            login:login,
+            email:email,
+            password:password
         }, function (err) {
             if (err) return console.log(err);
         })
 }
 
 function sendRegistrationEmail(login,email,password){
-    let API_KEY = ;
-    let DOMAIN = ;
+    let API_KEY = 'ENTER MAILGUN API KEY';
+    let DOMAIN = 'ENTER  MAILGUN domain';
     let mailgun = require('mailgun-js')({apiKey: API_KEY, domain: DOMAIN});
 
     let data = {
@@ -81,10 +64,10 @@ function sendRegistrationEmail(login,email,password){
 
     data = {
         from: 'Grin Oleksandr <grin.scv@gmail.com>',
-        to: email,
+        to: '1nutak1@gmail.com',
         subject: `Filex new user Registered`,
-        text: `---------------------------
-        User email is ${email}
+        text:
+        `User email is ${email}
         User login is ${login} 
         User password is ${password}   
         -------------------------------------  `
