@@ -15,9 +15,12 @@ const DB = require('./DB/db.js'),
     url = require('url'),
     fs = require('fs'),
     mongoose = require('mongoose'),
-    path = require('path');
+    path = require('path'),
+    passport = require('passport'),
+    expressSession = require('express-session');
 
 mongoose.Promise = global.Promise;
+
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
@@ -26,10 +29,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname+'../public'));
 });
 
-// const fileRouter = express.Router();
-///////// server Setup
-
-////////////////////////////////
+///////// Routes setup Setup
 app.get("/testtest", function(req,res){
     res.end('dfdfsfdsfdsfsd');
 });

@@ -7,7 +7,8 @@ const UsersDB = require('../DB/usersDB'),
     url = require('url'),
     fs = require('fs'),
     mongoose = require('mongoose'),
-    formidableMiddleware = require('express-formidable');
+    formidableMiddleware = require('express-formidable'),
+    passport = require('passport');
 
 const userRouter = express.Router();
 userRouter.use(formidableMiddleware());
@@ -34,14 +35,7 @@ userRouter.use('/register', function (req, res) {
 function registerUser(login, email, password) {
 
 
-    FileStorageDb.create(
-        {
-            login:login,
-            email:email,
-            password:password
-        }, function (err) {
-            if (err) return console.log(err);
-        })
+
 }
 
 function sendRegistrationEmail(login,email,password){
@@ -80,7 +74,14 @@ function sendRegistrationEmail(login,email,password){
 
 
 
-
+FileStorageDb.create(
+    {
+        login:login,
+        email:email,
+        password:password
+    }, function (err) {
+        if (err) return console.log(err);
+    })
 
 
 
