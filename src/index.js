@@ -170,12 +170,89 @@ function downloadFile(file){
 
 let folderNameInput = document.getElementById("folder-name");
 let createFolderBtn = document.getElementById('create-folder');
-createFolderBtn.addEventListener('click',createNewFolder);
+createFolderBtn.addEventListener('click',createFolder);
 
-function createNewFolder(){
-    console.log(folderNameInput.value);
+function createNewFolder(name){
+    console.log();
+    fetch(`/file/createfolder?name=${folderNameInput.value}`, {
+        method: 'POST',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then((data)=>{
+        console.log(data);
+    })
+        .catch(error => console.log("Данные не получены: " + error));
 }
 
+function createFolder(){
 
+    let newItem = document.createElement("li");
+    // newItem.addEventListener('click', (ev) =>{
+    //     ev.preventDefault();
+    //     ev.stopPropagation();
+    //     fileClick(ev.currentTarget);
+    // });
 
+    let itemName = document.createElement("span");
+    itemName.innerText = "New Folder";
+    itemName.className = "file-name";
+    itemName.contentEditable = "true";
+    itemName.addEventListener('change', function(){
+        if(itemName.innerText === ""){
+            itemName.innerText = "New Folder"
+        }
+        createNewFolder(itemName.innerText);
+    });
+    itemName.addEventListener('keypress', function(key){
+        if(key.keyCode === 13){
+            console.log('eneter pressed');
+            createFolderBtn.focus();
+        }
+    });
 
+    itemName.addEventListener('click', function(){
+        itemName.style.backgroundColor = "white";
+        rename(itemName);
+    });
+
+    itemName.addEventListener('focusout', function(){
+        itemName.style.backgroundColor = "transparent";
+        if(itemName.innerText === ""){
+            itemName.innerText = "New Folder"
+        }
+        createNewFolder(itemName.innerText);
+    });
+
+    let fileIcon = document.createElement("span");
+    fileIcon.className = "file-icon";
+    fileIcon.style.backgroundImage = `url(./img/file-type-icons/folder_icon.png)`;
+
+    newItem.appendChild(fileIcon);
+    newItem.appendChild(itemName);
+
+    ListOfFiles.appendChild(newItem);
+
+    itemName.style.minWidth = "70px";
+    itemName.style.backgroundColor = "white";
+    itemName.innerText = "New Folder";
+    let r = document.createRange();
+    r.selectNodeContents(itemName);
+    let sel=window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(r);
+    itemName.focus();
+}
+
+function rename(oldName, newName){
+    console.log(oldName, newName);
+    fetch(`/file/rename?oldname=${oldName}&newname=${newName}`, {
+        method: 'POST',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then((data)=>{
+        console.log(data);
+    })
+        .catch(error => console.log("Данные не получены: " + error));
+}

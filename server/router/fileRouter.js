@@ -85,6 +85,7 @@ fileRouter.use('/download', function (req, res) {
 });
 
 fileRouter.use('/createfolder', function (req, res) {
+    console.log("folder creation");
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -93,10 +94,34 @@ fileRouter.use('/createfolder', function (req, res) {
     res.writeHead(200);
     let folder = {
         name: parsedUrl.query.name,
-        isFolder: true
+        isFolder: true,
+        mimetype: "",
+        link: `${config.ip}:${config.port}/${parsedUrl.query.name}`,
+        uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
+        owner: "SashaGrin",
+        access: "SashaGrin",
+        parent: "root"
     };
 
+    console.log(folder);
+
     addFileToDataBase(folder);
+
+    res.end();
+    console.log('folder created')
+});
+
+fileRouter.use('/rename', function (req, res) {
+    console.log("renaming");
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    console.log("renaming",req.url.oldname,  req.url.newname);
+    res.writeHead(200);
+
+
+    rename(req.url.oldname, req.url.newname);
 
     res.end();
     console.log('folder created')
@@ -149,6 +174,13 @@ fileRouter.use ('/getfiles', function(request, response) {
         });
 });
 
+function rename(oldName, newName){
+    FileStorageDb.updateOne({name:oldName}, {name:newName}, function (err) {
+            if (err) return console.log(err);
+        })
+}
+
 
 
 module.exports = fileRouter;
+
