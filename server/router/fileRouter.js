@@ -117,11 +117,11 @@ fileRouter.use('/rename', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("renaming",req.url.oldname,  req.url.newname);
+    console.log("renaming",parsedUrl.oldname,  parsedUrl.newname);
     res.writeHead(200);
 
 
-    rename(req.url.oldname, req.url.newname);
+    rename(parsedUrl.oldname, parsedUrl.newname);
 
     res.end();
     console.log('folder created')
@@ -136,6 +136,7 @@ function uploadFile(file) {
 }
 
 function addFileToDataBase(target) {
+    console.log(target.name);
     let name = target.name || "unnamed",
         mimetype = target.mimetype || "",
         link = target.link || `${config.ip}:${config.port}/${target.name}`,

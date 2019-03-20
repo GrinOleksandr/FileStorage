@@ -174,7 +174,7 @@ createFolderBtn.addEventListener('click',createFolder);
 
 function createNewFolder(name){
     console.log();
-    fetch(`/file/createfolder?name=${folderNameInput.value}`, {
+    fetch(`/file/createfolder?name=${name}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
@@ -212,14 +212,25 @@ function createFolder(){
     });
 
     itemName.addEventListener('click', function(){
+        let oldName = itemName.innerText;
         itemName.style.backgroundColor = "white";
-        rename(itemName);
+        let r = document.createRange();
+        r.selectNodeContents(itemName);
+        let sel=window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(r);
+        itemName.focus();
+        itemName.dataset.oldname = itemName.innerText;
+
     });
 
     itemName.addEventListener('focusout', function(){
         itemName.style.backgroundColor = "transparent";
         if(itemName.innerText === ""){
             itemName.innerText = "New Folder"
+        }
+        if(itemName.dataset.oldName){
+            rename(itemName.dataset.oldName, itemName.innerText)
         }
         createNewFolder(itemName.innerText);
     });
