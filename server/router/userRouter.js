@@ -74,14 +74,14 @@ function sendRegistrationEmail(login,email,password){
 
 
 
-FileStorageDb.create(
-    {
-        login:login,
-        email:email,
-        password:password
-    }, function (err) {
-        if (err) return console.log(err);
-    })
+// UsersDB.create(
+//     {
+//         login:login,
+//         email:email,
+//         password:password
+//     }, function (err) {
+//         if (err) return console.log(err);
+//     });
 
 
 

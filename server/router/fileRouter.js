@@ -65,6 +65,44 @@ fileRouter.use('/upload', function (req, res) {
     res.end('File uploaded!');
 });
 
+fileRouter.use('/download', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+
+    res.writeHead(200);
+    console.log('Try to download');
+    fs.readFile(`${config.fileStoragePath}${parsedUrl.query.name}`, function (err, data) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        res.end(data);
+        console.log('download is completed')
+    });
+});
+
+fileRouter.use('/createfolder', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    res.writeHead(200);
+    let folder = {
+        name: parsedUrl.query.name,
+        isFolder: true
+    };
+
+    addFileToDataBase(folder);
+
+    res.end();
+    console.log('folder created')
+});
+
+
 function uploadFile(file) {
     file.mv(`${config.fileStoragePath}${file.name}`, function (err) {
         if (err)
@@ -78,7 +116,7 @@ function addFileToDataBase(target) {
         link = target.link || `${config.ip}:${config.port}/${target.name}`,
         date = moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner = target.owner || "SashaGrin",
-        access = target.access || owner,
+        access = target.access || [],
         isFolder = target.folder || false,
         parent = target.parent || "/";
 

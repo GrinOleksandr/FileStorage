@@ -150,8 +150,6 @@ function addFromBase(element) {
     ListOfFiles.appendChild(newItem);
 }
 
-
-
 //////////////////////////////////////////////////////--------------Download------------/////////////////////////////////
 let readFileBtn = document.getElementById('readfile');
 readFileBtn.addEventListener('click', downloadFile);
@@ -166,6 +164,16 @@ function downloadFile(file){
         .then(response => response.blob())
         .then((blob) => saveAs(blob, file))
         .catch(error => console.log("Данные не получены: " + error));
+}
+
+/////////////**********************CREATE FOLdER***********************////////////////////////////
+
+let folderNameInput = document.getElementById("folder-name");
+let createFolderBtn = document.getElementById('create-folder');
+createFolderBtn.addEventListener('click',createNewFolder);
+
+function createNewFolder(){
+    console.log(folderNameInput.value);
 }
 
 
