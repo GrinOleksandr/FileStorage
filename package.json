@@ -7,7 +7,7 @@
     "start": "npm-run-all -p dev serv",
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development --open",
-    "serv": "nodemon --inspect server/app.js",
+    "serv": "nodemon --inspect -w server/ server/app.js",
     "watch": "webpack  --mode production  --watch "
   },
   "keywords": [

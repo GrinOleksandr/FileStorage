@@ -1,7 +1,15 @@
 const ListFiles = document.getElementById('get-files');
 ListFiles.addEventListener('click', listFiles );
 
+document.addEventListener('contextmenu',()=>{
+    console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
+    if(document.getElementsByClassName("dropdown-menu")[0]) {
+        document.getElementsByClassName("dropdown-menu")[0].remove();
+    }
+});
+
 const ListOfFiles = document.getElementById('files-list');
+ListOfFiles.addEventListener('contextmenu',(ev)=>{ev.preventDefault()});
 
 /////////////////////////////////////----------UPLOAD----------/////////////////////////////////////
 const DropZone = document.getElementById("upload-container");
@@ -95,18 +103,34 @@ function addAllToList(array) {
 }
 
 function fileClick(target){
+    ev.preventDefault();
+    ev.stopPropagation();
     let fileId = target.dataset.id;
     let fileName = target.querySelector('.file-name').innerText;
-    console.log(fileId, fileName);
     downloadFile(fileName, fileId);
 }
 
 function addFromBase(element) {
     let newItem = document.createElement("li");
+    newItem.className = "file-container";
     newItem.addEventListener('click', (ev) =>{
         ev.preventDefault();
         ev.stopPropagation();
         fileClick(ev.currentTarget);
+    });
+    newItem.addEventListener('contextmenu',(ev)=>{
+        console.log(ev);
+        ev.preventDefault();
+        ev.stopPropagation();
+        if(document.getElementsByClassName("dropdown-menu")[0]) {
+            document.getElementsByClassName("dropdown-menu")[0].remove();
+        }
+                let cors = {
+                x: ev.clientX,
+                y: ev.clientY
+            };
+            dropDown(ev.currentTarget, cors);
+
     });
     newItem.dataset.id = element.fileId;
 
@@ -152,11 +176,34 @@ function addFromBase(element) {
     ListOfFiles.appendChild(newItem);
 }
 
+function dropDown(target, cors){
+    console.log(`${cors.x}px , ${cors.y}px`);
+    let download = document.createElement('li');
+    download.className = "dropDownItem";
+    download.innerText = "Download";
+    download.addEventListener('click', (ev)=>{
+        let target = ev.currentTarget;
+        ev.preventDefault();
+        ev.stopPropagation();
+        let fileId = target.dataset.id;
+        let fileName = target.querySelector('.file-name').innerText;
+        downloadFile(fileName, fileId);
+    });
+
+    let dropDownMenu = document.createElement('ul');
+    dropDownMenu.className = "dropdown-menu";
+    dropDownMenu.classList.toggle('dropdown-visible');
+    dropDownMenu.style.position = "fixed";
+    dropDownMenu.style.top = `${cors.y}px`;
+    dropDownMenu.style.left = `${cors.x}px`;
+    dropDownMenu.appendChild(download);
+    target.appendChild(dropDownMenu);
+}
+
 //////////////////////////////////////////////////////--------------Download------------/////////////////////////////////
 let readFileBtn = document.getElementById('readfile');
 readFileBtn.addEventListener('click', downloadFile);
 function downloadFile(fileName, fileId){
-    console.log('reading file', fileName , fileId);
     fetch(`/file/download?id=${fileId}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',

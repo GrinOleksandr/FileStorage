@@ -26,6 +26,7 @@ a:hover                        { text-decoration:none; }
     flex-direction:column;
     overflow:hidden;
 
+
 }
 
 /************************HEADER*****************************/
@@ -168,7 +169,7 @@ input[type="search"] {
     max-height:500px;
 }
 
-#files-list li{
+.file-container{
     width:100px;
     height: 130px;
     border:1px solid black;
@@ -259,4 +260,28 @@ input[type="search"] {
 #upload-container.dragover {
     background-color: #fafafa;
     outline-offset: -17px;
+}
+
+
+.dropdown-menu{
+    width:100px;
+    height: 100px;
+    background: #cfc085e0;
+    transition: opacity 1s ease;
+    visibility:hidden;
+    opacity:0.3;
+}
+
+.dropdown-visible {
+    opacity: 1;
+    visibility: visible;
+    z-index:5;
+}
+
+.dropDownItem {
+    height:20px;
+    width:100%;
+    text-align:center;
+    border: 1px solid darkgrey;
+    background-color:lightblue;
 }
