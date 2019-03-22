@@ -95,9 +95,9 @@ function addAllToList(array) {
 }
 
 function fileClick(target){
-    let fileName = target.getElementsByClassName("file-name")[0].innerText;
-    console.log(target.getElementsByClassName("file-name")[0].innerText);
-    downloadFile(fileName);
+    let fileId = target.getElementsByClassName("file-name")[0].dataset.fileId;
+    console.log(fileId);
+    downloadFile(fileId);
 }
 
 function addFromBase(element) {
@@ -107,6 +107,7 @@ function addFromBase(element) {
         ev.stopPropagation();
         fileClick(ev.currentTarget);
     });
+    newItem.dataset.id = element.fileId;
 
     let itemName = document.createElement("span");
     itemName.innerText = element.name;
@@ -155,7 +156,7 @@ let readFileBtn = document.getElementById('readfile');
 readFileBtn.addEventListener('click', downloadFile);
 function downloadFile(file){
     console.log('reading file');
-    fetch(`http://127.0.0.1:8000/file/download?name=${file}`, {
+    fetch(`/file/download?id=${file}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"

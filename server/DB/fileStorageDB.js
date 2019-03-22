@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const fileStorageSchema = new mongoose.Schema({
     name : String,
+    fileId:String,
     mimetype : String,
     link: String,
     uploadDate: String,

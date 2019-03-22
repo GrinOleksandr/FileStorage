@@ -7,7 +7,9 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     moment = require('moment'),
     url = require('url'),
     fs = require('fs'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    suid = require('rand-token').suid;
+
 
 
 
@@ -20,17 +22,34 @@ fileRouter.use('/download', function (req, res) {
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
+    // FileStorageDb.find({fileId:parsedUrl.query.id})
+    //     .select('-_id -__v')
+    //     .exec(function (err, file) {
+    //         let responseString = JSON.stringify(file);
+    //         console.log(responseString);
+    //         res.end(responseString);
+    //     });
+
+
+    let query  = FileStorageDb.where({ fileId:parsedUrl.query.id });
+    query.findOne(function (err, file) {
+        if (err) return console.log(err);
+        if (file) {
+            fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+
+                res.end(data);
+                console.log('download is completed')
+            });
+        }
+    });
+
 
     res.writeHead(200);
     console.log('Try to download');
-    fs.readFile(`${config.fileStoragePath}${parsedUrl.query.name}`, function (err, data) {
-        if (err) {
-            return res.status(500).send(err);
-        }
 
-        res.end(data);
-        console.log('download is completed')
-    });
 });
 
 
@@ -53,37 +72,18 @@ fileRouter.use('/upload', function (req, res) {
         });
     }
     else {
-
         let uploadedFile = req.files.fileInput;
         if (uploadedFile.mimetype) {
+            uploadedFile.fileId = suid(16);
             uploadFile(uploadedFile);
             addFileToDataBase(uploadedFile);
+            console.log(uploadedFile);
         }
     }
     console.log('***File uploaded');
     res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': "*"});
     res.end('File uploaded!');
 });
-
-fileRouter.use('/download', function (req, res) {
-    let parsedUrl = url.parse(req.url, true);
-    res.setHeader('Content-Type', 'text/plain');
-    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-
-
-    res.writeHead(200);
-    console.log('Try to download');
-    fs.readFile(`${config.fileStoragePath}${parsedUrl.query.name}`, function (err, data) {
-        if (err) {
-            return res.status(500).send(err);
-        }
-
-        res.end(data);
-        console.log('download is completed')
-    });
-});
-
 fileRouter.use('/createfolder', function (req, res) {
     console.log("folder creation");
     let parsedUrl = url.parse(req.url, true);
@@ -94,6 +94,7 @@ fileRouter.use('/createfolder', function (req, res) {
     res.writeHead(200);
     let folder = {
         name: parsedUrl.query.name,
+        fileId: "",
         isFolder: true,
         mimetype: "",
         link: `${config.ip}:${config.port}/${parsedUrl.query.name}`,
@@ -110,7 +111,6 @@ fileRouter.use('/createfolder', function (req, res) {
     res.end();
     console.log('folder created')
 });
-
 fileRouter.use('/rename', function (req, res) {
     console.log("renaming");
     let parsedUrl = url.parse(req.url, true);
@@ -120,24 +120,21 @@ fileRouter.use('/rename', function (req, res) {
     console.log("renaming",parsedUrl.oldname,  parsedUrl.newname);
     res.writeHead(200);
 
-
     rename(parsedUrl.oldname, parsedUrl.newname);
 
     res.end();
     console.log('folder created')
 });
-
-
 function uploadFile(file) {
-    file.mv(`${config.fileStoragePath}${file.name}`, function (err) {
+    file.mv(`${config.fileStoragePath}${file.fileId}`, function (err) {
         if (err)
             return res.status(500).send(err);
     });
 }
-
 function addFileToDataBase(target) {
     console.log(target.name);
     let name = target.name || "unnamed",
+        fileId = target.fileId,
         mimetype = target.mimetype || "",
         link = target.link || `${config.ip}:${config.port}/${target.name}`,
         date = moment().format('MMMM Do YYYY, h:mm:ss a'),
@@ -149,6 +146,7 @@ function addFileToDataBase(target) {
     FileStorageDb.create(
         {
             name: name,
+            fileId: fileId,
             mimetype: mimetype,
             link: link,
             uploadDate: date,
@@ -180,7 +178,6 @@ function rename(oldName, newName){
             if (err) return console.log(err);
         })
 }
-
 
 
 module.exports = fileRouter;

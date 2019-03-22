@@ -1,7 +1,7 @@
 'use strict';
 
 const host = 'localhost',
-      dbName = 'test4';
+      dbName = 'test5';
 
 module.exports = {
     ip:"localhost",
