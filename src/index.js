@@ -59,7 +59,7 @@ DropZone.addEventListener('drop', function(e){
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let request = new XMLHttpRequest();
-    request.open('POST', 'http://127.0.0.1:8000/file/upload', true);
+    request.open('POST', '/file/upload', true);
     request.setRequestHeader('accept', 'application/json');
     let formData = new FormData(DropZone);
     request.send(formData);
@@ -95,9 +95,10 @@ function addAllToList(array) {
 }
 
 function fileClick(target){
-    let fileId = target.getElementsByClassName("file-name")[0].dataset.fileId;
-    console.log(fileId);
-    downloadFile(fileId);
+    let fileId = target.dataset.id;
+    let fileName = target.querySelector('.file-name').innerText;
+    console.log(fileId, fileName);
+    downloadFile(fileName, fileId);
 }
 
 function addFromBase(element) {
@@ -154,16 +155,16 @@ function addFromBase(element) {
 //////////////////////////////////////////////////////--------------Download------------/////////////////////////////////
 let readFileBtn = document.getElementById('readfile');
 readFileBtn.addEventListener('click', downloadFile);
-function downloadFile(file){
-    console.log('reading file');
-    fetch(`/file/download?id=${file}`, {
+function downloadFile(fileName, fileId){
+    console.log('reading file', fileName , fileId);
+    fetch(`/file/download?id=${fileId}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
         }
     })
         .then(response => response.blob())
-        .then((blob) => saveAs(blob, file))
+        .then((blob) => saveAs(blob, fileName))
         .catch(error => console.log("Данные не получены: " + error));
 }
 

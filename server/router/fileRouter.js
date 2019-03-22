@@ -21,36 +21,26 @@ fileRouter.use('/download', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-
-    // FileStorageDb.find({fileId:parsedUrl.query.id})
-    //     .select('-_id -__v')
-    //     .exec(function (err, file) {
-    //         let responseString = JSON.stringify(file);
-    //         console.log(responseString);
-    //         res.end(responseString);
-    //     });
-
-
-    let query  = FileStorageDb.where({ fileId:parsedUrl.query.id });
-    query.findOne(function (err, file) {
+    console.log(parsedUrl.query.id);
+    FileStorageDb.find({name: parsedUrl.query.id}, function (err, file) {
+        console.log('find in base ', file);
         if (err) return console.log(err);
         if (file) {
+            console.log('reading from storage file ', file);
             fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
                 if (err) {
                     return res.status(500).send(err);
                 }
-
                 res.end(data);
                 console.log('download is completed')
             });
         }
     });
 
-
-    res.writeHead(200);
-    console.log('Try to download');
-
 });
+
+
+
 
 
 
@@ -66,6 +56,7 @@ fileRouter.use('/upload', function (req, res) {
         let uploadedFiles = req.files.fileInput;
         uploadedFiles.forEach(function (item) {
             if (item.mimetype) {
+                item.fileId = suid(16);
                 uploadFile(item);
                 addFileToDataBase(item);
             }
