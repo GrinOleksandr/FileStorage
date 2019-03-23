@@ -39,14 +39,16 @@
 	<div id = sidebar>
 		<form id="upload-container" method="POST"   enctype="multipart/form-data"   action='http://localhost:8000/upload'  > <!--action="http://127.0.0.1:8000/upload"-->
 			<img id="upload-image" src="img/upload.png">
-			<div>
+			<div class="upload-text">
 				<input id="file-input" type="file" name="fileInput"  multiple allowdirs   >
 				<label for="file-input">Выберите файл</label>
 				<span>или перетащите его сюда</span>
 			</div>
 		</form>
 		<div id="folder-wrapper">
-			<button id="create-folder">Create folder</button>
+			<button id="create-folder" >
+				<img src="./img/file-type-icons/add-folder.png" alt = "create new folder" />
+			</button>
 		</div>
 	</div>
 		<div id = content>

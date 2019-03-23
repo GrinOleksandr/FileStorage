@@ -66,6 +66,8 @@ DropZone.addEventListener('drop', function(e){
     DropZone.classList.remove('dragover');
     console.log(e.dataTransfer.items[0]);
     FileInput.files = files;
+    ajaxSendFiles();
+    renderList();
 });
 
 
@@ -163,7 +165,7 @@ function addFromBase(element) {
             return applicationTypes[mimetype.split('/')[1]] || './img/file-type-icons/application.svg'
         }
         let fileTypes = {
-            folder: './img/file-type-icons/folder.svg',
+            folder: './img/file-type-icons/folder.webp',
             application: './img/file-type-icons/application.svg',
             audio: './img/file-type-icons/mp3.svg',
             image: './img/file-type-icons/jpg.svg',
