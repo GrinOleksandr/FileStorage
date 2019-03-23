@@ -247,8 +247,6 @@ function dropDown(target, cors){
         deleteFromServer(fileId);
     });
 
-
-
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
     dropDownMenu.classList.toggle('dropdown-visible');

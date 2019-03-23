@@ -12,7 +12,7 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     fileRouter = express.Router();
 
 fileRouter.use(bodyParser.json());
-fileRouter.use ('/getfiles', function(request, response) {
+fileRouter.use('/getfiles', function(request, response) {
     response.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     FileStorageDb.find({})
         .select('-_id -__v')
@@ -131,30 +131,20 @@ function uploadFile(file) {
     });
 }
 function addFileToDataBase(target) {
-    console.log(target.name);
+    console.log(target);
     let name = target.name || "unnamed",
         fileId = target.fileId,
         mimetype = target.mimetype || "",
         link = target.link || `${config.ip}:${config.port}/${target.name}`,
-        date = moment().format('MMMM Do YYYY, h:mm:ss a'),
+        uploadDate = moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner = target.owner || "SashaGrin",
         access = target.access || [],
         isFolder = target.folder || false,
         parent = target.parent || "/";
 
     FileStorageDb.create(
-        {
-            name: name,
-            fileId: fileId,
-            mimetype: mimetype,
-            link: link,
-            uploadDate: date,
-            owner: owner,
-            access: access,
-            parent: parent,
-            folder: isFolder,
-
-        }, function (err) {
+        {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder},
+        function (err) {
             if (err) return console.log(err);
         })
 }
@@ -164,7 +154,6 @@ function rename(fileId, newName){
     })
 }
 function deleteItem(fileId){
-    console.log(fileId);
     FileStorageDb.deleteOne({fileId:fileId}, function (err) {
         if (err) return console.log(err);
     })

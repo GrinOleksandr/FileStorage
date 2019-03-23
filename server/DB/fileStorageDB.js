@@ -9,7 +9,7 @@ const fileStorageSchema = new mongoose.Schema({
     owner: String,
     access: String,
     parent: String,
-    folder: Boolean
+    isFolder: Boolean
 });
 
 let fileStorageDB = mongoose.model('FileStorage99', fileStorageSchema );
