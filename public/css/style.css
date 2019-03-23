@@ -163,10 +163,9 @@ input[type="search"] {
     flex-wrap: wrap;
     overflow-y: auto;
     width:900px;
-    min-height:200px;
     margin:20px auto;
     border:2px solid black;
-    /*max-height:500px;*/
+    height: 90%;
 }
 
 .file-container{

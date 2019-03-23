@@ -1,5 +1,5 @@
-const ListFiles = document.getElementById('get-files');
-ListFiles.addEventListener('click', renderList );
+// const ListFiles = document.getElementById('get-files');
+// ListFiles.addEventListener('click', renderList );
 
 document.addEventListener('contextmenu',()=>{
     console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
@@ -10,6 +10,13 @@ document.addEventListener('contextmenu',()=>{
 
 const ListOfFiles = document.getElementById('files-list');
 ListOfFiles.addEventListener('contextmenu',(ev)=>{ev.preventDefault()});
+ListOfFiles.addEventListener('click',(ev)=>{
+    ev.preventDefault();
+    ev.stopPropagation();
+    if(document.getElementsByClassName("dropdown-menu")[0]) {
+        document.getElementsByClassName("dropdown-menu")[0].remove();
+    }
+});
 
 /////////////////////////////////////----------UPLOAD----------/////////////////////////////////////
 const DropZone = document.getElementById("upload-container");
@@ -51,6 +58,7 @@ FileInput.addEventListener('change', function(e){
         }
     });
     ajaxSendFiles();
+    renderList();
 });
 
 //upload via drag&drop
@@ -66,11 +74,25 @@ DropZone.addEventListener('drop', function(e){
 
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
-    let request = new XMLHttpRequest();
-    request.open('POST', '/file/upload', true);
-    request.setRequestHeader('accept', 'application/json');
+    // let request = new XMLHttpRequest();
+    // request.open('POST', '/file/upload', true);
+    // request.setRequestHeader('accept', 'application/json');
+    // request.send(formData);
     let formData = new FormData(DropZone);
-    request.send(formData);
+
+    fetch("/file/upload", {
+        method: 'POST',
+        headers:{
+            accept:'application/json'
+        },
+        body:formData
+    }).then(function (response) {
+        console.log('Files Uploaded!');
+        renderList();
+        return response.text()
+    })
+        .catch(error => console.log("Данные не отправленны: " + error));
+
 }
 
 /////////////////////////////////////----------!LIST-FILES!----------/////////////////////////////////////
@@ -102,6 +124,7 @@ function addAllToList(array) {
 }
 
 function addFromBase(element) {
+    console.log(element);
     let newItem = document.createElement("li");
     newItem.className = "file-container";
     newItem.addEventListener('click', (ev) =>{
