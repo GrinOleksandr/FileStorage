@@ -213,20 +213,20 @@ function addItemFromServer(element) {
 
 function dropDown(target, cors){
     let fileId = target.dataset.id;
-    let download = document.createElement('li');
-    download.className = "dropDownItem";
-    download.innerText = "Download";
-    download.addEventListener('click', (ev)=>{
+    let downloadBtn = document.createElement('li');
+    downloadBtn.className = "dropDownItem";
+    downloadBtn.innerText = "Download";
+    downloadBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
         let fileName = target.querySelector('.file-name').innerText;
         downloadFile(fileName, fileId);
     });
 
-    let renameLink = document.createElement('li');
-    renameLink.className = "dropDownItem";
-    renameLink.innerText = "Rename";
-    renameLink.addEventListener('click', (ev)=>{
+    let renameBtn = document.createElement('li');
+    renameBtn.className = "dropDownItem";
+    renameBtn.innerText = "Rename";
+    renameBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
         rename(ev, fileId);
@@ -238,14 +238,26 @@ function dropDown(target, cors){
         })
     }
 
+    let deleteBtn = document.createElement('li');
+    deleteBtn.className = "dropDownItem";
+    deleteBtn.innerText = "Delete";
+    deleteBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        deleteFromServer(fileId);
+    });
+
+
+
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
     dropDownMenu.classList.toggle('dropdown-visible');
     dropDownMenu.style.position = "fixed";
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
-    dropDownMenu.appendChild(download);
-    dropDownMenu.appendChild(renameLink);
+    dropDownMenu.appendChild(downloadBtn);
+    dropDownMenu.appendChild(renameBtn);
+    dropDownMenu.appendChild(deleteBtn);
     target.appendChild(dropDownMenu);
 }
 
@@ -321,7 +333,6 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     });
 
     function closeModal(ev){
-        console.log(ev);
         document.getElementsByClassName('modal')[0].remove();
     }
 
