@@ -292,11 +292,16 @@ input[type="search"] {
 }
 
 .dropDownItem {
-    height:20px;
-    width:100%;
-    text-align:center;
+    height: 20px;
+    display: flex;
+    width: 100%;
+    text-align: center;
     border: 1px solid darkgrey;
-    background-color:lightblue;
+    background-color: lightblue;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
 }
 
 /******************MODAL*************************/
