@@ -12,13 +12,14 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     fileRouter = express.Router();
 
 fileRouter.use(bodyParser.json());
-fileRouter.use('/getfiles', function(request, response) {
-    response.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    FileStorageDb.find({})
+fileRouter.use('/listfiles', function(req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
+    FileStorageDb.find({fileId : parsedUrl.query.id})
         .select('-_id -__v')
         .exec(function (err, Result) {
             let responseString = JSON.stringify(Result);
-            response.end(responseString);
+            res.end(responseString);
         });
 });
 fileRouter.use('/download', function (req, res) {
@@ -42,6 +43,8 @@ fileRouter.use('/download', function (req, res) {
 });
 fileRouter.use(fileUpload());
 fileRouter.use('/upload', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    console.log(parsedUrl.query.parent);
     if (Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
@@ -50,6 +53,7 @@ fileRouter.use('/upload', function (req, res) {
         uploadedFiles.forEach(function (item) {
             if (item.mimetype) {
                 item.fileId = suid(16);
+                item.parent = parsedUrl.query.parent;
                 uploadFile(item);
                 addFileToDataBase(item);
             }
@@ -59,9 +63,9 @@ fileRouter.use('/upload', function (req, res) {
         let uploadedFile = req.files.fileInput;
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = suid(16);
+            uploadedFile.parent = parsedUrl.query.parent;
             uploadFile(uploadedFile);
             addFileToDataBase(uploadedFile);
-            console.log(uploadedFile);
         }
     }
     console.log('***File uploaded');
@@ -133,14 +137,14 @@ function uploadFile(file) {
 function addFileToDataBase(target) {
     console.log(target);
     let name = target.name || "unnamed",
-        fileId = target.fileId,
+        fileId = target.fileId || "",
         mimetype = target.mimetype || "",
         link = target.link || `${config.ip}:${config.port}/${target.name}`,
         uploadDate = moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner = target.owner || "SashaGrin",
         access = target.access || [],
         isFolder = target.folder || false,
-        parent = target.parent || "/";
+        parent = target.parent || "";
 
     FileStorageDb.create(
         {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder},

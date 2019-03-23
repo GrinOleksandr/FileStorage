@@ -15,6 +15,8 @@ ListOfFiles.addEventListener('click',(ev)=>{
     }
 });
 
+const FilePath = document.getElementById('filePath');
+
 //***********************************UPLOAD***********************************//
 //upload via drag&drop
 const DropZone = document.getElementById("upload-container");
@@ -45,7 +47,7 @@ DropZone.addEventListener('drop', function(e){
     console.log(e.dataTransfer.items[0]);
     FileInput.files = files;
     ajaxSendFiles();
-    renderList();
+    renderFileStructure();
 });
 
 let createFolderBtn = document.getElementById('create-folder');
@@ -67,14 +69,14 @@ FileInput.addEventListener('change', function(e){
         }
     });
     ajaxSendFiles();
-    renderList();
+    renderFileStructure();
 });
 
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let formData = new FormData(DropZone);
-
-    fetch("/file/upload", {
+    let parentFolder= ListOfFiles.dataset.currentFolder;
+    fetch(`/file/upload?parent=${parentFolder}`, {
         method: 'POST',
         headers:{
             accept:'application/json'
@@ -82,17 +84,17 @@ function ajaxSendFiles(){
         body:formData
     }).then(function (response) {
         console.log('Files Uploaded!');
-        renderList();
-        return response.text()
+        renderFileStructure();
+        return response.text();
     })
         .catch(error => console.log("Данные не отправленны: " + error));
 }
 //**********************************************************************//
-renderList();
+renderFileStructure();
 
-function renderList () {
-    fetch("http://127.0.0.1:8000/file/getfiles?", {
-        method: 'GET'
+function renderFileStructure (folder = "") {
+    fetch(`http://127.0.0.1:8000/file/listfiles?folder=${folder}`, {
+        method: 'POST'
     }).then(function (response) {
         return response.text()
     })
@@ -115,13 +117,37 @@ function addAllToList(array) {
 function addItemFromServer(element) {
     let newItem = document.createElement("li");
     newItem.className = "file-container";
+    newItem.dataset.parent = element.parent;
     newItem.addEventListener('click', (ev) =>{
         ev.preventDefault();
         ev.stopPropagation();
-        activate(ev.currentTarget);
+        activateItem(ev.currentTarget);
     });
 
-    function activate(target){
+     if(element.isFolder) {
+         newItem.addEventListener('doubleclick', function(ev){
+             openFolder(name, id)
+         });
+     }
+
+    function openFolder(name, id) {
+        ListOfFiles.dataset.currentFolder = id;
+        renderFileStructure(id);
+        addToFilePath(name, id);
+
+    }
+
+     function addToFilePath(folderName, id){
+         let item = document.createElement('span');
+         item.className = "file-path_item";
+         item.innerText = folderName;
+         item.addEventListener('click', function(){
+             renderFileStructure(id);
+         })
+     }
+
+
+    function activateItem(target){
         if(document.querySelector(".item-active")){
             document.querySelector(".item-active").classList.remove('item-active');
         }
@@ -268,7 +294,7 @@ function renameOnServer(file, newName) {
         }
     }).then((data) => {
         console.log(data);
-        renderList();
+        renderFileStructure();
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
@@ -282,7 +308,7 @@ function deleteFromServer(fileId) {
         }
     }).then((data) => {
         console.log(data);
-        renderList();
+        renderFileStructure();
     })
         .catch(error => console.log("Удаление не прошло: " + error));
 }
@@ -327,7 +353,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     createBtn.addEventListener('click', ()=>{
         callback(nameField.value);
         closeModal();
-        renderList();
+        renderFileStructure();
     });
 
     function closeModal(ev){
