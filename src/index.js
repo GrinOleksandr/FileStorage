@@ -17,7 +17,6 @@ ListOfFiles.addEventListener('click',(ev)=>{
 
 /////////////////////////////////////----------UPLOAD----------/////////////////////////////////////
 const DropZone = document.getElementById("upload-container");
-
 DropZone.addEventListener('dragover', function(e) {
     e.stopPropagation();
     e.preventDefault();
@@ -28,7 +27,6 @@ DropZone.addEventListener('dragenter', function(e) {
     e.preventDefault();
     DropZone.classList.add('dragover');
 });
-
 DropZone.addEventListener('dragleave', function(e) {
     e.stopPropagation();
     e.preventDefault();
@@ -38,6 +36,7 @@ DropZone.addEventListener('dragleave', function(e) {
         DropZone.classList.remove('dragover');
     }
 });
+
 const FileInput = document.getElementById("file-input");
 FileInput.addEventListener('focus', ()=> DropZone.querySelector('label').classList.add('focus'));
 FileInput.addEventListener('blur', ()=> DropZone.querySelector('label').classList.remove('focus'));
@@ -264,7 +263,20 @@ function renameOnServer(file, newName) {
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-//////////////////////////////////////////////////////--------------Download------------/////////////////////////////////
+function deleteOnServer(fileId) {
+    fetch(`/file/rename?id=${fileId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then((data) => {
+        console.log(data);
+        renderList();
+    })
+        .catch(error => console.log("Удаление не прошло: " + error));
+}
+
 function downloadFile(fileName, fileId){
     fetch(`/file/download?id=${fileId}`, {
         method: 'GET',
@@ -276,8 +288,6 @@ function downloadFile(fileName, fileId){
         .then((blob) => saveAs(blob, fileName))
         .catch(error => console.log("Данные не получены: " + error));
 }
-
-/////////////**********************CREATE FOLdER***********************////////////////////////////
 
 let createFolderBtn = document.getElementById('create-folder');
 createFolderBtn.addEventListener('click',Modal);
