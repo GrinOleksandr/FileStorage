@@ -1,6 +1,3 @@
-// const ListFiles = document.getElementById('get-files');
-// ListFiles.addEventListener('click', renderList );
-
 document.addEventListener('contextmenu',()=>{
     console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
     if(document.getElementsByClassName("dropdown-menu")[0]) {
@@ -74,10 +71,6 @@ DropZone.addEventListener('drop', function(e){
 
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
-    // let request = new XMLHttpRequest();
-    // request.open('POST', '/file/upload', true);
-    // request.setRequestHeader('accept', 'application/json');
-    // request.send(formData);
     let formData = new FormData(DropZone);
 
     fetch("/file/upload", {
@@ -92,14 +85,10 @@ function ajaxSendFiles(){
         return response.text()
     })
         .catch(error => console.log("Данные не отправленны: " + error));
-
 }
 
 /////////////////////////////////////----------!LIST-FILES!----------/////////////////////////////////////
-
-
 renderList();
-
 
 function renderList () {
     fetch("http://127.0.0.1:8000/file/getfiles?", {
@@ -124,7 +113,7 @@ function addAllToList(array) {
 }
 
 function addFromBase(element) {
-    console.log(element);
+    console.log(element.mimetype);
     let newItem = document.createElement("li");
     newItem.className = "file-container";
     newItem.addEventListener('click', (ev) =>{
@@ -159,10 +148,36 @@ function addFromBase(element) {
     itemName.innerText = element.name;
     itemName.className = "file-name";
 
+    function chooseIcon(mimetype) {
+
+        if (mimetype.split('/')[0] === "application") {
+            let applicationTypes = {
+                msword: './img/file-type-icons/doc.svg',
+                pdf: './img/file-type-icons/pdf.svg',
+                ppt: './img/file-type-icons/ppt.svg',
+                pptx: './img/file-type-icons/ppt.svg',
+                zip: './img/file-type-icons/zip.svg',
+                rar: './img/file-type-icons/zip.svg',
+                'vnd.ms-excel': './img/file-type-icons/xls.svg'
+            };
+            return applicationTypes[mimetype.split('/')[1]] || './img/file-type-icons/application.svg'
+        }
+        let fileTypes = {
+            folder: './img/file-type-icons/folder.svg',
+            application: './img/file-type-icons/application.svg',
+            audio: './img/file-type-icons/mp3.svg',
+            image: './img/file-type-icons/jpg.svg',
+            text: './img/file-type-icons/txt.svg',
+            video: './img/file-type-icons/avi.svg',
+        };
+        return fileTypes[mimetype.split('/')[0]] || './img/file-type-icons/file.svg'
+    }
+
+
     let fileIcon = document.createElement("span");
     fileIcon.className = "file-icon";
-    fileIcon.style.backgroundImage = `url(./img/file-type-icons/doc.png)`;
-
+    fileIcon.style.backgroundImage = `url(${chooseIcon(element.mimetype})`;
+        // `url(./img/file-type-icons/doc.png)`;
     // let itemMimeType = document.createElement("span");
     // itemMimeType.innerText = `type: ${element.mimetype}`;
     //
@@ -198,12 +213,10 @@ function addFromBase(element) {
 }
 
 function dropDown(target, cors){
-    console.log(`${cors.x}px , ${cors.y}px`);
     let download = document.createElement('li');
     download.className = "dropDownItem";
     download.innerText = "Download";
     download.addEventListener('click', (ev)=>{
-        console.log(target)
         ev.preventDefault();
         ev.stopPropagation();
         let fileId = target.dataset.id;
@@ -222,8 +235,6 @@ function dropDown(target, cors){
 }
 
 //////////////////////////////////////////////////////--------------Download------------/////////////////////////////////
-let readFileBtn = document.getElementById('readfile');
-readFileBtn.addEventListener('click', downloadFile);
 function downloadFile(fileName, fileId){
     fetch(`/file/download?id=${fileId}`, {
         method: 'GET',
