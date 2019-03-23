@@ -176,7 +176,7 @@ function addFromBase(element) {
 
     let fileIcon = document.createElement("span");
     fileIcon.className = "file-icon";
-    fileIcon.style.backgroundImage = `url(${chooseIcon(element.mimetype})`;
+    fileIcon.style.backgroundImage = `url(${chooseIcon(element.mimetype)})`;
         // `url(./img/file-type-icons/doc.png)`;
     // let itemMimeType = document.createElement("span");
     // itemMimeType.innerText = `type: ${element.mimetype}`;
