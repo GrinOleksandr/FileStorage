@@ -15,7 +15,8 @@ ListOfFiles.addEventListener('click',(ev)=>{
     }
 });
 
-/////////////////////////////////////----------UPLOAD----------/////////////////////////////////////
+//***********************************UPLOAD***********************************//
+//upload via drag&drop
 const DropZone = document.getElementById("upload-container");
 DropZone.addEventListener('dragover', function(e) {
     e.stopPropagation();
@@ -36,12 +37,24 @@ DropZone.addEventListener('dragleave', function(e) {
         DropZone.classList.remove('dragover');
     }
 });
+DropZone.addEventListener('drop', function(e){
+    e.stopPropagation();
+    e.preventDefault();
+    let files = e.dataTransfer.files;
+    DropZone.classList.remove('dragover');
+    console.log(e.dataTransfer.items[0]);
+    FileInput.files = files;
+    ajaxSendFiles();
+    renderList();
+});
 
+let createFolderBtn = document.getElementById('create-folder');
+createFolderBtn.addEventListener('click',Modal);
+
+//upload via input field
 const FileInput = document.getElementById("file-input");
 FileInput.addEventListener('focus', ()=> DropZone.querySelector('label').classList.add('focus'));
 FileInput.addEventListener('blur', ()=> DropZone.querySelector('label').classList.remove('focus'));
-
-//upload via input field
 FileInput.addEventListener('change', function(e){
     e.preventDefault();
     console.log("files  ", this.files);
@@ -53,18 +66,6 @@ FileInput.addEventListener('change', function(e){
             console.log(`DIRECTORY!! : ${item}`)
         }
     });
-    ajaxSendFiles();
-    renderList();
-});
-
-//upload via drag&drop
-DropZone.addEventListener('drop', function(e){
-    e.stopPropagation();
-    e.preventDefault();
-    let files = e.dataTransfer.files;
-    DropZone.classList.remove('dragover');
-    console.log(e.dataTransfer.items[0]);
-    FileInput.files = files;
     ajaxSendFiles();
     renderList();
 });
@@ -86,8 +87,7 @@ function ajaxSendFiles(){
     })
         .catch(error => console.log("Данные не отправленны: " + error));
 }
-
-/////////////////////////////////////----------!LIST-FILES!----------/////////////////////////////////////
+//**********************************************************************//
 renderList();
 
 function renderList () {
@@ -108,11 +108,11 @@ function renderList () {
 function addAllToList(array) {
     ListOfFiles.innerHTML = "";
     array.forEach(function (item) {
-        addFromBase(item)
+        addItemFromServer(item)
     });
 }
 
-function addFromBase(element) {
+function addItemFromServer(element) {
     let newItem = document.createElement("li");
     newItem.className = "file-container";
     newItem.addEventListener('click', (ev) =>{
@@ -263,7 +263,7 @@ function renameOnServer(file, newName) {
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-function deleteOnServer(fileId) {
+function deleteFromServer(fileId) {
     fetch(`/file/rename?id=${fileId}`, {
         method: 'POST',
         headers: {
@@ -288,9 +288,6 @@ function downloadFile(fileName, fileId){
         .then((blob) => saveAs(blob, fileName))
         .catch(error => console.log("Данные не получены: " + error));
 }
-
-let createFolderBtn = document.getElementById('create-folder');
-createFolderBtn.addEventListener('click',Modal);
 
 function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = createNewFolderOnServer){
     let createFolderModal = document.createElement('div');
