@@ -15,9 +15,10 @@ ListOfFiles.addEventListener('click',(ev)=>{
     }
 });
 
-// let currentFolder = ListOfFiles.dataset.currentfolder;
-
 const FilePath = document.getElementById('filePath');
+FilePath.querySelector("span").addEventListener('click',()=> {
+    renderFileStructure("root");
+});
 
 //***********************************UPLOAD***********************************//
 //upload via drag&drop
@@ -141,10 +142,11 @@ function addItemFromServer(element) {
      function addToFilePath(folderName, id){
          let item = document.createElement('span');
          item.className = "file-path_item";
-         item.innerText = folderName;
+         item.innerText = `${folderName}/`;
          item.addEventListener('click', function(){
              renderFileStructure(id);
-         })
+         });
+         FilePath.appendChild(item);
      }
 
 
@@ -390,79 +392,4 @@ function createNewFolderOnServer(name){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-// function createFolder(){
-//     let newItem = document.createElement("li");
-//     newItem.className = "file-container";
-//
-//     let itemName = document.createElement("span");
-//     itemName.innerText = "New Folder";
-//     itemName.className = "file-name";
-//     itemName.contentEditable = "true";
-//     itemName.addEventListener('change', function(){
-//         if(itemName.innerText === ""){
-//             itemName.innerText = "New Folder"
-//         }
-//         createNewFolderOnServer(itemName.innerText);
-//     });
-//     itemName.addEventListener('keypress', function(key){
-//         if(key.keyCode === 13){
-//             createFolderBtn.focus();
-//         }
-//     });
-//
-//     itemName.addEventListener('click', function(){
-//         let oldName = itemName.innerText;
-//         itemName.style.backgroundColor = "white";
-//         let r = document.createRange();
-//         r.selectNodeContents(itemName);
-//         let sel=window.getSelection();
-//         sel.removeAllRanges();
-//         sel.addRange(r);
-//         itemName.focus();
-//         itemName.dataset.oldname = itemName.innerText;
-//
-//     });
-//
-//     itemName.addEventListener('focusout', function(){
-//         itemName.style.backgroundColor = "transparent";
-//         if(itemName.innerText === ""){
-//             itemName.innerText = "New Folder"
-//         }
-//         if(itemName.dataset.oldName){
-//             rename(itemName.dataset.oldName, itemName.innerText)
-//         }
-//         createNewFolderOnServer(itemName.innerText);
-//     });
-//
-//     let fileIcon = document.createElement("span");
-//     fileIcon.className = "file-icon";
-//     fileIcon.style.backgroundImage = `url(./img/file-type-icons/folder_icon.png)`;
-//
-//     newItem.appendChild(fileIcon);
-//     newItem.appendChild(itemName);
-//
-//     ListOfFiles.appendChild(newItem);
-//
-//     itemName.style.minWidth = "70px";
-//     itemName.style.backgroundColor = "white";
-//     itemName.innerText = "New Folder";
-//     let r = document.createRange();
-//     r.selectNodeContents(itemName);
-//     let sel=window.getSelection();
-//     sel.removeAllRanges();
-//     sel.addRange(r);
-//     itemName.focus();
-// }
 
-// function rename(oldName, newName){
-//     console.log(oldName, newName);
-//     fetch(`/file/rename?oldname=${oldName}&newname=${newName}`, {
-//         method: 'POST',
-//         headers:{'Content-Type': 'text/plain',
-//             'Access-Control-Allow-Origin': "*"
-//         }
-//     }).then((data)=>{
-//         console.log(data);
-//     })
-//         .catch(error => console.log("Данные не получены: " + error));
-// }
