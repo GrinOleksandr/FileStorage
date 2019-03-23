@@ -15,7 +15,8 @@ fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    FileStorageDb.find({fileId : parsedUrl.query.id})
+    console.log('rendering ', parsedUrl.query.folder );
+    FileStorageDb.find({parent : parsedUrl.query.folder})
         .select('-_id -__v')
         .exec(function (err, Result) {
             let responseString = JSON.stringify(Result);
@@ -144,7 +145,7 @@ function addFileToDataBase(target) {
         owner = target.owner || "SashaGrin",
         access = target.access || [],
         isFolder = target.folder || false,
-        parent = target.parent || "";
+        parent = target.parent || "root";
 
     FileStorageDb.create(
         {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder},

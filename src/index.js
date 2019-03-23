@@ -75,7 +75,8 @@ FileInput.addEventListener('change', function(e){
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let formData = new FormData(DropZone);
-    let parentFolder= ListOfFiles.dataset.currentFolder;
+    let parentFolder= ListOfFiles.dataset.currentfolder;
+    console.log('curent ', parentFolder);
     fetch(`/file/upload?parent=${parentFolder}`, {
         method: 'POST',
         headers:{
@@ -92,7 +93,7 @@ function ajaxSendFiles(){
 //**********************************************************************//
 renderFileStructure();
 
-function renderFileStructure (folder = "") {
+function renderFileStructure (folder = "root") {
     fetch(`http://127.0.0.1:8000/file/listfiles?folder=${folder}`, {
         method: 'POST'
     }).then(function (response) {
