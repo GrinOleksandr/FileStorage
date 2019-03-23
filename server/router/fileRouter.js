@@ -90,7 +90,7 @@ fileRouter.use('/createfolder', function (req, res) {
         uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner: "SashaGrin",
         access: "SashaGrin",
-        parent: parsedUrl.query.parrent
+        parent: parsedUrl.query.parent
     };
 
     console.log(folder);
@@ -144,7 +144,7 @@ function addFileToDataBase(target) {
         uploadDate = moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner = target.owner || "SashaGrin",
         access = target.access || [],
-        isFolder = target.folder || false,
+        isFolder = target.isFolder || false,
         parent = target.parent || "root";
 
     FileStorageDb.create(
