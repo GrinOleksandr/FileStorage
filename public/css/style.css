@@ -159,13 +159,9 @@ input[type="search"] {
 }
 
 #files-list{
-    display:flex;
+    display: flex;
+    overflow: hidden;
     flex-wrap: wrap;
-    overflow-y: auto;
-    width:900px;
-    margin:20px auto;
-    border:2px solid black;
-    height: 90%;
 }
 
 .file-container{

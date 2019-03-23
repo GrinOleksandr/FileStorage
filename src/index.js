@@ -158,7 +158,7 @@ function addFromBase(element) {
                 pptx: './img/file-type-icons/ppt.svg',
                 zip: './img/file-type-icons/zip.svg',
                 rar: './img/file-type-icons/zip.svg',
-                'vnd.ms-excel': './img/file-type-icons/xls.svg'
+                // 'vnd.ms-excel': './img/file-type-icons/xls.svg'
             };
             return applicationTypes[mimetype.split('/')[1]] || './img/file-type-icons/application.svg'
         }
