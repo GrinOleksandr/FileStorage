@@ -215,16 +215,31 @@ function addFromBase(element) {
 }
 
 function dropDown(target, cors){
+    let fileId = target.dataset.id;
     let download = document.createElement('li');
     download.className = "dropDownItem";
     download.innerText = "Download";
     download.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        let fileId = target.dataset.id;
         let fileName = target.querySelector('.file-name').innerText;
         downloadFile(fileName, fileId);
     });
+
+    let renameLink = document.createElement('li');
+    renameLink.className = "dropDownItem";
+    renameLink.innerText = "Rename";
+    renameLink.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        // rename(ev, fileId);
+    });
+
+    // function rename(ev, file){
+    //     Modal(ev, "Rename", "Rename", function(newObjectName) {
+    //         renameOnServer(file, newObjectName)
+    //     })
+    // }
 
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
@@ -233,8 +248,22 @@ function dropDown(target, cors){
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
     dropDownMenu.appendChild(download);
+    // dropDownMenu.appendChild(renameLink);
     target.appendChild(dropDownMenu);
 }
+
+// function renameOnServer(file, newName) {
+//     fetch(`/file/rename?id=${file}&newname=${newName}`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'text/plain',
+//             'Access-Control-Allow-Origin': "*"
+//         }
+//     }).then((data) => {
+//         console.log(data);
+//     })
+//         .catch(error => console.log("Данные не получены: " + error));
+// }
 
 //////////////////////////////////////////////////////--------------Download------------/////////////////////////////////
 function downloadFile(fileName, fileId){
@@ -266,10 +295,10 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     let crateFolderWrapper = document.createElement('div');
     crateFolderWrapper.className = "modal-wrapper";
 
-    let folderNameField = document.createElement('input');
-    folderNameField.type= "text";
-    folderNameField.className = "modal-fileName";
-    folderNameField.focus();
+    let nameField = document.createElement('input');
+    nameField.type= "text";
+    nameField.className = "modal-fileName";
+    nameField.focus();
 
     let cancelBtn = document.createElement('button');
     cancelBtn.innerText= "cancel";
@@ -280,7 +309,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     createBtn.innerText = buttonText;
     createBtn.className = "modal-createButton";
     createBtn.addEventListener('click', ()=>{
-        callback(folderNameField.value);
+        callback(nameField.value);
         closeModal();
         renderList();
     });
@@ -297,7 +326,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     title.innerText = modalTitle;
 
     crateFolderWrapper.appendChild(title);
-    crateFolderWrapper.appendChild(folderNameField);
+    crateFolderWrapper.appendChild(nameField);
     modalButtonsWrapper.appendChild(cancelBtn);
     modalButtonsWrapper.appendChild(createBtn);
     crateFolderWrapper.appendChild(modalButtonsWrapper);
@@ -307,7 +336,6 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
 }
 
 function createNewFolderOnServer(name){
-    console.log();
     fetch(`/file/createfolder?name=${name}&parrent=${ListOfFiles.dataset.currentFolder}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
@@ -319,79 +347,79 @@ function createNewFolderOnServer(name){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-function createFolder(){
-    let newItem = document.createElement("li");
-    newItem.className = "file-container";
+// function createFolder(){
+//     let newItem = document.createElement("li");
+//     newItem.className = "file-container";
+//
+//     let itemName = document.createElement("span");
+//     itemName.innerText = "New Folder";
+//     itemName.className = "file-name";
+//     itemName.contentEditable = "true";
+//     itemName.addEventListener('change', function(){
+//         if(itemName.innerText === ""){
+//             itemName.innerText = "New Folder"
+//         }
+//         createNewFolderOnServer(itemName.innerText);
+//     });
+//     itemName.addEventListener('keypress', function(key){
+//         if(key.keyCode === 13){
+//             createFolderBtn.focus();
+//         }
+//     });
+//
+//     itemName.addEventListener('click', function(){
+//         let oldName = itemName.innerText;
+//         itemName.style.backgroundColor = "white";
+//         let r = document.createRange();
+//         r.selectNodeContents(itemName);
+//         let sel=window.getSelection();
+//         sel.removeAllRanges();
+//         sel.addRange(r);
+//         itemName.focus();
+//         itemName.dataset.oldname = itemName.innerText;
+//
+//     });
+//
+//     itemName.addEventListener('focusout', function(){
+//         itemName.style.backgroundColor = "transparent";
+//         if(itemName.innerText === ""){
+//             itemName.innerText = "New Folder"
+//         }
+//         if(itemName.dataset.oldName){
+//             rename(itemName.dataset.oldName, itemName.innerText)
+//         }
+//         createNewFolderOnServer(itemName.innerText);
+//     });
+//
+//     let fileIcon = document.createElement("span");
+//     fileIcon.className = "file-icon";
+//     fileIcon.style.backgroundImage = `url(./img/file-type-icons/folder_icon.png)`;
+//
+//     newItem.appendChild(fileIcon);
+//     newItem.appendChild(itemName);
+//
+//     ListOfFiles.appendChild(newItem);
+//
+//     itemName.style.minWidth = "70px";
+//     itemName.style.backgroundColor = "white";
+//     itemName.innerText = "New Folder";
+//     let r = document.createRange();
+//     r.selectNodeContents(itemName);
+//     let sel=window.getSelection();
+//     sel.removeAllRanges();
+//     sel.addRange(r);
+//     itemName.focus();
+// }
 
-    let itemName = document.createElement("span");
-    itemName.innerText = "New Folder";
-    itemName.className = "file-name";
-    itemName.contentEditable = "true";
-    itemName.addEventListener('change', function(){
-        if(itemName.innerText === ""){
-            itemName.innerText = "New Folder"
-        }
-        createNewFolderOnServer(itemName.innerText);
-    });
-    itemName.addEventListener('keypress', function(key){
-        if(key.keyCode === 13){
-            createFolderBtn.focus();
-        }
-    });
-
-    itemName.addEventListener('click', function(){
-        let oldName = itemName.innerText;
-        itemName.style.backgroundColor = "white";
-        let r = document.createRange();
-        r.selectNodeContents(itemName);
-        let sel=window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(r);
-        itemName.focus();
-        itemName.dataset.oldname = itemName.innerText;
-
-    });
-
-    itemName.addEventListener('focusout', function(){
-        itemName.style.backgroundColor = "transparent";
-        if(itemName.innerText === ""){
-            itemName.innerText = "New Folder"
-        }
-        if(itemName.dataset.oldName){
-            rename(itemName.dataset.oldName, itemName.innerText)
-        }
-        createNewFolderOnServer(itemName.innerText);
-    });
-
-    let fileIcon = document.createElement("span");
-    fileIcon.className = "file-icon";
-    fileIcon.style.backgroundImage = `url(./img/file-type-icons/folder_icon.png)`;
-
-    newItem.appendChild(fileIcon);
-    newItem.appendChild(itemName);
-
-    ListOfFiles.appendChild(newItem);
-
-    itemName.style.minWidth = "70px";
-    itemName.style.backgroundColor = "white";
-    itemName.innerText = "New Folder";
-    let r = document.createRange();
-    r.selectNodeContents(itemName);
-    let sel=window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(r);
-    itemName.focus();
-}
-
-function rename(oldName, newName){
-    console.log(oldName, newName);
-    fetch(`/file/rename?oldname=${oldName}&newname=${newName}`, {
-        method: 'POST',
-        headers:{'Content-Type': 'text/plain',
-            'Access-Control-Allow-Origin': "*"
-        }
-    }).then((data)=>{
-        console.log(data);
-    })
-        .catch(error => console.log("Данные не получены: " + error));
-}
+// function rename(oldName, newName){
+//     console.log(oldName, newName);
+//     fetch(`/file/rename?oldname=${oldName}&newname=${newName}`, {
+//         method: 'POST',
+//         headers:{'Content-Type': 'text/plain',
+//             'Access-Control-Allow-Origin': "*"
+//         }
+//     }).then((data)=>{
+//         console.log(data);
+//     })
+//         .catch(error => console.log("Данные не получены: " + error));
+// }
