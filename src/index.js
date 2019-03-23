@@ -232,14 +232,14 @@ function dropDown(target, cors){
     renameLink.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        // rename(ev, fileId);
+        rename(ev, fileId);
     });
 
-    // function rename(ev, file){
-    //     Modal(ev, "Rename", "Rename", function(newObjectName) {
-    //         renameOnServer(file, newObjectName)
-    //     })
-    // }
+    function rename(ev, file){
+        Modal(ev, "Rename", "Rename", function(newObjectName) {
+            renameOnServer(file, newObjectName)
+        })
+    }
 
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
@@ -248,22 +248,22 @@ function dropDown(target, cors){
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
     dropDownMenu.appendChild(download);
-    // dropDownMenu.appendChild(renameLink);
+    dropDownMenu.appendChild(renameLink);
     target.appendChild(dropDownMenu);
 }
 
-// function renameOnServer(file, newName) {
-//     fetch(`/file/rename?id=${file}&newname=${newName}`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'text/plain',
-//             'Access-Control-Allow-Origin': "*"
-//         }
-//     }).then((data) => {
-//         console.log(data);
-//     })
-//         .catch(error => console.log("Данные не получены: " + error));
-// }
+function renameOnServer(file, newName) {
+    fetch(`/file/rename?id=${file}&newname=${newName}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then((data) => {
+        console.log(data);
+    })
+        .catch(error => console.log("Данные не получены: " + error));
+}
 
 //////////////////////////////////////////////////////--------------Download------------/////////////////////////////////
 function downloadFile(fileName, fileId){
