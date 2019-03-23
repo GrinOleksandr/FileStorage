@@ -70,7 +70,6 @@ DropZone.addEventListener('drop', function(e){
     renderList();
 });
 
-
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let formData = new FormData(DropZone);
@@ -115,7 +114,6 @@ function addAllToList(array) {
 }
 
 function addFromBase(element) {
-    console.log(element.mimetype);
     let newItem = document.createElement("li");
     newItem.className = "file-container";
     newItem.addEventListener('click', (ev) =>{
@@ -261,6 +259,7 @@ function renameOnServer(file, newName) {
         }
     }).then((data) => {
         console.log(data);
+        renderList();
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
