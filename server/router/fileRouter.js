@@ -81,14 +81,14 @@ fileRouter.use('/createfolder', function (req, res) {
     res.writeHead(200);
     let folder = {
         name: parsedUrl.query.name,
-        fileId: "",
+        fileId: suid(16),
         isFolder: true,
-        mimetype: "",
+        mimetype: "folder",
         link: `${config.ip}:${config.port}/${parsedUrl.query.name}`,
         uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner: "SashaGrin",
         access: "SashaGrin",
-        parent: "root"
+        parent: parsedUrl.query.parrent
     };
 
     console.log(folder);

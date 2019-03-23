@@ -1,5 +1,5 @@
 const ListFiles = document.getElementById('get-files');
-ListFiles.addEventListener('click', listFiles );
+ListFiles.addEventListener('click', renderList );
 
 document.addEventListener('contextmenu',()=>{
     console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
@@ -75,10 +75,9 @@ function ajaxSendFiles(){
 
 /////////////////////////////////////----------!LIST-FILES!----------/////////////////////////////////////
 
-function listFiles(){
-    console.log("listed");
-    renderList();
-}
+
+renderList();
+
 
 function renderList () {
     fetch("http://127.0.0.1:8000/file/getfiles?", {
@@ -102,22 +101,22 @@ function addAllToList(array) {
     });
 }
 
-function fileClick(target){
-    ev.preventDefault();
-    ev.stopPropagation();
-    let fileId = target.dataset.id;
-    let fileName = target.querySelector('.file-name').innerText;
-    downloadFile(fileName, fileId);
-}
-
 function addFromBase(element) {
     let newItem = document.createElement("li");
     newItem.className = "file-container";
     newItem.addEventListener('click', (ev) =>{
         ev.preventDefault();
         ev.stopPropagation();
-        fileClick(ev.currentTarget);
+        activate(ev.currentTarget);
     });
+
+    function activate(target){
+        if(document.querySelector(".item-active")){
+            document.querySelector(".item-active").classList.remove('item-active');
+        }
+        target.classList.add('item-active');
+    }
+
     newItem.addEventListener('contextmenu',(ev)=>{
         console.log(ev);
         ev.preventDefault();
@@ -130,7 +129,6 @@ function addFromBase(element) {
                 y: ev.clientY
             };
             dropDown(ev.currentTarget, cors);
-
     });
     newItem.dataset.id = element.fileId;
 
@@ -182,7 +180,7 @@ function dropDown(target, cors){
     download.className = "dropDownItem";
     download.innerText = "Download";
     download.addEventListener('click', (ev)=>{
-        let target = ev.currentTarget;
+        console.log(target)
         ev.preventDefault();
         ev.stopPropagation();
         let fileId = target.dataset.id;
@@ -217,13 +215,64 @@ function downloadFile(fileName, fileId){
 
 /////////////**********************CREATE FOLdER***********************////////////////////////////
 
-let folderNameInput = document.getElementById("folder-name");
 let createFolderBtn = document.getElementById('create-folder');
-createFolderBtn.addEventListener('click',createFolder);
+createFolderBtn.addEventListener('click',Modal);
 
-function createNewFolder(name){
+function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = createNewFolderOnServer){
+    let createFolderModal = document.createElement('div');
+    createFolderModal.className = "modal";
+    createFolderModal.addEventListener('click', (ev)=>{
+        if(ev.target === createFolderModal){
+            closeModal();
+        }
+    });
+
+    let crateFolderWrapper = document.createElement('div');
+    crateFolderWrapper.className = "modal-wrapper";
+
+    let folderNameField = document.createElement('input');
+    folderNameField.type= "text";
+    folderNameField.className = "modal-fileName";
+    folderNameField.focus();
+
+    let cancelBtn = document.createElement('button');
+    cancelBtn.innerText= "cancel";
+    cancelBtn.className = "modal-cancelButton";
+    cancelBtn.addEventListener('click', closeModal);
+
+    let createBtn = document.createElement('button');
+    createBtn.innerText = buttonText;
+    createBtn.className = "modal-createButton";
+    createBtn.addEventListener('click', ()=>{
+        callback(folderNameField.value);
+        closeModal();
+        renderList();
+    });
+
+    function closeModal(ev){
+        console.log(ev);
+        document.getElementsByClassName('modal')[0].remove();
+    }
+
+    let modalButtonsWrapper = document.createElement('div');
+    modalButtonsWrapper.className = "modalButtons-wrapper";
+
+    let title = document.createElement('h2');
+    title.innerText = modalTitle;
+
+    crateFolderWrapper.appendChild(title);
+    crateFolderWrapper.appendChild(folderNameField);
+    modalButtonsWrapper.appendChild(cancelBtn);
+    modalButtonsWrapper.appendChild(createBtn);
+    crateFolderWrapper.appendChild(modalButtonsWrapper);
+    createFolderModal.appendChild(crateFolderWrapper);
+    document.getElementById("wrapper").appendChild(createFolderModal);
+
+}
+
+function createNewFolderOnServer(name){
     console.log();
-    fetch(`/file/createfolder?name=${name}`, {
+    fetch(`/file/createfolder?name=${name}&parrent=${ListOfFiles.dataset.currentFolder}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
@@ -235,13 +284,8 @@ function createNewFolder(name){
 }
 
 function createFolder(){
-
     let newItem = document.createElement("li");
-    // newItem.addEventListener('click', (ev) =>{
-    //     ev.preventDefault();
-    //     ev.stopPropagation();
-    //     fileClick(ev.currentTarget);
-    // });
+    newItem.className = "file-container";
 
     let itemName = document.createElement("span");
     itemName.innerText = "New Folder";
@@ -251,11 +295,10 @@ function createFolder(){
         if(itemName.innerText === ""){
             itemName.innerText = "New Folder"
         }
-        createNewFolder(itemName.innerText);
+        createNewFolderOnServer(itemName.innerText);
     });
     itemName.addEventListener('keypress', function(key){
         if(key.keyCode === 13){
-            console.log('eneter pressed');
             createFolderBtn.focus();
         }
     });
@@ -281,7 +324,7 @@ function createFolder(){
         if(itemName.dataset.oldName){
             rename(itemName.dataset.oldName, itemName.innerText)
         }
-        createNewFolder(itemName.innerText);
+        createNewFolderOnServer(itemName.innerText);
     });
 
     let fileIcon = document.createElement("span");

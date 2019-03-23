@@ -25,7 +25,7 @@ a:hover                        { text-decoration:none; }
     display:flex;
     flex-direction:column;
     overflow:hidden;
-
+    position:relative;
 
 }
 
@@ -166,36 +166,37 @@ input[type="search"] {
     min-height:200px;
     margin:20px auto;
     border:2px solid black;
-    max-height:500px;
+    /*max-height:500px;*/
 }
 
 .file-container{
-    width:100px;
-    height: 130px;
-    border:1px solid black;
+    width: 69px;
+    height: 81px;
+    border: 1px solid black;
     padding: 2px;
-    display:flex;
+    display: flex;
     flex-direction: column;
-    align-items:center;
+    align-items: center;
     justify-content: center;
-    margin:10px;
-    cursor:pointer;
+    margin: 10px;
+    cursor: pointer;
+    font-size: 10px;
 }
 
 #shared-files-list{
-    display:flex;
+    /*display:flex;*/
     width:900px;
     min-height:200px;
     max-height:500px;
     margin:20px auto;
     border:2px solid black;
+    display:none;
 }
 
 
-/*#files-list li span {*/
-    /*margin:2px;*/
-/*}*/
-
+.item-active {
+    background-color:blue;
+}
 .file-name {
 
 }
@@ -261,7 +262,7 @@ input[type="search"] {
     background-color: #fafafa;
     outline-offset: -17px;
 }
-
+/******************dropdown*************************/
 
 .dropdown-menu{
     width:100px;
@@ -285,3 +286,49 @@ input[type="search"] {
     border: 1px solid darkgrey;
     background-color:lightblue;
 }
+
+/******************MODAL*************************/
+.modal {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 99;
+    background-color: #000000f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-wrapper {
+    width: 300px;
+    height: 110px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    opacity: 1;
+}
+
+.modal-wrapper h2 {
+    text-align: center;
+    padding-bottom: 9px;
+}
+
+.modal-fileName{
+    text-align: center;
+    margin: 0 auto;
+    width: 162px;
+}
+
+.modalButtons-wrapper {
+    padding-top: 14px;
+    display: flex;
+    justify-content: center;
+}
+
+.modal-cancelButton {
+    margin-right: 25px;
+}
+
+/*******************************************/
