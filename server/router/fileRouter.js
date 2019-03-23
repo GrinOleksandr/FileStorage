@@ -104,10 +104,10 @@ fileRouter.use('/rename', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("renaming",parsedUrl.oldname,  parsedUrl.newname);
+    console.log("renaming",parsedUrl.query.id,  parsedUrl.query.newname);
     res.writeHead(200);
 
-    rename(parsedUrl.oldname, parsedUrl.newname);
+    rename(parsedUrl.query.id,  parsedUrl.query.newname);
 
     res.end();
     console.log('folder created')
@@ -146,9 +146,7 @@ function addFileToDataBase(target) {
             if (err) return console.log(err);
         })
 }
-
-//////////////////////////////////////////// FILE LISTINGS
-
+//////////////////////// FILE LISTINGS///////////////////////////////////////////
 fileRouter.use ('/getfiles', function(request, response) {
     response.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     FileStorageDb.find({})
@@ -159,9 +157,8 @@ fileRouter.use ('/getfiles', function(request, response) {
             response.end(responseString);
         });
 });
-
-function rename(oldName, newName){
-    FileStorageDb.updateOne({name:oldName}, {name:newName}, function (err) {
+function rename(fileId, newName){
+    FileStorageDb.updateOne({fileId:fileId}, {name:newName}, function (err) {
             if (err) return console.log(err);
         })
 }
