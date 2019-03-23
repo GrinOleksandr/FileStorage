@@ -8,14 +8,19 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     url = require('url'),
     fs = require('fs'),
     mongoose = require('mongoose'),
-    suid = require('rand-token').suid;
+    suid = require('rand-token').suid,
+    fileRouter = express.Router();
 
-
-
-
-const fileRouter = express.Router();
 fileRouter.use(bodyParser.json());
-/////////////////////////////////////FILE Downloads///////////////////////////////////////////////
+fileRouter.use ('/getfiles', function(request, response) {
+    response.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
+    FileStorageDb.find({})
+        .select('-_id -__v')
+        .exec(function (err, Result) {
+            let responseString = JSON.stringify(Result);
+            response.end(responseString);
+        });
+});
 fileRouter.use('/download', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
@@ -35,14 +40,6 @@ fileRouter.use('/download', function (req, res) {
     });
 
 });
-
-
-
-
-
-
-
-/////////////////////////////////////FILE UPLOADS///////////////////////////////////////////////
 fileRouter.use(fileUpload());
 fileRouter.use('/upload', function (req, res) {
     if (Object.keys(req.files).length === 0) {
@@ -110,8 +107,23 @@ fileRouter.use('/rename', function (req, res) {
     rename(parsedUrl.query.id,  parsedUrl.query.newname);
 
     res.end();
-    console.log('folder created')
 });
+fileRouter.use('/delete', function (req, res) {
+    console.log("deleting");
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    console.log("deleting",parsedUrl.query.id);
+    res.writeHead(200);
+
+    deleteItem(parsedUrl.query.id);
+
+    res.end();
+    console.log('item deleted')
+});
+
+
 function uploadFile(file) {
     file.mv(`${config.fileStoragePath}${file.fileId}`, function (err) {
         if (err)
@@ -146,22 +158,21 @@ function addFileToDataBase(target) {
             if (err) return console.log(err);
         })
 }
-//////////////////////// FILE LISTINGS///////////////////////////////////////////
-fileRouter.use ('/getfiles', function(request, response) {
-    response.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    FileStorageDb.find({})
-        .select('-_id -__v')
-        .exec(function (err, Result) {
-            let responseString = JSON.stringify(Result);
-            console.log(responseString);
-            response.end(responseString);
-        });
-});
 function rename(fileId, newName){
     FileStorageDb.updateOne({fileId:fileId}, {name:newName}, function (err) {
-            if (err) return console.log(err);
-        })
+        if (err) return console.log(err);
+    })
 }
+function deleteItem(fileId){
+    console.log(fileId);
+    FileStorageDb.deleteOne({fileId:fileId}, function (err) {
+        if (err) return console.log(err);
+    })
+}
+
+
+
+
 
 
 module.exports = fileRouter;

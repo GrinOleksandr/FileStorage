@@ -276,7 +276,7 @@ function renameOnServer(file, newName) {
 }
 
 function deleteFromServer(fileId) {
-    fetch(`/file/rename?id=${fileId}`, {
+    fetch(`/file/delete?id=${fileId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'text/plain',
