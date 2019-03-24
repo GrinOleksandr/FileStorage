@@ -15,8 +15,8 @@ fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('rendering ', parsedUrl.query.folderid );
-    FileStorageDb.find({parentId : parsedUrl.query.folderid})
+    console.log('rendering ', parsedUrl.query.folder );
+    FileStorageDb.find({parent : parsedUrl.query.folder})
         .select('-_id -__v')
         .exec(function (err, Result) {
             let responseString = JSON.stringify(Result);
@@ -54,8 +54,7 @@ fileRouter.use('/upload', function (req, res) {
         uploadedFiles.forEach(function (item) {
             if (item.mimetype) {
                 item.fileId = suid(16);
-                item.parentId = parsedUrl.query.parentid;
-                item.parentName = parsedUrl.query.parentname;
+                item.parent = parsedUrl.query.parent;
                 uploadFile(item);
                 addFileToDataBase(item);
             }
@@ -65,8 +64,7 @@ fileRouter.use('/upload', function (req, res) {
         let uploadedFile = req.files.fileInput;
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = suid(16);
-            uploadedFile.parentId = parsedUrl.query.parentid;
-            item.parentName = parsedUrl.query.parentname;
+            uploadedFile.parent = parsedUrl.query.parent;
             uploadFile(uploadedFile);
             addFileToDataBase(uploadedFile);
         }
@@ -92,9 +90,7 @@ fileRouter.use('/createfolder', function (req, res) {
         uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner: "SashaGrin",
         access: "SashaGrin",
-        parentId: parsedUrl.query.parentid,
-        parentName: parsedUrl.query.parentid
-
+        parent: parsedUrl.query.parent
     };
 
     console.log(folder);
@@ -152,8 +148,6 @@ fileRouter.use('/getpath', function(req, res) {
     res.end(path);
 });
 
-
-
 function uploadFile(file) {
     file.mv(`${config.fileStoragePath}${file.fileId}`, function (err) {
         if (err)
@@ -170,11 +164,10 @@ function addFileToDataBase(target) {
         owner = target.owner || "SashaGrin",
         access = target.access || [],
         isFolder = target.isFolder || false,
-        parentId = target.parentId || "/",
-        parentName = target.parentName || "/";
+        parent = target.parent || "root";
 
     FileStorageDb.create(
-        {name, fileId, mimetype, link, uploadDate, owner, access,isFolder, parentId, parentName },
+        {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder},
         function (err) {
             if (err) return console.log(err);
         })
