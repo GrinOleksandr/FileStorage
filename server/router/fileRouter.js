@@ -15,8 +15,8 @@ fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('rendering ', parsedUrl.query.folder );
-    FileStorageDb.find({parent : parsedUrl.query.folder})
+    console.log('rendering ', parsedUrl.query.folderid );
+    FileStorageDb.find({parentId : parsedUrl.query.folderid})
         .select('-_id -__v')
         .exec(function (err, Result) {
             let responseString = JSON.stringify(Result);
@@ -54,7 +54,8 @@ fileRouter.use('/upload', function (req, res) {
         uploadedFiles.forEach(function (item) {
             if (item.mimetype) {
                 item.fileId = suid(16);
-                item.parent = parsedUrl.query.parent;
+                item.parentId = parsedUrl.query.parentid;
+                item.parentName = parsedUrl.query.parentname;
                 uploadFile(item);
                 addFileToDataBase(item);
             }
@@ -64,7 +65,8 @@ fileRouter.use('/upload', function (req, res) {
         let uploadedFile = req.files.fileInput;
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = suid(16);
-            uploadedFile.parent = parsedUrl.query.parent;
+            uploadedFile.parentId = parsedUrl.query.parentid;
+            item.parentName = parsedUrl.query.parentname;
             uploadFile(uploadedFile);
             addFileToDataBase(uploadedFile);
         }
@@ -90,7 +92,9 @@ fileRouter.use('/createfolder', function (req, res) {
         uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner: "SashaGrin",
         access: "SashaGrin",
-        parent: parsedUrl.query.parent
+        parentId: parsedUrl.query.parentid,
+        parentName: parsedUrl.query.parentid
+
     };
 
     console.log(folder);
@@ -127,6 +131,27 @@ fileRouter.use('/delete', function (req, res) {
     res.end();
     console.log('item deleted')
 });
+fileRouter.use('/getpath', function(req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
+    console.log('rendering ', parsedUrl.query.folderid );
+    let path = [];
+    renderPath(parsedUrl.query.id);
+    function renderPath(fileId) {
+        FileStorageDb.find({fileId: fileId})
+            .select('-_id -__v')
+            .exec(function (err, result) {
+                path.unshift(result);
+                if(result.parentId){
+                    renderPath(parentId);
+                }
+                else {return}
+            });
+    }
+    console.log(path);
+    res.end(path);
+});
+
 
 
 function uploadFile(file) {
@@ -145,10 +170,11 @@ function addFileToDataBase(target) {
         owner = target.owner || "SashaGrin",
         access = target.access || [],
         isFolder = target.isFolder || false,
-        parent = target.parent || "root";
+        parentId = target.parentId || "/",
+        parentName = target.parentName || "/";
 
     FileStorageDb.create(
-        {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder},
+        {name, fileId, mimetype, link, uploadDate, owner, access,isFolder, parentId, parentName },
         function (err) {
             if (err) return console.log(err);
         })

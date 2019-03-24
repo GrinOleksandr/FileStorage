@@ -8,7 +8,8 @@ const fileStorageSchema = new mongoose.Schema({
     uploadDate: String,
     owner: String,
     access: String,
-    parent: String,
+    parentId: String,
+    parentName: String,
     isFolder: Boolean
 });
 
