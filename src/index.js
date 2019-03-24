@@ -123,31 +123,33 @@ function addItemFromServer(element) {
         ev.stopPropagation();
         activateItem(ev.currentTarget);
     });
-    console.log(element);
      if(element.isFolder) {
-         console.log("folder detected");
          newItem.addEventListener('dblclick', function(ev){
-             openFolder(element)
+             openFolder(element.name, element.fileId)
          });
      }
 
-    function openFolder(element) {
-         console.log(element.name, element.id);
+    function openFolder(name, id) {
+         console.log('opening: ',name, id);
         ListOfFiles.dataset.currentfolder = id;
-        renderFileStructure(element.id);
+        renderFileStructure(id);
         addToFilePath(element);
 
     }
 
     function addToFilePath(element){
+         console.log('adding to path: ', element);
+
         let item = document.createElement('span');
+
         item.className = "file-path_item";
-        item.data.parentId = element.parentId;
-        item.data.parentName = element.parentName;
         item.innerText = `${element.name}/`;
+        console.log(item);
+        item.dataset.parent = element.fileId;
+
         item.addEventListener('click', function(){
-            renderFileStructure(element.id);
-            if(element.id !== ListOfFiles.dataset.currentfolderid){
+            renderFileStructure(element.fileId);
+            if(element.id !== ListOfFiles.dataset.currentfolder){
                 filePath.innerHTML = "";
                 renderFilePath(element);
             }
@@ -156,7 +158,8 @@ function addItemFromServer(element) {
     }
 
     function renderFilePath(element){
-        fetch(`/file/getpath?id=${element.id}`, {
+        console.log('rendering path: ', element);
+        fetch(`/file/getpath?id=${element.fileId}`, {
             method: 'POST'
         }).then(function (response) {
             return response.text()
