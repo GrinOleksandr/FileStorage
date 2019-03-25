@@ -131,7 +131,7 @@ fileRouter.use('/getpath', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     console.log('rendering path for: ', parsedUrl.query.folderid );
-
+asd(parsedUrl.query.folderid);
     function asd(id) {
         let path = [];
         renderPath(id);
@@ -158,12 +158,13 @@ fileRouter.use('/getpath', function(req, res) {
             }).then(function(smt){
 
                 console.log('mememeemem: ************', smt);
-                res.end(smt);
+                res.send(JSON.stringify(smt));
             })
                 .catch((err)=>console.log(err));
         }
         return path;
         }
+        res.end();
     // console.log("WEEE ", asd(parsedUrl.query.folderid) );
     // res.send(JSON.stringify(path));
 
