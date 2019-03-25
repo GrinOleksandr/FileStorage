@@ -131,37 +131,47 @@ fileRouter.use('/getpath', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     console.log('rendering path for: ', parsedUrl.query.folderid );
-    asd(parsedUrl.query.folderid);
+
     function asd(id) {
         let path = [];
         renderPath(id);
 
         function renderPath(folderId) {
-            FileStorageDb.find({fileId: folderId})
+            FileStorageDb.findOne({fileId: folderId})
                 .select('-_id -__v')
-                .exec(function (err,nextElement) {
+                .exec(function (err, result) {
+                    console.log('result', result);
+                    path.push(result);
 
-                    path.push(nextElement);
 
-                }).then(function(){
-                if (nextElement && nextElement.parent !== "root") {
+
+                }).then(function(nextElement){
+                console.log( 'nextelement: ',nextElement);
+                if(nextElement && nextElement.parent !== "root"){
+                    console.log("woohoo");
                     renderPath(nextElement.parent);
                 }
+
+            }).then(function(){
+                console.log("path generated ", JSON.stringify(path));
+                return path
+            }).then(function(smt){
+
+                console.log('mememeemem: ************', smt);
+                res.end(smt);
             })
-                .catch((err) => console.log(err));
+                .catch((err)=>console.log(err));
         }
-        console.log("WEEE ", path );
-        console.log(JSON.stringify(path));
-        let responseString =JSON.stringify(path) ;
-        res.end(responseString);
-    }
+        return path;
+        }
+    // console.log("WEEE ", asd(parsedUrl.query.folderid) );
+    // res.send(JSON.stringify(path));
 
+        // console.log(JSON.stringify(path));
+        // let responseString =JSON.stringify(path) ;
+        // res.end(responseString);
+    });
 
-
-
-
-
-});
 
 function uploadFile(file) {
     file.mv(`${config.fileStoragePath}${file.fileId}`, function (err) {
