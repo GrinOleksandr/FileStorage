@@ -131,35 +131,35 @@ fileRouter.use('/getpath', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     console.log('rendering path for: ', parsedUrl.query.folderid );
-    let path = [];
-    renderPath(parsedUrl.query.folderid);
-    function renderPath(folderId) {
-        FileStorageDb.findOne({fileId: folderId})
-            .select('-_id -__v')
-            .exec(function (err, result) {
-                console.log('result', result);
-                path.push(result);
+    asd(parsedUrl.query.folderid);
+    function asd(id) {
+        let path = [];
+        renderPath(id);
 
+        function renderPath(folderId) {
+            FileStorageDb.find({fileId: folderId})
+                .select('-_id -__v')
+                .exec(function (err,nextElement) {
 
+                    path.push(nextElement);
 
-            }).then(function(nextElement){
-            console.log( 'nextelement: ',nextElement);
-            if(nextElement && nextElement.parent !== "root"){
-                console.log("woohoo");
-                renderPath(nextElement.parent);
-            }
-
-        }).then(function(){
-            console.log("path generated ", JSON.stringify(path));
-            res.end(JSON.stringify(path));
-        })
-            .catch((err)=>console.log(err));
+                }).then(function(){
+                if (nextElement && nextElement.parent !== "root") {
+                    renderPath(nextElement.parent);
+                }
+            })
+                .catch((err) => console.log(err));
+        }
+        console.log("WEEE ", path );
+        console.log(JSON.stringify(path));
+        let responseString =JSON.stringify(path) ;
+        res.end(responseString);
     }
-    // console.log('next ', path[path.length-1]);
-    // console.log('dig' , path[path.length-1].parent);
-    // renderPath(path[path.length-1].parent);
 
-    console.log(path);
+
+
+
+
 
 });
 
