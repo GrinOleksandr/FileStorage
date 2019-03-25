@@ -163,7 +163,7 @@ function addItemFromServer(element) {
             method: 'POST'
         }).then(function (response) {
             // console.log('RESPONSE!' ,response , response.text());
-            return response.json()
+            return response.text()
         })
             .then(function (textOfResponse) {
                 console.log('txtxtxt: ', JSON.parse(textOfResponse));

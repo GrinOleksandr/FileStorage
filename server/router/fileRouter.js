@@ -131,36 +131,27 @@ fileRouter.use('/getpath', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     console.log('rendering path for: ', parsedUrl.query.folderid );
-asd(parsedUrl.query.folderid);
-    function asd(id) {
-        let path = [];
-        renderPath(id);
+    let path = [];
+    renderPath(parsedUrl.query.folderid);
+    function renderPath(folderId) {
+        FileStorageDb.find({fileId: folderId})
+            .select('-_id -__v')
+            .exec(function (err, result) {
+                if(err){
+                    console.log(err);
+                }
+                console.log('result', result);
+                path.push(result);
+                if(result && result.parent !== "root"){
+                    console.log("woohoo");
+                    renderPath(result.parent);
+                }
 
-        function renderPath(folderId) {
-            FileStorageDb.findOne({fileId: folderId})
-                .select('-_id -__v')
-                .exec(function (err, result) {
-                    console.log('result', result);
-                    path.push(result);
-                    if(result && result.parent !== "root"){
-                        console.log("woohoo");
-                        renderPath(result.parent);
-                    }
+                res.end(JSON.stringify(path));
 
-                    res.end(JSON.stringify(path));
-                })
-                .catch((err)=>console.log(err));
-        }
-        return path;
-        }
-        res.end();
-    // console.log("WEEE ", asd(parsedUrl.query.folderid) );
-    // res.send(JSON.stringify(path));
 
-        // console.log(JSON.stringify(path));
-        // let responseString =JSON.stringify(path) ;
-        // res.end(responseString);
     });
+
 
 
 function uploadFile(file) {
