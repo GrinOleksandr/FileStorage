@@ -150,8 +150,8 @@ fileRouter.use('/getpath', function(req, res) {
             }
 
         }).then(function(){
-            console.log("path generated ", path);
-            res.end(path);
+            console.log("path generated ", JSON.stringify(path));
+            res.end(JSON.stringify(path));
         })
             .catch((err)=>console.log(err));
     }
