@@ -142,24 +142,13 @@ asd(parsedUrl.query.folderid);
                 .exec(function (err, result) {
                     console.log('result', result);
                     path.push(result);
+                    if(result && result.parent !== "root"){
+                        console.log("woohoo");
+                        renderPath(result.parent);
+                    }
 
-
-
-                }).then(function(nextElement){
-                console.log( 'nextelement: ',nextElement);
-                if(nextElement && nextElement.parent !== "root"){
-                    console.log("woohoo");
-                    renderPath(nextElement.parent);
-                }
-
-            }).then(function(){
-                console.log("path generated ", JSON.stringify(path));
-                return path
-            }).then(function(smt){
-
-                console.log('mememeemem: ************', smt);
-                res.send(JSON.stringify(smt));
-            })
+                    res.end(JSON.stringify(path));
+                })
                 .catch((err)=>console.log(err));
         }
         return path;
