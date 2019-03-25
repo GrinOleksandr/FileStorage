@@ -159,7 +159,7 @@ function addItemFromServer(element) {
 
     function renderFilePath(element){
         console.log('rendering path: ', element);
-        fetch(`/file/getpath?id=${element.fileId}`, {
+        fetch(`/file/getpath?folderid=${element.fileId}`, {
             method: 'POST'
         }).then(function (response) {
             return response.text()

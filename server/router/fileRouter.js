@@ -15,7 +15,7 @@ fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('rendering ', parsedUrl.query.folder );
+    console.log('rendering filestructure for: ', parsedUrl.query.folder );
     FileStorageDb.find({parent : parsedUrl.query.folder})
         .select('-_id -__v')
         .exec(function (err, Result) {
@@ -130,22 +130,37 @@ fileRouter.use('/delete', function (req, res) {
 fileRouter.use('/getpath', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('rendering ', parsedUrl.query.folderid );
+    console.log('rendering path for: ', parsedUrl.query.folderid );
     let path = [];
-    renderPath(parsedUrl.query.id);
-    function renderPath(fileId) {
-        FileStorageDb.find({fileId: fileId})
+    renderPath(parsedUrl.query.folderid);
+    function renderPath(folderId) {
+        FileStorageDb.findOne({fileId: folderId})
             .select('-_id -__v')
             .exec(function (err, result) {
-                path.unshift(result);
-                if(result.parentId){
-                    renderPath(parentId);
-                }
-                else {return}
-            });
+                console.log('result', result);
+                path.push(result);
+
+
+
+            }).then(function(nextElement){
+            console.log( 'nextelement: ',nextElement);
+            if(nextElement && nextElement.parent !== "root"){
+                console.log("woohoo");
+                renderPath(nextElement.parent);
+            }
+
+        }).then(function(){
+            console.log("path generated ", path);
+            res.end(path);
+        })
+            .catch((err)=>console.log(err));
     }
+    // console.log('next ', path[path.length-1]);
+    // console.log('dig' , path[path.length-1].parent);
+    // renderPath(path[path.length-1].parent);
+
     console.log(path);
-    res.end(path);
+
 });
 
 function uploadFile(file) {
