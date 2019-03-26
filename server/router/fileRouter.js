@@ -127,31 +127,48 @@ fileRouter.use('/delete', function (req, res) {
     res.end();
     console.log('item deleted')
 });
-fileRouter.use('/getpath', function(req, res) {
-    let parsedUrl = url.parse(req.url, true);
-    res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('rendering path for: ', parsedUrl.query.folderid );
-    let path = [];
-    renderPath(parsedUrl.query.folderid);
-    function renderPath(folderId) {
-        FileStorageDb.find({fileId: folderId})
-            .select('-_id -__v')
-            .exec(function (err, result) {
-                if(err){
-                    console.log(err);
-                }
-                console.log('result', result);
-                path.push(result);
-                if(result && result.parent !== "root"){
-                    console.log("woohoo");
-                    renderPath(result.parent);
-                }
-
-                res.end(JSON.stringify(path));
-
-
-    });
-
+// fileRouter.use('/getpath', function(req, res) {
+//     let parsedUrl = url.parse(req.url, true);
+//     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
+//     console.log('rendering path for: ', parsedUrl.query.folderid );
+//     let path = [];
+//
+//         FileStorageDb.find({})
+//             .select('-_id -__v')
+//             .exec(function (err, result) {
+//                 if (err) {
+//                     console.log(err);
+//                 }
+//             renderPath(result,parsedUrl.query.folderid );
+//
+//             });
+//
+//
+//
+//         function renderPath(data, folder =){
+//             let target;
+//             data.forEach(function(item){
+//                 if(item.fileId === folder){
+//                     target = item;
+//                 }
+//             });
+//             traversal(data, target);
+//
+//             function traversal(data, target){
+//                 path.push(target);
+//                 if(target.parent && target.parent !=="root"){
+//
+//                     traversal(data, target.parent)
+//                 }
+//             }
+//
+//             console.log("ATA!!!", data);
+//
+//
+//
+//     }
+//     res.end();
+// });
 
 
 function uploadFile(file) {
@@ -170,7 +187,7 @@ function addFileToDataBase(target) {
         owner = target.owner || "SashaGrin",
         access = target.access || [],
         isFolder = target.isFolder || false,
-        parent = target.parent || "root";
+        parent = target.parent || "/";
 
     FileStorageDb.create(
         {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder},

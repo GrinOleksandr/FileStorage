@@ -1,3 +1,6 @@
+setLocalStorageObjectItem('currentPath', '');
+setLocalStorageObjectItem('currentFolder', '/');
+
 document.addEventListener('contextmenu',()=>{
     console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
     if(document.getElementsByClassName("dropdown-menu")[0]) {
@@ -17,7 +20,7 @@ ListOfFiles.addEventListener('click',(ev)=>{
 
 const filePath = document.getElementById('filePath');
 filePath.querySelector("span").addEventListener('click',()=> {
-    renderFileStructure("root");
+    renderFileStructure("/");
 });
 
 //***********************************UPLOAD***********************************//
@@ -76,7 +79,7 @@ FileInput.addEventListener('change', function(e){
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let formData = new FormData(DropZone);
-    fetch(`/file/upload?parent=${ListOfFiles.dataset.currentfolder}`, {
+    fetch(`/file/upload?parent=${getLocalStorageObjectItem('currentFolder')}`, {
         method: 'POST',
         headers:{
             accept:'application/json'
@@ -84,7 +87,7 @@ function ajaxSendFiles(){
         body:formData
     }).then(function (response) {
         console.log('Files Uploaded!');
-        renderFileStructure(ListOfFiles.dataset.currentfolder);
+        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
         return response.text();
     })
         .catch(error => console.log("Данные не отправленны: " + error));
@@ -92,7 +95,7 @@ function ajaxSendFiles(){
 //**********************************************************************//
 renderFileStructure();
 
-function renderFileStructure (folder = "root") {
+function renderFileStructure (folder = "/") {
     fetch(`http://127.0.0.1:8000/file/listfiles?folder=${folder}`, {
         method: 'POST'
     }).then(function (response) {
@@ -131,14 +134,16 @@ function addItemFromServer(element) {
 
     function openFolder(name, id) {
          console.log('opening: ',name, id);
-        ListOfFiles.dataset.currentfolder = id;
+        setLocalStorageObjectItem('currentFolder', id);
         renderFileStructure(id);
         addToFilePath(element);
-
     }
 
     function addToFilePath(element){
          console.log('adding to path: ', element);
+         let path = getLocalStorageObjectItem('currentPath');
+         let newPath = `${path},${element.fileId}`;
+         setLocalStorageObjectItem('currentPath', newPath);
 
         let item = document.createElement('span');
 
@@ -149,34 +154,34 @@ function addItemFromServer(element) {
 
         item.addEventListener('click', function(){
             renderFileStructure(element.fileId);
-            if(element.id !== ListOfFiles.dataset.currentfolder){
+            if(element.id !== getLocalStorageObjectItem('currentFolder')){
                 filePath.innerHTML = "";
-                renderFilePath(element);
+
             }
         });
         filePath.appendChild(item);
     }
 
-    function renderFilePath(element){
-        console.log('rendering path: ', element);
-        fetch(`/file/getpath?folderid=${element.fileId}`, {
-            method: 'POST'
-        }).then(function (response) {
-            // console.log('RESPONSE!' ,response , response.text());
-            return response.text()
-        })
-            .then(function (textOfResponse) {
-                console.log('txtxtxt: ', JSON.parse(textOfResponse));
-                return JSON.parse(textOfResponse);
-            })
-            .then(function (array) {
-                console.log('received path: ', array);
-                array.forEach(function(item){
-                    addToFilePath(item)
-                })
-            })
-            .catch(error => console.log("Данные не получены: " + error));
-    }
+    // function renderFilePath(element){
+    //     console.log('rendering path: ', element);
+    //     fetch(`/file/getpath?folderid=${element.fileId}`, {
+    //         method: 'POST'
+    //     }).then(function (response) {
+    //         // console.log('RESPONSE!' ,response , response.text());
+    //         return response.text()
+    //     })
+    //         .then(function (textOfResponse) {
+    //             console.log('txtxtxt: ', JSON.parse(textOfResponse));
+    //             return JSON.parse(textOfResponse);
+    //         })
+    //         .then(function (array) {
+    //             console.log('received path: ', array);
+    //             array.forEach(function(item){
+    //                 addToFilePath(item)
+    //             })
+    //         })
+    //         .catch(error => console.log("Данные не получены: " + error));
+    // }
 
 
     function activateItem(target){
@@ -326,7 +331,7 @@ function renameOnServer(file, newName) {
         }
     }).then((data) => {
         console.log(data);
-        renderFileStructure(ListOfFiles.dataset.currentfolder);
+        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
@@ -340,7 +345,7 @@ function deleteFromServer(fileId) {
         }
     }).then((data) => {
         console.log(data);
-        renderFileStructure(ListOfFiles.dataset.currentfolder);
+        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
     })
         .catch(error => console.log("Удаление не прошло: " + error));
 }
@@ -363,6 +368,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     createFolderModal.addEventListener('click', (ev)=>{
         if(ev.target === createFolderModal){
             closeModal();
+            renderFileStructure();
         }
     });
 
@@ -385,7 +391,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     createBtn.addEventListener('click', ()=>{
         callback(nameField.value);
         closeModal();
-        renderFileStructure(ListOfFiles.dataset.currentfolder);
+        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
     });
 
     function closeModal(ev){
@@ -409,16 +415,36 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
 }
 
 function createNewFolderOnServer(name){
-    fetch(`/file/createfolder?name=${name}&parent=${ListOfFiles.dataset.currentfolder}`, {
+    fetch(`/file/createfolder?name=${name}&parent=${getLocalStorageObjectItem('currentFolder')}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
         }
     }).then((data)=>{
-        renderFileStructure(ListOfFiles.dataset.currentfolder);
+        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
         console.log(data);
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
 
+
+
+
+
+//***************************************//
+function setLocalStorageObjectItem(key, value) {
+    if (value === undefined) {
+        localStorage.removeItem(key);
+    } else {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+}
+
+function getLocalStorageObjectItem(key) {
+    let json = localStorage.getItem(key);
+    if (json === undefined) {
+        return undefined;
+    }
+    return JSON.parse(json);
+}
 
