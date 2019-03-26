@@ -279,6 +279,19 @@ function dropDown(target, cors){
         deleteFromServer(fileId);
     });
 
+    let moveBtn = document.createElement('li');
+    moveBtn.className = "dropDownItem";
+    moveBtn.innerText = "Move";
+    moveBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        state.isMoving = true;
+        state.selectedItems = document.querySelectorAll('.item-active');
+        moveItem();
+    });
+
+
+
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
     dropDownMenu.classList.toggle('dropdown-visible');
@@ -290,6 +303,27 @@ function dropDown(target, cors){
     dropDownMenu.appendChild(deleteBtn);
     target.appendChild(dropDownMenu);
 }
+
+function moveItem() {
+    let newParent = getLocalStorageObjectItem('currentFolder');
+    let selectedItems = state.selectedItems;
+    console.log('selected: ', selectedItems);
+    selectedItems.forEach(function(item){
+        fetch(`/file/rename?id=${item}&to=${newParent}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+                'Access-Control-Allow-Origin': "*"
+            }
+        }).then((data) => {
+            console.log(data);
+            renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+        })
+            .catch(error => console.log("Данные не получены: " + error));
+    });
+    state.isMoving = false;
+    state.selectedItems = "";
+ }
 
 function renameOnServer(file, newName) {
     fetch(`/file/rename?id=${file}&newname=${newName}`, {
