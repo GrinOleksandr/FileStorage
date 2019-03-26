@@ -160,6 +160,7 @@ function addItemFromServer(element) {
                 let index = pathItems.indexOf(element.fileId);
                 let newPath = pathItems.slice(0,index+1);
                 filePath.innerHTML = "";
+                setLocalStorageObjectItem('currentPath', "");
                 newPath.forEach(function(item){
                     fetch(`http://127.0.0.1:8000/file/getelement?id=${item}`, {
                         method: 'POST'
@@ -170,10 +171,10 @@ function addItemFromServer(element) {
                             return JSON.parse(textOfResponse);
                         })
                         .then(function (data) {
-                            addToFilePath(data)
+                            addToFilePath(data[0])
                         })
                         .catch(error => console.log("Данные не получены: " + error));
-                    addToFilePath(item)
+
                 });
                 console.log(newPath);
             }
