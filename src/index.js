@@ -415,7 +415,7 @@ function renderFilePath(folderId = "/") {
                 .then(function (data) {
                     addToFilePath(data[0])
                 })
-                .catch(error => console.log("Данные не получены: " + error));
+                .catch(error => error);
         });
         console.log(newPath);
     }
@@ -424,6 +424,7 @@ function renderFilePath(folderId = "/") {
 
 
 function addToFilePath(element){
+
     console.log('adding to path: ', element);
     let path = getLocalStorageObjectItem('currentPath');
     let newPath = `${path},${element.fileId}`;
