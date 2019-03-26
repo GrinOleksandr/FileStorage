@@ -301,6 +301,7 @@ function dropDown(target, cors){
     dropDownMenu.appendChild(downloadBtn);
     dropDownMenu.appendChild(renameBtn);
     dropDownMenu.appendChild(deleteBtn);
+    dropDownMenu.appendChild(moveBtn);
     target.appendChild(dropDownMenu);
 }
 
