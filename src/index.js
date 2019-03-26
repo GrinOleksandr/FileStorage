@@ -413,7 +413,9 @@ function renderFilePath(folderId = "/") {
                     return JSON.parse(textOfResponse);
                 })
                 .then(function (data) {
-                    addToFilePath(data[0])
+                    if(data) {
+                        addToFilePath(data[0])
+                    }
                 })
                 .catch(error => error);
         });
