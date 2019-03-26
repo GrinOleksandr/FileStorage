@@ -285,8 +285,7 @@ function dropDown(target, cors){
     moveBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        state.isMoving = true;
-        state.selectedItems = document.querySelectorAll('.item-active');
+
         moveItem();
     });
 
@@ -306,24 +305,33 @@ function dropDown(target, cors){
 }
 
 function moveItem() {
-    let newParent = getLocalStorageObjectItem('currentFolder');
-    let selectedItems = state.selectedItems;
-    console.log('selected: ', selectedItems);
-    selectedItems.forEach(function(item){
-        fetch(`/file/rename?id=${item}&to=${newParent}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/plain',
-                'Access-Control-Allow-Origin': "*"
-            }
-        }).then((data) => {
-            console.log(data);
-            renderFileStructure(getLocalStorageObjectItem('currentFolder'));
-        })
-            .catch(error => console.log("Данные не получены: " + error));
-    });
-    state.isMoving = false;
-    state.selectedItems = "";
+
+
+    if(state.isMoving) {
+        let newParent = getLocalStorageObjectItem('currentFolder');
+        let selectedItems = state.selectedItems;
+        console.log('selected: ', selectedItems);
+        selectedItems.forEach(function (item) {
+            fetch(`/file/rename?id=${item}&to=${newParent}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain',
+                    'Access-Control-Allow-Origin': "*"
+                }
+            }).then((data) => {
+                console.log(data);
+                renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+            })
+                .catch(error => console.log("Данные не получены: " + error));
+        });
+        state.isMoving = false;
+        state.selectedItems = "";
+    }
+
+    else {
+        state.isMoving = true;
+        state.selectedItems = document.querySelectorAll('.item-active');
+    }
  }
 
 function renameOnServer(file, newName) {
