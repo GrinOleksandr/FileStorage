@@ -1,6 +1,7 @@
 setLocalStorageObjectItem('currentPath', '/');
 setLocalStorageObjectItem('currentFolder', '/');
 
+
 document.addEventListener('contextmenu',()=>{
     console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
     if(document.getElementsByClassName("dropdown-menu")[0]) {
@@ -22,6 +23,14 @@ const filePath = document.getElementById('filePath');
 filePath.querySelector("span").addEventListener('click',()=> {
     renderFileStructure("/");
 });
+
+let rootFolder = document.createElement('span');
+rootFolder.innerText = "/";
+rootFolder.addEventListener('click', function(){
+    renderFileStructure("/");
+    renderFilePath("/");
+});
+filePath.appendChild(rootFolder);
 
 //***********************************UPLOAD***********************************//
 //upload via drag&drop
@@ -154,54 +163,13 @@ function addItemFromServer(element) {
 
         item.addEventListener('click', function(){
             renderFileStructure(element.fileId);
-            if(element.fileId !== getLocalStorageObjectItem('currentFolder')){
-                let currentPath = getLocalStorageObjectItem('currentPath');
-                let pathItems = currentPath.split(',');
-                let index = pathItems.indexOf(element.fileId);
-                let newPath = pathItems.slice(0,index+1);
-                filePath.innerHTML = "";
-                setLocalStorageObjectItem('currentPath', "");
-                newPath.forEach(function(item){
-                    fetch(`http://127.0.0.1:8000/file/getelement?id=${item}`, {
-                        method: 'POST'
-                    }).then(function (response) {
-                        return response.text()
-                    })
-                        .then(function (textOfResponse) {
-                            return JSON.parse(textOfResponse);
-                        })
-                        .then(function (data) {
-                            addToFilePath(data[0])
-                        })
-                        .catch(error => console.log("Данные не получены: " + error));
+            renderFilePath(element.fileId);
 
-                });
-                console.log(newPath);
-            }
         });
         filePath.appendChild(item);
     }
 
-    // function renderFilePath(element){
-    //     console.log('rendering path: ', element);
-    //     fetch(`/file/getpath?folderid=${element.fileId}`, {
-    //         method: 'POST'
-    //     }).then(function (response) {
-    //         // console.log('RESPONSE!' ,response , response.text());
-    //         return response.text()
-    //     })
-    //         .then(function (textOfResponse) {
-    //             console.log('txtxtxt: ', JSON.parse(textOfResponse));
-    //             return JSON.parse(textOfResponse);
-    //         })
-    //         .then(function (array) {
-    //             console.log('received path: ', array);
-    //             array.forEach(function(item){
-    //                 addToFilePath(item)
-    //             })
-    //         })
-    //         .catch(error => console.log("Данные не получены: " + error));
-    // }
+
 
 
     function activateItem(target){
@@ -445,6 +413,32 @@ function createNewFolderOnServer(name){
         console.log(data);
     })
         .catch(error => console.log("Данные не получены: " + error));
+}
+
+function renderFilePath(folderId) {
+    if (folderId !== getLocalStorageObjectItem('currentFolder')) {
+        let currentPath = getLocalStorageObjectItem('currentPath');
+        let pathItems = currentPath.split(',');
+        let index = pathItems.indexOf(folderId);
+        let newPath = pathItems.slice(0, index + 1);
+        filePath.appendChild(rootFolder);
+        setLocalStorageObjectItem('currentPath', "/");
+        newPath.forEach(function (item) {
+            fetch(`http://127.0.0.1:8000/file/getelement?id=${item}`, {
+                method: 'POST'
+            }).then(function (response) {
+                return response.text()
+            })
+                .then(function (textOfResponse) {
+                    return JSON.parse(textOfResponse);
+                })
+                .then(function (data) {
+                    addToFilePath(data[0])
+                })
+                .catch(error => console.log("Данные не получены: " + error));
+        });
+        console.log(newPath);
+    }
 }
 
 
