@@ -1,4 +1,4 @@
-setLocalStorageObjectItem('currentPath', '');
+setLocalStorageObjectItem('currentPath', '/');
 setLocalStorageObjectItem('currentFolder', '/');
 
 document.addEventListener('contextmenu',()=>{
@@ -154,9 +154,16 @@ function addItemFromServer(element) {
 
         item.addEventListener('click', function(){
             renderFileStructure(element.fileId);
-            if(element.id !== getLocalStorageObjectItem('currentFolder')){
+            if(element.fileId !== getLocalStorageObjectItem('currentFolder')){
+                let currentPath = getLocalStorageObjectItem('currentPath');
+                let pathItems = currentPath.split(',');
+                let index = pathItems.indexOf(element.fileId);
+                let newPath = pathItems.slice(0,index+1);
                 filePath.innerHTML = "";
-
+                newPath.forEach(function(item){
+                    addToFilePath(item)
+                });
+                console.log(newPath);
             }
         });
         filePath.appendChild(item);
@@ -447,4 +454,6 @@ function getLocalStorageObjectItem(key) {
     }
     return JSON.parse(json);
 }
+
+
 
