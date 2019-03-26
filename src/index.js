@@ -28,7 +28,7 @@ let rootFolder = document.createElement('span');
 rootFolder.innerText = "/";
 rootFolder.addEventListener('click', function(){
     renderFileStructure("/");
-    renderFilePath("/");
+    renderFilePath();
 });
 filePath.appendChild(rootFolder);
 
@@ -415,7 +415,7 @@ function createNewFolderOnServer(name){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-function renderFilePath(folderId) {
+function renderFilePath(folderId = "/") {
     if (folderId !== getLocalStorageObjectItem('currentFolder')) {
         let currentPath = getLocalStorageObjectItem('currentPath');
         let pathItems = currentPath.split(',');
