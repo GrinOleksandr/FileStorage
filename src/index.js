@@ -1,7 +1,6 @@
 setLocalStorageObjectItem('currentPath', '/');
 setLocalStorageObjectItem('currentFolder', '/');
 
-
 document.addEventListener('contextmenu',()=>{
     console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
     if(document.getElementsByClassName("dropdown-menu")[0]) {
@@ -85,6 +84,11 @@ FileInput.addEventListener('change', function(e){
     ajaxSendFiles();
 });
 
+let moveBtn = document.getElementById('move');
+
+
+let pasteBtn
+
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let formData = new FormData(DropZone);
@@ -155,7 +159,7 @@ function addItemFromServer(element) {
         if(document.querySelector(".item-active")){
             document.querySelector(".item-active").classList.remove('item-active');
         }
-        target.classList.add('item-active');
+        target.classList.toggle('item-active');
     }
 
     newItem.addEventListener('contextmenu',(ev)=>{
@@ -201,7 +205,6 @@ function addItemFromServer(element) {
         };
         return fileTypes[mimetype.split('/')[0]] || './img/file-type-icons/file.svg'
     }
-
 
     let fileIcon = document.createElement("span");
     fileIcon.className = "file-icon";
@@ -423,8 +426,6 @@ function renderFilePath(folderId = "/") {
     }
 }
 
-
-
 function addToFilePath(element){
 
     console.log('adding to path: ', element);
@@ -446,10 +447,6 @@ function addToFilePath(element){
     });
     filePath.appendChild(item);
 }
-
-
-
-
 
 //***************************************//
 function setLocalStorageObjectItem(key, value) {
