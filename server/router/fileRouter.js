@@ -127,48 +127,6 @@ fileRouter.use('/delete', function (req, res) {
     res.end();
     console.log('item deleted')
 });
-// fileRouter.use('/getpath', function(req, res) {
-//     let parsedUrl = url.parse(req.url, true);
-//     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-//     console.log('rendering path for: ', parsedUrl.query.folderid );
-//     let path = [];
-//
-//         FileStorageDb.find({})
-//             .select('-_id -__v')
-//             .exec(function (err, result) {
-//                 if (err) {
-//                     console.log(err);
-//                 }
-//             renderPath(result,parsedUrl.query.folderid );
-//
-//             });
-//
-//
-//
-//         function renderPath(data, folder =){
-//             let target;
-//             data.forEach(function(item){
-//                 if(item.fileId === folder){
-//                     target = item;
-//                 }
-//             });
-//             traversal(data, target);
-//
-//             function traversal(data, target){
-//                 path.push(target);
-//                 if(target.parent && target.parent !=="root"){
-//
-//                     traversal(data, target.parent)
-//                 }
-//             }
-//
-//             console.log("ATA!!!", data);
-//
-//
-//
-//     }
-//     res.end();
-// });
 fileRouter.use('/getelement', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
@@ -179,6 +137,19 @@ fileRouter.use('/getelement', function(req, res) {
             let responseString = JSON.stringify(Result);
             res.end(responseString);
         });
+});
+fileRouter.use('/move', function (req, res) {
+    console.log("moving");
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    console.log("renaming",parsedUrl.query.id,  parsedUrl.query.to);
+    res.writeHead(200);
+
+    move(parsedUrl.query.id,  parsedUrl.query.newname);
+
+    res.end();
 });
 
 function uploadFile(file) {
@@ -212,6 +183,11 @@ function rename(fileId, newName){
 }
 function deleteItem(fileId){
     FileStorageDb.deleteOne({fileId:fileId}, function (err) {
+        if (err) return console.log(err);
+    })
+}
+function move(fileId, newParent){
+    FileStorageDb.updateOne({fileId:fileId}, {parent:newParent}, function (err) {
         if (err) return console.log(err);
     })
 }

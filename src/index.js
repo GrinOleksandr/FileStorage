@@ -1,6 +1,8 @@
 setLocalStorageObjectItem('currentPath', '/');
 setLocalStorageObjectItem('currentFolder', '/');
 
+let state = {};
+
 document.addEventListener('contextmenu',()=>{
     console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
     if(document.getElementsByClassName("dropdown-menu")[0]) {
@@ -152,13 +154,10 @@ function addItemFromServer(element) {
         addToFilePath(element);
     }
 
-
-
-
     function activateItem(target){
-        if(document.querySelector(".item-active")){
-            document.querySelector(".item-active").classList.remove('item-active');
-        }
+        // if(document.querySelector(".item-active")){
+        //     document.querySelector(".item-active").classList.remove('item-active');
+        // }
         target.classList.toggle('item-active');
     }
 
