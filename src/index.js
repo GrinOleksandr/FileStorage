@@ -142,31 +142,10 @@ function addItemFromServer(element) {
      }
 
     function openFolder(name, id) {
-         console.log('opening: ',name, id);
+        console.log('opening: ',name, id);
         setLocalStorageObjectItem('currentFolder', id);
         renderFileStructure(id);
         addToFilePath(element);
-    }
-
-    function addToFilePath(element){
-         console.log('adding to path: ', element);
-         let path = getLocalStorageObjectItem('currentPath');
-         let newPath = `${path},${element.fileId}`;
-         setLocalStorageObjectItem('currentPath', newPath);
-
-        let item = document.createElement('span');
-
-        item.className = "file-path_item";
-        item.innerText = `${element.name}/`;
-        console.log(item);
-        item.dataset.parent = element.fileId;
-
-        item.addEventListener('click', function(){
-            renderFileStructure(element.fileId);
-            renderFilePath(element.fileId);
-
-        });
-        filePath.appendChild(item);
     }
 
 
@@ -421,6 +400,7 @@ function renderFilePath(folderId = "/") {
         let pathItems = currentPath.split(',');
         let index = pathItems.indexOf(folderId);
         let newPath = pathItems.slice(0, index + 1);
+        filePath.innerHTML = "";
         filePath.appendChild(rootFolder);
         setLocalStorageObjectItem('currentPath', "/");
         newPath.forEach(function (item) {
@@ -439,6 +419,29 @@ function renderFilePath(folderId = "/") {
         });
         console.log(newPath);
     }
+}
+
+
+
+function addToFilePath(element){
+    console.log('adding to path: ', element);
+    let path = getLocalStorageObjectItem('currentPath');
+    let newPath = `${path},${element.fileId}`;
+    setLocalStorageObjectItem('currentPath', newPath);
+
+    let item = document.createElement('span');
+
+    item.className = "file-path_item";
+    item.innerText = `${element.name}/`;
+    console.log(item);
+    item.dataset.parent = element.fileId;
+
+    item.addEventListener('click', function(){
+        renderFileStructure(element.fileId);
+        renderFilePath(element.fileId);
+
+    });
+    filePath.appendChild(item);
 }
 
 
