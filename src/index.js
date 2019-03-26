@@ -161,6 +161,7 @@ function addItemFromServer(element) {
                 let newPath = pathItems.slice(0,index+1);
                 filePath.innerHTML = "";
                 newPath.forEach(function(item){
+                    console.log(item);
                     addToFilePath(item)
                 });
                 console.log(newPath);
