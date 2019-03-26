@@ -169,7 +169,17 @@ fileRouter.use('/delete', function (req, res) {
 //     }
 //     res.end();
 // });
-
+fileRouter.use('/getelement', function(req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
+    console.log('rendering filestructure for: ', parsedUrl.query.folder );
+    FileStorageDb.find({fileId : parsedUrl.query.id})
+        .select('-_id -__v')
+        .exec(function (err, Result) {
+            let responseString = JSON.stringify(Result);
+            res.end(responseString);
+        });
+});
 
 function uploadFile(file) {
     file.mv(`${config.fileStoragePath}${file.fileId}`, function (err) {

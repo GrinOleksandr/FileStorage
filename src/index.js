@@ -161,7 +161,18 @@ function addItemFromServer(element) {
                 let newPath = pathItems.slice(0,index+1);
                 filePath.innerHTML = "";
                 newPath.forEach(function(item){
-                    console.log(item);
+                    fetch(`http://127.0.0.1:8000/file/getelement?id=${item}`, {
+                        method: 'POST'
+                    }).then(function (response) {
+                        return response.text()
+                    })
+                        .then(function (textOfResponse) {
+                            return JSON.parse(textOfResponse);
+                        })
+                        .then(function (data) {
+                            addToFilePath(data)
+                        })
+                        .catch(error => console.log("Данные не получены: " + error));
                     addToFilePath(item)
                 });
                 console.log(newPath);
