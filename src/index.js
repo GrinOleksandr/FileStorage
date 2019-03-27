@@ -1,13 +1,13 @@
 setLocalStorageObjectItem('currentPath', '/');
 setLocalStorageObjectItem('currentFolder', '/');
 
-let state = {};
+let state = {
+    clipBoard:[]
+};
+
 
 document.addEventListener('contextmenu',()=>{
-    console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
-    if(document.getElementsByClassName("dropdown-menu")[0]) {
-        document.getElementsByClassName("dropdown-menu")[0].remove();
-    }
+    closeContextMenu();
 });
 
 const ListOfFiles = document.getElementById('files-list');
@@ -15,10 +15,22 @@ ListOfFiles.addEventListener('contextmenu',(ev)=>{ev.preventDefault()});
 ListOfFiles.addEventListener('click',(ev)=>{
     ev.preventDefault();
     ev.stopPropagation();
-    if(document.getElementsByClassName("dropdown-menu")[0]) {
-        document.getElementsByClassName("dropdown-menu")[0].remove();
-    }
+    console.log('ffffffff', ev.currentTarget);
+    state.clipBoard = [];
+    closeContextMenu();
+    invertSelection();
+
+
 });
+
+function invertSelection(){
+    if(document.querySelectorAll('.selected-item')){
+        document.querySelectorAll('.selected-item').forEach(function(item){
+            item.classList.remove('selected-item');
+        })
+    }
+}
+
 
 const filePath = document.getElementById('filePath');
 filePath.querySelector("span").addEventListener('click',()=> {
@@ -140,7 +152,7 @@ function addItemFromServer(element) {
     newItem.addEventListener('click', (ev) =>{
         ev.preventDefault();
         ev.stopPropagation();
-        activateItem(ev.currentTarget);
+        selectItem(ev.currentTarget);
     });
      if(element.isFolder) {
          newItem.addEventListener('dblclick', function(ev){
@@ -154,20 +166,16 @@ function addItemFromServer(element) {
         addToFilePath(element);
     }
 
-    function activateItem(target){
-        // if(document.querySelector(".item-active")){
-        //     document.querySelector(".item-active").classList.remove('item-active');
-        // }
-        target.classList.toggle('item-active');
+    function selectItem(target){
+        target.classList.toggle('item-selected');
+        state.clipBoard.push(target.dataset.parent)
     }
 
     newItem.addEventListener('contextmenu',(ev)=>{
-        console.log(ev);
         ev.preventDefault();
         ev.stopPropagation();
-        if(document.getElementsByClassName("dropdown-menu")[0]) {
-            document.getElementsByClassName("dropdown-menu")[0].remove();
-        }
+        selectItem(ev.currentTarget);
+       closeContextMenu();
                 let cors = {
                 x: ev.clientX,
                 y: ev.clientY
@@ -279,16 +287,16 @@ function dropDown(target, cors){
         deleteFromServer(fileId);
     });
 
-    let moveBtn = document.createElement('li');
-    moveBtn.className = "dropDownItem";
-    moveBtn.innerText = "Move";
-    moveBtn.addEventListener('click', (ev)=>{
+    let moveToClipboard = document.createElement('li');
+    moveToClipboard.className = "dropDownItem";
+    moveToClipboard.innerText = "Move";
+    moveToClipboard.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
 
-        moveItem();
+        cutItem();
+        closeContextMenu();
     });
-
 
 
     let dropDownMenu = document.createElement('ul');
@@ -300,38 +308,36 @@ function dropDown(target, cors){
     dropDownMenu.appendChild(downloadBtn);
     dropDownMenu.appendChild(renameBtn);
     dropDownMenu.appendChild(deleteBtn);
-    dropDownMenu.appendChild(moveBtn);
+    dropDownMenu.appendChild(moveToClipboard);
     target.appendChild(dropDownMenu);
 }
 
-function moveItem() {
+function cutItem() {
 
 
-    if(state.isMoving) {
-        let newParent = getLocalStorageObjectItem('currentFolder');
-        let selectedItems = state.selectedItems;
-        console.log('selected: ', selectedItems);
-        selectedItems.forEach(function (item) {
-            fetch(`/file/rename?id=${item}&to=${newParent}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain',
-                    'Access-Control-Allow-Origin': "*"
-                }
-            }).then((data) => {
-                console.log(data);
-                renderFileStructure(getLocalStorageObjectItem('currentFolder'));
-            })
-                .catch(error => console.log("Данные не получены: " + error));
-        });
-        state.isMoving = false;
-        state.selectedItems = "";
-    }
+ }
 
-    else {
-        state.isMoving = true;
-        state.selectedItems = document.querySelectorAll('.item-active');
-    }
+ function pasteItem(){
+
+     let newParent = getLocalStorageObjectItem('currentFolder');
+     let selectedItems = state.clipBoard;
+     console.log('selected: ', selectedItems);
+     selectedItems.forEach(function (item) {
+         fetch(`/file/rename?id=${item}&to=${newParent}`, {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'text/plain',
+                 'Access-Control-Allow-Origin': "*"
+             }
+         }).then((data) => {
+             console.log(data);
+             renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+         })
+             .catch(error => console.log("Данные не получены: " + error));
+     });
+
+     state.clipBoard = [];
+
  }
 
 function renameOnServer(file, newName) {
@@ -488,6 +494,18 @@ function addToFilePath(element){
 
     });
     filePath.appendChild(item);
+}
+
+function closeContextMenu(ev){
+    console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
+    if(document.getElementsByClassName("dropdown-menu")[0]) {
+        document.getElementsByClassName("dropdown-menu")[0].remove();
+    }
+    let cors = {
+        x: ev.clientX,
+        y: ev.clientY
+    };
+    else { dropDown(ev.currentTarget, cors);}
 }
 
 //***************************************//

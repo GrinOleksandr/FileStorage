@@ -182,7 +182,7 @@ input[type="search"] {
     display:none;
 }
 
-.item-active {
+.item-selected {
     background-color:blue;
 }
 .file-name {
