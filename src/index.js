@@ -505,7 +505,7 @@ function closeContextMenu(ev){
         x: ev.clientX,
         y: ev.clientY
     };
-    else { dropDown(ev.currentTarget, cors);}
+    dropDown(ev.currentTarget, cors);
 }
 
 //***************************************//
