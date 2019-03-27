@@ -26,6 +26,7 @@ filePath.querySelector("span").addEventListener('click',()=> {
 });
 
 let rootFolder = document.createElement('span');
+rootFolder.className = "file-path_item";
 rootFolder.innerText = "/";
 rootFolder.addEventListener('click', function(){
     renderFileStructure("/");
@@ -148,7 +149,6 @@ function addItemFromServer(element) {
      }
 
     function openFolder(name, id) {
-        console.log('opening: ',name, id);
         setLocalStorageObjectItem('currentFolder', id);
         renderFileStructure(id);
         addToFilePath(element);
