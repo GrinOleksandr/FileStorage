@@ -11,7 +11,13 @@ document.addEventListener('contextmenu',()=>{
 });
 
 const ListOfFiles = document.getElementById('files-list');
-ListOfFiles.addEventListener('contextmenu',(ev)=>{ev.preventDefault()});
+ListOfFiles.addEventListener('contextmenu',(ev)=>{
+    ev.preventDefault()
+    dropDown(ev.currentTarget, {
+        x: ev.clientX,
+        y: ev.clientY
+    })
+});
 ListOfFiles.addEventListener('click',(ev)=>{
     ev.preventDefault();
     ev.stopPropagation();
@@ -298,6 +304,15 @@ function dropDown(target, cors){
         closeContextMenu();
     });
 
+    let pasteBtn = document.createElement('li');
+    pasteBtn.className = "dropDownItem";
+    pasteBtn.innerText = "Paste";
+    pasteBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        pasteItem();
+    });
+
 
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
@@ -305,10 +320,15 @@ function dropDown(target, cors){
     dropDownMenu.style.position = "fixed";
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
-    dropDownMenu.appendChild(downloadBtn);
-    dropDownMenu.appendChild(renameBtn);
-    dropDownMenu.appendChild(deleteBtn);
-    dropDownMenu.appendChild(moveToClipboard);
+
+    if(target.id !=='files-list') {
+        dropDownMenu.appendChild(downloadBtn);
+        dropDownMenu.appendChild(renameBtn);
+        dropDownMenu.appendChild(deleteBtn);
+        dropDownMenu.appendChild(moveToClipboard);
+    }
+
+    else {dropDownMenu.appendChild(pasteBtn)}
     target.appendChild(dropDownMenu);
 }
 
