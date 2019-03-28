@@ -18,7 +18,7 @@ ListOfFiles.addEventListener('contextmenu',(ev)=>{
         y: ev.clientY
     };
     console.log("CORS FROM: ",ev);
-    dropDown(ev.target, myCors)
+    dropDown(ev.currentTarget, myCors)
 });
 ListOfFiles.addEventListener('click',(ev)=>{
     ev.preventDefault();
@@ -331,7 +331,7 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(moveToClipboard);
     }
 
-    else {dropDownMenu.appendChild(pasteBtn)}
+    else dropDownMenu.appendChild(pasteBtn)
     target.appendChild(dropDownMenu);
 }
 
