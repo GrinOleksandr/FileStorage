@@ -174,8 +174,7 @@ function addItemFromServer(element) {
 
     function selectItem(target){
         target.classList.toggle('item-selected');
-        state.clipBoard.push(target.dataset.parent)
-    }
+     }
 
     newItem.addEventListener('contextmenu',(ev)=>{
         ev.preventDefault();
@@ -333,31 +332,32 @@ function dropDown(target, cors){
 }
 
 function cutItem() {
-
-
+     state.clipBoard = document.querySelectorAll(".item-selected");
+    invertSelection();
  }
 
  function pasteItem(){
 
      let newParent = getLocalStorageObjectItem('currentFolder');
      let selectedItems = state.clipBoard;
-     console.log('selected: ', selectedItems);
-     selectedItems.forEach(function (item) {
-         fetch(`/file/rename?id=${item}&to=${newParent}`, {
-             method: 'POST',
-             headers: {
-                 'Content-Type': 'text/plain',
-                 'Access-Control-Allow-Origin': "*"
-             }
-         }).then((data) => {
-             console.log(data);
-             renderFileStructure(getLocalStorageObjectItem('currentFolder'));
-         })
-             .catch(error => console.log("Данные не получены: " + error));
-     });
+     if(selectedItems.length) {
+         console.log('selected: ', selectedItems);
+         selectedItems.forEach(function (item) {
+             fetch(`/file/rename?id=${item}&to=${newParent}`, {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'text/plain',
+                     'Access-Control-Allow-Origin': "*"
+                 }
+             }).then((data) => {
+                 console.log(data);
+                 renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+             })
+                 .catch(error => console.log("Данные не получены: " + error));
+         });
 
-     state.clipBoard = [];
-
+         state.clipBoard = [];
+     }
  }
 
 function renameOnServer(file, newName) {
