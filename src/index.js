@@ -23,7 +23,7 @@ ListOfFiles.addEventListener('click',(ev)=>{
     ev.stopPropagation();
     console.log('ffffffff', ev.currentTarget);
     state.clipBoard = [];
-    closeContextMenu();
+    closeContextMenu(ev);
     invertSelection();
 
 
@@ -180,7 +180,7 @@ function addItemFromServer(element) {
         ev.preventDefault();
         ev.stopPropagation();
         selectItem(ev.currentTarget);
-       closeContextMenu();
+       closeContextMenu(ev);
                 let cors = {
                 x: ev.clientX,
                 y: ev.clientY
