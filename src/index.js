@@ -81,7 +81,7 @@ FileInput.addEventListener('focus', ()=> DropZone.querySelector('label').classLi
 FileInput.addEventListener('blur', ()=> DropZone.querySelector('label').classList.remove('focus'));
 FileInput.addEventListener('change', function(e){
     e.preventDefault();
-    console.log("files  ", this.files);
+    console.log("uploading files  ", this.files);uoh
     if(this.files[0].isDirectory){
         console.log(`DIRECTORY!! : ${this.files[0]}`)
     }

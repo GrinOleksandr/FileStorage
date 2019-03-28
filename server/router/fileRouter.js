@@ -49,6 +49,7 @@ fileRouter.use('/upload', function (req, res) {
     else if (Array.isArray(req.files.fileInput)) {
         let uploadedFiles = req.files.fileInput;
         uploadedFiles.forEach(function (item) {
+            console.log("****INCOMING FILE  ", item);
             if (item.mimetype) {
                 item.fileId = suid(16);
                 item.parent = parsedUrl.query.parent;
@@ -59,6 +60,7 @@ fileRouter.use('/upload', function (req, res) {
     }
     else {
         let uploadedFile = req.files.fileInput;
+        console.log("****INCOMING FILE  ", uploadedFile);
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = suid(16);
             uploadedFile.parent = parsedUrl.query.parent;
@@ -83,7 +85,7 @@ fileRouter.use('/createfolder', function (req, res) {
         fileId: suid(16),
         isFolder: true,
         mimetype: "folder",
-        link: `${fileId}${suid(16)}`,
+        link: `${this.fileId}${suid(16)}`,
         uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner: "SashaGrin",
         access: "SashaGrin",
@@ -147,6 +149,20 @@ fileRouter.use('/move', function (req, res) {
 
     res.end();
 });
+fileRouter.use('/share', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    console.log("sharing  ",parsedUrl.query.id);
+    res.writeHead(200);
+
+    shareItem(parsedUrl.query.id);
+
+    res.end();
+});
+
+
 
 function uploadFile(file) {
     file.mv(`${config.fileStoragePath}${file.fileId}`, function (err) {
@@ -159,7 +175,7 @@ function addFileToDataBase(target) {
     let name = target.name || "unnamed",
         fileId = target.fileId || "",
         mimetype = target.mimetype || "",
-        link = target.link || `${fileId}${suid(16)}`,
+        link = target.link || `${target.fileId}${suid(16)}`,
         uploadDate = moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner = target.owner || "SashaGrin",
         access = target.access || [],
@@ -189,6 +205,13 @@ function move(fileId, newParent){
     })
 }
 
+
+function shareItem(idToShare){
+
+
+
+
+}
 
 
 
