@@ -1,10 +1,8 @@
-setLocalStorageObjectItem('currentPath', '/');
-setLocalStorageObjectItem('currentFolder', '/');
-
 let state = {
+    currentFolder: "/",
+    currentPath:"/",
     clipBoard:[]
 };
-
 
 // document.addEventListener('contextmenu',()=>{
 //     closeContextMenu();
@@ -107,15 +105,15 @@ FileInput.addEventListener('change', function(e){
     ajaxSendFiles();
 });
 
-let moveBtn = document.getElementById('move');
 
 
-let pasteBtn
 
+
+renderFileStructure();
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let formData = new FormData(DropZone);
-    fetch(`/file/upload?parent=${getLocalStorageObjectItem('currentFolder')}`, {
+    fetch(`/file/upload?parent=${state.currentFolder}`, {
         method: 'POST',
         headers:{
             accept:'application/json'
@@ -129,7 +127,7 @@ function ajaxSendFiles(){
         .catch(error => console.log("Данные не отправленны: " + error));
 }
 //**********************************************************************//
-renderFileStructure();
+
 
 function renderFileStructure (folder = "/") {
     fetch(`http://127.0.0.1:8000/file/listfiles?folder=${folder}`, {
