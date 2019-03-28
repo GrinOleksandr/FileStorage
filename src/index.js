@@ -29,13 +29,7 @@ ListOfFiles.addEventListener('click',(ev)=>{
 
 });
 
-function invertSelection(){
-    if(document.querySelectorAll('.selected-item')){
-        document.querySelectorAll('.selected-item').forEach(function(item){
-            item.classList.remove('selected-item');
-        })
-    }
-}
+
 
 
 const filePath = document.getElementById('filePath');
@@ -127,7 +121,13 @@ function ajaxSendFiles(){
         .catch(error => console.log("Данные не отправленны: " + error));
 }
 //**********************************************************************//
-
+function invertSelection(){
+    if(document.querySelectorAll('.selected-item')){
+        document.querySelectorAll('.selected-item').forEach(function(item){
+            item.classList.remove('selected-item');
+        })
+    }
+}
 
 function renderFileStructure (folder = "/") {
     fetch(`http://127.0.0.1:8000/file/listfiles?folder=${folder}`, {
@@ -295,6 +295,7 @@ function dropDown(target, cors){
     });
 
     let moveToClipboard = document.createElement('li');
+
     moveToClipboard.className = "dropDownItem";
     moveToClipboard.innerText = "Move";
     moveToClipboard.addEventListener('click', (ev)=>{
@@ -312,6 +313,7 @@ function dropDown(target, cors){
         ev.preventDefault();
         ev.stopPropagation();
         pasteItem();
+        closeContextMenu();
     });
 
 
@@ -329,11 +331,12 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(moveToClipboard);
     }
 
-    else dropDownMenu.appendChild(pasteBtn)
+    else dropDownMenu.appendChild(pasteBtn);
     target.appendChild(dropDownMenu);
 }
 
 function cutItem() {
+    console.log('moving to clipboard: ',document.querySelectorAll(".item-selected") );
      state.clipBoard = document.querySelectorAll(".item-selected");
     invertSelection();
  }
