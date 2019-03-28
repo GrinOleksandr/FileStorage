@@ -6,9 +6,9 @@ let state = {
 };
 
 
-document.addEventListener('contextmenu',()=>{
-    closeContextMenu();
-});
+// document.addEventListener('contextmenu',()=>{
+//     closeContextMenu();
+// });
 
 const ListOfFiles = document.getElementById('files-list');
 ListOfFiles.addEventListener('contextmenu',(ev)=>{
@@ -182,7 +182,7 @@ function addItemFromServer(element) {
         ev.preventDefault();
         ev.stopPropagation();
         selectItem(ev.currentTarget);
-        // closeContextMenu(ev);
+        closeContextMenu(ev);
         let cors = {
             x: ev.clientX,
             y: ev.clientY
