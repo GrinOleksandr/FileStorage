@@ -81,7 +81,7 @@ FileInput.addEventListener('focus', ()=> DropZone.querySelector('label').classLi
 FileInput.addEventListener('blur', ()=> DropZone.querySelector('label').classList.remove('focus'));
 FileInput.addEventListener('change', function(e){
     e.preventDefault();
-    console.log("uploading files  ", this.files);uoh
+    console.log("uploading files  ", this.files);
     if(this.files[0].isDirectory){
         console.log(`DIRECTORY!! : ${this.files[0]}`)
     }
@@ -181,6 +181,9 @@ function addItemFromServer(element) {
     let itemName = document.createElement("span");
     itemName.innerText = element.name;
     itemName.className = "file-name";
+    if(element.isShared){
+        itemName.classList.add('shared-item');
+    }
 
     function chooseIcon(mimetype) {
 

@@ -156,8 +156,8 @@ fileRouter.use('/share', function (req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     console.log("sharing  ",parsedUrl.query.id);
     res.writeHead(200);
-
-    shareItem(parsedUrl.query.id);
+    parseAndShare(parsedUrl.query.id);
+    // shareItem(parsedUrl.query.id);
 
     res.end();
 });
@@ -205,12 +205,75 @@ function move(fileId, newParent){
     })
 }
 
+function makeMeShared(id){
+    FileStorageDb.updateOne({fileId:id}, {isShared:true}, function (err) {
+        if (err) return console.log(err);
+    })
+}
 
-function shareItem(idToShare){
+
+function parseAndShare(id){
+        let childrenArray = [];
+        lookForChildren(id);
+    function lookForChildren(id){
+        childrenArray.push(id);
+        shareItem(id);
+        FileStorageDb.find({parent : id})
+            .select('-_id -__v')
+            .exec(function (err, result) {
+
+                if(result.length) {
+                    result.forEach(function(item){
+                        console.log('i am child!: ', item);
+                        lookForChildren(item.fileId);
+                    })
+                }
+                console.log('my children is: ', result);
+
+            });
+        console.log('********* PARSEd CHILREN!: ', childrenArray)
+    }
 
 
+}
+
+function shareItem(idToShare) {
+    FileStorageDb.updateOne({fileId: idToShare}, {isShared: true}, function (err) {
+        if (err) return console.log(err);
+    });
+    console.log('root element shared', idToShare)
+}
+
+function parseAndUnShare(id){
+    let childrenArray = [];
+    lookForChildren(id);
+    function lookForChildren(id){
+        childrenArray.push(id);
+        unShareItem(id);
+        FileStorageDb.find({parent : id})
+            .select('-_id -__v')
+            .exec(function (err, result) {
+
+                if(result.length) {
+                    result.forEach(function(item){
+                        console.log('i am child!: ', item);
+                        lookForChildren(item.fileId);
+                    })
+                }
+                console.log('my children is: ', result);
+
+            });
+        console.log('********* PARSEd CHILREN!: ', childrenArray)
+    }
 
 
+}
+
+function unShareItem(id) {
+    FileStorageDb.updateOne({fileId: id}, {isShared: false}, function (err) {
+        if (err) return console.log(err);
+    });
+    console.log('root element access closed', id)
 }
 
 

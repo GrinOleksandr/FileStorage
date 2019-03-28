@@ -196,6 +196,9 @@ input[type="search"] {
     background-repeat:no-repeat;
 }
 
+.shared-item{
+    background-color:red;
+}
 /************************UPLOAD*****************************/
 
 #upload-container {
