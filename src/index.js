@@ -308,9 +308,9 @@ function dropDown(target, cors){
     });
 
     let shareBtn = document.createElement('li');
-    pasteBtn.className = "dropDownItem";
-    pasteBtn.innerText = "Enable access by link";
-    pasteBtn.addEventListener('click', (ev)=>{
+    shareBtn.className = "dropDownItem";
+    shareBtn.innerText = "Enable access by link";
+    shareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
         shareItem(target.id);
@@ -318,9 +318,9 @@ function dropDown(target, cors){
     });
 
     let unShareBtn = document.createElement('li');
-    pasteBtn.className = "dropDownItem";
-    pasteBtn.innerText = "Disable access by link";
-    pasteBtn.addEventListener('click', (ev)=>{
+    unShareBtn.className = "dropDownItem";
+    unShareBtn.innerText = "Disable access by link";
+    unShareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
         unShareItem(target.id);
@@ -330,7 +330,7 @@ function dropDown(target, cors){
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
     dropDownMenu.classList.toggle('dropdown-visible');
-    dropDownMenu.style.position = "fixed";
+    dropDownMenu.style.position = "absolute";
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
 
@@ -342,6 +342,7 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
         if(target.dataset.isShared === "true"){
+            console.log("TRUEEEE");
             dropDownMenu.appendChild(unShareBtn);
         }
         else  dropDownMenu.appendChild(shareBtn);
