@@ -331,12 +331,14 @@ function dropDown(target, cors){
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
 
+    console.log(target);
+
     if(target.id !=='files-list') {
         dropDownMenu.appendChild(downloadBtn);
         dropDownMenu.appendChild(renameBtn);
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
-        if(target.isShared){
+        if(target.classList.contains("shared-item")){
             dropDownMenu.appendChild(unShareBtn);
         }
         else  dropDownMenu.appendChild(shareBtn);
