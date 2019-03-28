@@ -218,7 +218,6 @@ function makeMeShared(id){
     })
 }
 
-
 function digAndShare(id){
         let childrenArray = [];
         lookForChildren(id);
@@ -270,8 +269,6 @@ function digAndUnShare(id){
             });
         console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
-
-
 }
 
 function unShareItem(id) {

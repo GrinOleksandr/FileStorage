@@ -286,13 +286,11 @@ function dropDown(target, cors){
     });
 
     let moveToClipboard = document.createElement('li');
-
     moveToClipboard.className = "dropDownItem";
     moveToClipboard.innerText = "Move";
     moveToClipboard.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-
         cutItem();
         closeContextMenu();
     });
@@ -303,6 +301,26 @@ function dropDown(target, cors){
         ev.preventDefault();
         ev.stopPropagation();
         pasteItem();
+        closeContextMenu();
+    });
+
+    let shareBtn = document.createElement('li');
+    pasteBtn.className = "dropDownItem";
+    pasteBtn.innerText = "Enable access by link";
+    pasteBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        shareItem(target.id);
+        closeContextMenu();
+    });
+
+    let unShareBtn = document.createElement('li');
+    pasteBtn.className = "dropDownItem";
+    pasteBtn.innerText = "Disable access by link";
+    pasteBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        unShareItem(target.id);
         closeContextMenu();
     });
 
@@ -318,6 +336,10 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(renameBtn);
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
+        if(target.isShared){
+            dropDownMenu.appendChild(unShareBtn);
+        }
+        else  dropDownMenu.appendChild(shareBtn);
     }
     else dropDownMenu.appendChild(pasteBtn);
     target.appendChild(dropDownMenu);
@@ -503,6 +525,30 @@ function closeContextMenu() {
     if (document.getElementsByClassName("dropdown-menu")[0]) {
         document.getElementsByClassName("dropdown-menu")[0].remove();
     }
+}
+
+function shareItem(id){
+    fetch(`/file/share?id=${id}`, {
+        method: 'POST',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then((data)=>{
+        renderFileStructure(state.currentFolder);
+    })
+        .catch(error => console.log("Данные не получены: " + error));
+}
+
+function unShareItem(id){
+    fetch(`/file/unshare?id=${id}`, {
+        method: 'POST',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then((data)=>{
+        renderFileStructure(state.currentFolder);
+    })
+        .catch(error => console.log("Данные не получены: " + error));
 }
 
 
