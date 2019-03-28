@@ -13,7 +13,7 @@ document.addEventListener('contextmenu',()=>{
 const ListOfFiles = document.getElementById('files-list');
 ListOfFiles.addEventListener('contextmenu',(ev)=>{
     ev.preventDefault();
-    ev.stopPropagation();
+
     console.log("CORS FROM: ",ev);
     dropDown(ev.target, {
         x: ev.clientX,
