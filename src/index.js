@@ -259,6 +259,7 @@ function addItemFromServer(element) {
 }
 
 function dropDown(target, cors){
+    console.log("context target: ", target);
     closeContextMenu();
     let fileId = target.dataset.id;
     let downloadBtn = document.createElement('li');
