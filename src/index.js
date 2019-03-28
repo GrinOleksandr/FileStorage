@@ -177,6 +177,9 @@ function addItemFromServer(element) {
         dropDown(ev.currentTarget, cors);
     });
     newItem.dataset.id = element.fileId;
+    if(element.isShared){
+        newItem.dataset.isShared = "true";
+    }
 
     let itemName = document.createElement("span");
     itemName.innerText = element.name;
@@ -338,7 +341,7 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(renameBtn);
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
-        if(target.classList.contains("shared-item")){
+        if(target.dataset.isShared === "true"){
             dropDownMenu.appendChild(unShareBtn);
         }
         else  dropDownMenu.appendChild(shareBtn);
