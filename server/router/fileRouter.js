@@ -164,7 +164,7 @@ fileRouter.use('/unshare', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("sharing  ",parsedUrl.query.id);
+    console.log("unsharing  ",parsedUrl.query.id);
     res.writeHead(200);
     digAndUnShare(parsedUrl.query.id);
     res.end();

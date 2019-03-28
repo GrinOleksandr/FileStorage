@@ -313,7 +313,7 @@ function dropDown(target, cors){
     shareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        shareItem(target.id);
+        shareItem(fileId);
         closeContextMenu();
     });
 
@@ -323,7 +323,7 @@ function dropDown(target, cors){
     unShareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        unShareItem(target.id);
+        unShareItem(fileId);
         closeContextMenu();
     });
 
