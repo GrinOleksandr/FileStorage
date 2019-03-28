@@ -13,7 +13,7 @@ document.addEventListener('contextmenu',()=>{
 const ListOfFiles = document.getElementById('files-list');
 ListOfFiles.addEventListener('contextmenu',(ev)=>{
     ev.preventDefault()
-    dropDown(ev.currentTarget, {
+    dropDown(ev.target, {
         x: ev.clientX,
         y: ev.clientY
     })
@@ -173,7 +173,7 @@ function addItemFromServer(element) {
     }
 
     function selectItem(target){
-        target.classList.toggle('item-selected');
+        target.classList.add('item-selected');
      }
 
     newItem.addEventListener('contextmenu',(ev)=>{
