@@ -178,16 +178,16 @@ function addItemFromServer(element) {
         target.classList.add('item-selected');
      }
 
-    newItem.addEventListener('contextmenu',(ev)=>{
+    newItem.addEventListener('contextmenu',(ev)=> {
         ev.preventDefault();
         ev.stopPropagation();
         selectItem(ev.currentTarget);
-       closeContextMenu(ev);
-                let cors = {
-                x: ev.clientX,
-                y: ev.clientY
-            };
-            dropDown(ev.currentTarget, cors);
+        // closeContextMenu(ev);
+        let cors = {
+            x: ev.clientX,
+            y: ev.clientY
+        };
+        dropDown(ev.currentTarget, cors);
     });
     newItem.dataset.id = element.fileId;
 
@@ -525,11 +525,11 @@ function closeContextMenu(ev){
     if(document.getElementsByClassName("dropdown-menu")[0]) {
         document.getElementsByClassName("dropdown-menu")[0].remove();
     }
-    let cors = {
-        x: ev.clientX,
-        y: ev.clientY
-    };
-    dropDown(ev.currentTarget, cors);
+    // let cors = {
+    //     x: ev.clientX,
+    //     y: ev.clientY
+    // };
+    // dropDown(ev.currentTarget, cors);
 }
 
 //***************************************//
