@@ -9,8 +9,9 @@ const fileStorageSchema = new mongoose.Schema({
     owner: String,
     access: String,
     parent: String,
+    isShared: Boolean,
     isFolder: Boolean
 });
 
-let fileStorageDB = mongoose.model('FileStorage1233', fileStorageSchema );
+let fileStorageDB = mongoose.model('FileStorage12343', fileStorageSchema );
 module.exports = fileStorageDB ;

@@ -15,7 +15,6 @@ fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('rendering filestructure for: ', parsedUrl.query.folder );
     FileStorageDb.find({parent : parsedUrl.query.folder})
         .select('-_id -__v')
         .exec(function (err, Result) {
@@ -36,7 +35,6 @@ fileRouter.use('/download', function (req, res) {
                     return res.status(500).send(err);
                 }
                 res.end(data);
-                console.log('download is completed')
             });
         }
     });
@@ -45,7 +43,6 @@ fileRouter.use('/download', function (req, res) {
 fileRouter.use(fileUpload());
 fileRouter.use('/upload', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
-    console.log(parsedUrl.query.parent);
     if (Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
@@ -86,19 +83,19 @@ fileRouter.use('/createfolder', function (req, res) {
         fileId: suid(16),
         isFolder: true,
         mimetype: "folder",
-        link: `${config.ip}:${config.port}/${parsedUrl.query.name}`,
+        link: `${fileId}${suid(16)}`,
         uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner: "SashaGrin",
         access: "SashaGrin",
-        parent: parsedUrl.query.parent
+        parent: parsedUrl.query.parent,
+        isShared: false
     };
 
-    console.log(folder);
+    console.log('folder created' ,folder);
 
     addFileToDataBase(folder);
 
     res.end();
-    console.log('folder created')
 });
 fileRouter.use('/rename', function (req, res) {
     console.log("renaming");
@@ -162,15 +159,16 @@ function addFileToDataBase(target) {
     let name = target.name || "unnamed",
         fileId = target.fileId || "",
         mimetype = target.mimetype || "",
-        link = target.link || `${config.ip}:${config.port}/${target.name}`,
+        link = target.link || `${fileId}${suid(16)}`,
         uploadDate = moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner = target.owner || "SashaGrin",
         access = target.access || [],
         isFolder = target.isFolder || false,
-        parent = target.parent || "/";
+        parent = target.parent || "/",
+        isShared = target.isShared || false;
 
     FileStorageDb.create(
-        {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder},
+        {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder, isShared},
         function (err) {
             if (err) return console.log(err);
         })

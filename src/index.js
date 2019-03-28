@@ -4,10 +4,6 @@ let state = {
     clipBoard:[]
 };
 
-// document.addEventListener('contextmenu',()=>{
-//     closeContextMenu();
-// });
-
 const ListOfFiles = document.getElementById('files-list');
 ListOfFiles.addEventListener('contextmenu',(ev)=>{
     ev.preventDefault();
@@ -15,8 +11,6 @@ ListOfFiles.addEventListener('contextmenu',(ev)=>{
         x: ev.clientX,
         y: ev.clientY
     };
-    console.log("CORS FROM: ",ev);
-    console.log('on paste ', state);
     if(state.clipBoard.length) {
         dropDown(ev.currentTarget, myCors)
     }
@@ -26,16 +20,10 @@ ListOfFiles.addEventListener('contextmenu',(ev)=>{
 ListOfFiles.addEventListener('click',(ev)=>{
     ev.preventDefault();
     ev.stopPropagation();
-    console.log('ffffffff', ev.currentTarget);
     state.clipBoard = [];
     closeContextMenu(ev);
     invertSelection();
-
-
 });
-
-
-
 
 const filePath = document.getElementById('filePath');
 filePath.querySelector("span").addEventListener('click',()=> {
@@ -80,7 +68,6 @@ DropZone.addEventListener('drop', function(e){
     e.preventDefault();
     let files = e.dataTransfer.files;
     DropZone.classList.remove('dragover');
-    console.log(e.dataTransfer.items[0]);
     FileInput.files = files;
     ajaxSendFiles();
 });
@@ -106,10 +93,6 @@ FileInput.addEventListener('change', function(e){
     ajaxSendFiles();
 });
 
-
-
-
-
 renderFileStructure();
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
@@ -121,7 +104,6 @@ function ajaxSendFiles(){
         },
         body:formData
     }).then(function (response) {
-        console.log('Files Uploaded!');
         renderFileStructure(state.currentFolder);
         return response.text();
     })
@@ -264,7 +246,6 @@ function addItemFromServer(element) {
 }
 
 function dropDown(target, cors){
-    console.log("context target: ", target , "CORS! " , cors);
     closeContextMenu();
     let fileId = target.dataset.id;
     let downloadBtn = document.createElement('li');
@@ -312,7 +293,6 @@ function dropDown(target, cors){
         cutItem();
         closeContextMenu();
     });
-
     let pasteBtn = document.createElement('li');
     pasteBtn.className = "dropDownItem";
     pasteBtn.innerText = "Paste";
@@ -322,7 +302,6 @@ function dropDown(target, cors){
         pasteItem();
         closeContextMenu();
     });
-
 
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
@@ -337,41 +316,37 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
     }
-
     else dropDownMenu.appendChild(pasteBtn);
     target.appendChild(dropDownMenu);
 }
 
 function cutItem() {
-    console.log('moving to clipboard: ',document.querySelectorAll(".item-selected") );
-     state.clipBoard = document.querySelectorAll(".item-selected");
+    state.clipBoard = document.querySelectorAll(".item-selected");
     invertSelection();
- }
+}
 
- function pasteItem(){
+function pasteItem() {
+    let newParent = state.currentFolder;
+    let selectedItems = state.clipBoard;
+    if (selectedItems.length) {
+        selectedItems.forEach(function (item) {
+            if (state.currentPath.indexOf(item.dataset.id) === -1) {
+                fetch(`/file/move?id=${item.dataset.id}&to=${newParent}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                        'Access-Control-Allow-Origin': "*"
+                    }
+                }).then((data) => {
+                    renderFileStructure(state.currentFolder);
+                })
+                    .catch(error => console.log("Данные не получены: " + error));
+            } else alert(`Sorry, you can't move a folder to its own child or grandchild`);
+        });
 
-     let newParent = state.currentFolder;
-     let selectedItems = state.clipBoard;
-     if(selectedItems.length) {
-         console.log('selected: ', selectedItems);
-         selectedItems.forEach(function (item) {
-             console.log('item+newparent:  ', item, newParent);
-             fetch(`/file/move?id=${item.dataset.id}&to=${newParent}`, {
-                 method: 'POST',
-                 headers: {
-                     'Content-Type': 'text/plain',
-                     'Access-Control-Allow-Origin': "*"
-                 }
-             }).then((data) => {
-                 console.log('response after moving',data);
-                 renderFileStructure(state.currentFolder);
-             })
-                 .catch(error => console.log("Данные не получены: " + error));
-         });
-
-         state.clipBoard = [];
-     }
- }
+        state.clipBoard = [];
+    }
+}
 
 function renameOnServer(file, newName) {
     fetch(`/file/rename?id=${file}&newname=${newName}`, {
@@ -381,7 +356,6 @@ function renameOnServer(file, newName) {
             'Access-Control-Allow-Origin': "*"
         }
     }).then((data) => {
-        console.log(data);
         renderFileStructure(state.currentFolder);
     })
         .catch(error => console.log("Данные не получены: " + error));
@@ -395,7 +369,6 @@ function deleteFromServer(fileId) {
             'Access-Control-Allow-Origin': "*"
         }
     }).then((data) => {
-        console.log(data);
         renderFileStructure(state.currentFolder);
     })
         .catch(error => console.log("Удаление не прошло: " + error));
@@ -473,7 +446,6 @@ function createNewFolderOnServer(name){
         }
     }).then((data)=>{
         renderFileStructure(state.currentFolder);
-        console.log(data);
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
@@ -497,49 +469,39 @@ function renderFilePath(folderId = "/") {
                     return JSON.parse(textOfResponse);
                 })
                 .then(function (data) {
-                    if(data) {
+                    if (data) {
                         addToFilePath(data[0])
                     }
                 })
                 .catch(error => error);
         });
-        console.log(newPath);
     }
 }
 
-function addToFilePath(element){
+function addToFilePath(element) {
+        let path = state.currentPath;
 
-    console.log('adding to path: ', element);
-    let path = state.currentPath;
+        state.currentPath = `${path},${element.fileId}`;
 
-    state.currentPath = `${path},${element.fileId}`;
+        let item = document.createElement('span');
 
-    let item = document.createElement('span');
+        item.className = "file-path_item";
+        item.innerText = `${element.name}/`;
+        item.dataset.parent = element.fileId;
 
-    item.className = "file-path_item";
-    item.innerText = `${element.name}/`;
-    console.log(item);
-    item.dataset.parent = element.fileId;
+        item.addEventListener('click', function () {
+            renderFileStructure(element.fileId);
+            renderFilePath(element.fileId);
 
-    item.addEventListener('click', function(){
-        renderFileStructure(element.fileId);
-        renderFilePath(element.fileId);
-
-    });
-    filePath.appendChild(item);
-}
-
-function closeContextMenu(ev){
-    console.log("dropdown removed", document.getElementsByClassName("dropdown-menu")[0]);
-    if(document.getElementsByClassName("dropdown-menu")[0]) {
+        });
+        filePath.appendChild(item);
+    }
+function closeContextMenu() {
+    if (document.getElementsByClassName("dropdown-menu")[0]) {
         document.getElementsByClassName("dropdown-menu")[0].remove();
     }
-    // let cors = {
-    //     x: ev.clientX,
-    //     y: ev.clientY
-    // };
-    // dropDown(ev.currentTarget, cors);
 }
+
 
 //***************************************//
 
