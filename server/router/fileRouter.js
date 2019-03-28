@@ -156,12 +156,19 @@ fileRouter.use('/share', function (req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     console.log("sharing  ",parsedUrl.query.id);
     res.writeHead(200);
-    parseAndShare(parsedUrl.query.id);
-    // shareItem(parsedUrl.query.id);
-
+    digAndShare(parsedUrl.query.id);
     res.end();
 });
-
+fileRouter.use('/unshare', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    console.log("sharing  ",parsedUrl.query.id);
+    res.writeHead(200);
+    digAndUnShare(parsedUrl.query.id);
+    res.end();
+});
 
 
 function uploadFile(file) {
@@ -212,7 +219,7 @@ function makeMeShared(id){
 }
 
 
-function parseAndShare(id){
+function digAndShare(id){
         let childrenArray = [];
         lookForChildren(id);
     function lookForChildren(id){
@@ -244,7 +251,7 @@ function shareItem(idToShare) {
     console.log('root element shared', idToShare)
 }
 
-function parseAndUnShare(id){
+function digAndUnShare(id){
     let childrenArray = [];
     lookForChildren(id);
     function lookForChildren(id){
@@ -253,7 +260,6 @@ function parseAndUnShare(id){
         FileStorageDb.find({parent : id})
             .select('-_id -__v')
             .exec(function (err, result) {
-
                 if(result.length) {
                     result.forEach(function(item){
                         console.log('i am child!: ', item);
@@ -261,7 +267,6 @@ function parseAndUnShare(id){
                     })
                 }
                 console.log('my children is: ', result);
-
             });
         console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
