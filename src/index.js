@@ -121,7 +121,7 @@ function ajaxSendFiles(){
         body:formData
     }).then(function (response) {
         console.log('Files Uploaded!');
-        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+        renderFileStructure(state.currentFolder);
         return response.text();
     })
         .catch(error => console.log("Данные не отправленны: " + error));
@@ -167,7 +167,7 @@ function addItemFromServer(element) {
      }
 
     function openFolder(name, id) {
-        setLocalStorageObjectItem('currentFolder', id);
+        state.currentFolder = id;
         renderFileStructure(id);
         addToFilePath(element);
     }
@@ -340,7 +340,7 @@ function cutItem() {
 
  function pasteItem(){
 
-     let newParent = getLocalStorageObjectItem('currentFolder');
+     let newParent = state.currentFolder;
      let selectedItems = state.clipBoard;
      if(selectedItems.length) {
          console.log('selected: ', selectedItems);
@@ -353,7 +353,7 @@ function cutItem() {
                  }
              }).then((data) => {
                  console.log(data);
-                 renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+                 renderFileStructure(state.currentFolder);
              })
                  .catch(error => console.log("Данные не получены: " + error));
          });
@@ -371,7 +371,7 @@ function renameOnServer(file, newName) {
         }
     }).then((data) => {
         console.log(data);
-        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+        renderFileStructure(state.currentFolder);
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
@@ -385,7 +385,7 @@ function deleteFromServer(fileId) {
         }
     }).then((data) => {
         console.log(data);
-        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+        renderFileStructure(state.currentFolder);
     })
         .catch(error => console.log("Удаление не прошло: " + error));
 }
@@ -431,7 +431,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     createBtn.addEventListener('click', ()=>{
         callback(nameField.value);
         closeModal();
-        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+        renderFileStructure(state.currentFolder);
     });
 
     function closeModal(ev){
@@ -455,27 +455,27 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
 }
 
 function createNewFolderOnServer(name){
-    fetch(`/file/createfolder?name=${name}&parent=${getLocalStorageObjectItem('currentFolder')}`, {
+    fetch(`/file/createfolder?name=${name}&parent=${state.currentFolder}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
         }
     }).then((data)=>{
-        renderFileStructure(getLocalStorageObjectItem('currentFolder'));
+        renderFileStructure(state.currentFolder);
         console.log(data);
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
 
 function renderFilePath(folderId = "/") {
-    if (folderId !== getLocalStorageObjectItem('currentFolder')) {
-        let currentPath = getLocalStorageObjectItem('currentPath');
+    if (folderId !== state.currentFolder) {
+        let currentPath = state.currentPath;
         let pathItems = currentPath.split(',');
         let index = pathItems.indexOf(folderId);
         let newPath = pathItems.slice(0, index + 1);
         filePath.innerHTML = "";
         filePath.appendChild(rootFolder);
-        setLocalStorageObjectItem('currentPath', "/");
+        state.currentPath = "/";
         newPath.forEach(function (item) {
             fetch(`http://127.0.0.1:8000/file/getelement?id=${item}`, {
                 method: 'POST'
@@ -499,9 +499,9 @@ function renderFilePath(folderId = "/") {
 function addToFilePath(element){
 
     console.log('adding to path: ', element);
-    let path = getLocalStorageObjectItem('currentPath');
-    let newPath = `${path},${element.fileId}`;
-    setLocalStorageObjectItem('currentPath', newPath);
+    let path = state.currentPath;
+
+    state.currentPath = `${path},${element.fileId}`;
 
     let item = document.createElement('span');
 
@@ -531,21 +531,7 @@ function closeContextMenu(ev){
 }
 
 //***************************************//
-function setLocalStorageObjectItem(key, value) {
-    if (value === undefined) {
-        localStorage.removeItem(key);
-    } else {
-        localStorage.setItem(key, JSON.stringify(value));
-    }
-}
 
-function getLocalStorageObjectItem(key) {
-    let json = localStorage.getItem(key);
-    if (json === undefined) {
-        return undefined;
-    }
-    return JSON.parse(json);
-}
 
 
 
