@@ -139,15 +139,14 @@ fileRouter.use('/getelement', function(req, res) {
         });
 });
 fileRouter.use('/move', function (req, res) {
-    console.log("moving");
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("renaming",parsedUrl.query.id,  parsedUrl.query.to);
+    console.log("moving",parsedUrl.query.id,  parsedUrl.query.to);
     res.writeHead(200);
 
-    move(parsedUrl.query.id,  parsedUrl.query.newname);
+    move(parsedUrl.query.id,  parsedUrl.query.to);
 
     res.end();
 });

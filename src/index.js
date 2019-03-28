@@ -16,7 +16,12 @@ ListOfFiles.addEventListener('contextmenu',(ev)=>{
         y: ev.clientY
     };
     console.log("CORS FROM: ",ev);
-    dropDown(ev.currentTarget, myCors)
+    console.log('on paste ', state);
+    if(state.clipBoard.length) {
+        dropDown(ev.currentTarget, myCors)
+    }
+
+    else closeContextMenu();
 });
 ListOfFiles.addEventListener('click',(ev)=>{
     ev.preventDefault();
@@ -43,6 +48,8 @@ rootFolder.innerText = "/";
 rootFolder.addEventListener('click', function(){
     renderFileStructure("/");
     renderFilePath();
+    state.currentPath = "/";
+    state.currentFolder = "/";
 });
 filePath.appendChild(rootFolder);
 
@@ -348,14 +355,15 @@ function cutItem() {
      if(selectedItems.length) {
          console.log('selected: ', selectedItems);
          selectedItems.forEach(function (item) {
-             fetch(`/file/rename?id=${item}&to=${newParent}`, {
+             console.log('item+newparent:  ', item, newParent);
+             fetch(`/file/move?id=${item.dataset.id}&to=${newParent}`, {
                  method: 'POST',
                  headers: {
                      'Content-Type': 'text/plain',
                      'Access-Control-Allow-Origin': "*"
                  }
              }).then((data) => {
-                 console.log(data);
+                 console.log('response after moving',data);
                  renderFileStructure(state.currentFolder);
              })
                  .catch(error => console.log("Данные не получены: " + error));
