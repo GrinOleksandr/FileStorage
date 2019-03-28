@@ -12,7 +12,9 @@ document.addEventListener('contextmenu',()=>{
 
 const ListOfFiles = document.getElementById('files-list');
 ListOfFiles.addEventListener('contextmenu',(ev)=>{
-    ev.preventDefault()
+    ev.preventDefault();
+    ev.stopPropagation();
+    console.log("CORS FROM: ",ev);
     dropDown(ev.target, {
         x: ev.clientX,
         y: ev.clientY
@@ -257,6 +259,7 @@ function addItemFromServer(element) {
 }
 
 function dropDown(target, cors){
+    closeContextMenu();
     let fileId = target.dataset.id;
     let downloadBtn = document.createElement('li');
     downloadBtn.className = "dropDownItem";
