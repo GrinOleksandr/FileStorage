@@ -11,8 +11,9 @@ ListOfFiles.addEventListener('contextmenu',(ev)=>{
         x: ev.clientX,
         y: ev.clientY
     };
-        dropDown(ev.currentTarget, myCors);
-        closeContextMenu();
+    closeContextMenu();
+    dropDown(ev.currentTarget, myCors);
+
 });
 ListOfFiles.addEventListener('click',(ev)=>{
     ev.preventDefault();
