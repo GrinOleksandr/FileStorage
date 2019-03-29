@@ -11,11 +11,8 @@ ListOfFiles.addEventListener('contextmenu',(ev)=>{
         x: ev.clientX,
         y: ev.clientY
     };
-    if(state.clipBoard.length) {
-        dropDown(ev.currentTarget, myCors)
-    }
-
-    else closeContextMenu();
+        dropDown(ev.currentTarget, myCors);
+        closeContextMenu();
 });
 ListOfFiles.addEventListener('click',(ev)=>{
     ev.preventDefault();
@@ -358,7 +355,9 @@ function dropDown(target, cors){
     }
     else {
         dropDownMenu.appendChild(mkDirBtn);
-        dropDownMenu.appendChild(pasteBtn);
+        if(state.clipBoard.length) {
+            dropDownMenu.appendChild(pasteBtn);
+        }
     }
     target.appendChild(dropDownMenu);
 }
