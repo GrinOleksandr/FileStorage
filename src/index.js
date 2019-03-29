@@ -352,7 +352,6 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
         if(target.dataset.isShared === "true"){
-            console.log("TRUEEEE");
             dropDownMenu.appendChild(unShareBtn);
         }
         else  dropDownMenu.appendChild(shareBtn);
