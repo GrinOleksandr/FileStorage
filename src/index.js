@@ -444,6 +444,9 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     crateFolderWrapper.className = "modal-wrapper";
 
     let nameField = document.createElement('input');
+    nameField.addEventListener('keypress', function(ev){
+        console.log(ev);
+    });
     nameField.type= "text";
     nameField.className = "modal-fileName";
     nameField.focus();
