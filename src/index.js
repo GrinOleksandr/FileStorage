@@ -334,6 +334,7 @@ function dropDown(target, cors){
     dropDownMenu.style.position = "absolute";
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
+    dropDownMenu.style.cursor = "default";
 
     if(target.id !=='files-list') {
         dropDownMenu.appendChild(downloadBtn);
@@ -556,17 +557,9 @@ function unShareItem(id){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-
-//***************************************//
-
-//********************Click on "Ellipsis" handler********************
-
-
-
 function truncateMe(text) {
 
     if (text.length > 12) {
-        console.log(text, 'truncated to!  ', text.substr(0, 10) + "...");
         return text.substr(0, 10) + "...";
     }
     else return text

@@ -298,6 +298,7 @@ input[type="search"] {
     justify-content: center;
     align-items: center;
     font-weight: 700;
+    cursor:pointer;
 }
 
 /******************MODAL*************************/
