@@ -308,6 +308,16 @@ function dropDown(target, cors){
         closeContextMenu();
     });
 
+    let mkDirBtn = document.createElement('li');
+    mkDirBtn.className = "dropDownItem";
+    mkDirBtn.innerText = "Create folder";
+    mkDirBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        Modal();
+        closeContextMenu();
+    });
+
     let shareBtn = document.createElement('li');
     shareBtn.className = "dropDownItem";
     shareBtn.innerText = "Enable access by link";
@@ -347,7 +357,10 @@ function dropDown(target, cors){
         }
         else  dropDownMenu.appendChild(shareBtn);
     }
-    else dropDownMenu.appendChild(pasteBtn);
+    else {
+        dropDownMenu.appendChild(mkDirBtn);
+        dropDownMenu.appendChild(pasteBtn);
+    }
     target.appendChild(dropDownMenu);
 }
 
