@@ -141,6 +141,7 @@ function addAllToList(array) {
 }
 
 function addItemFromServer(element) {
+    console.log(element);
     let newItem = document.createElement("li");
     newItem.className = "file-container";
     newItem.dataset.parent = element.parent;
@@ -182,7 +183,7 @@ function addItemFromServer(element) {
     }
 
     let itemName = document.createElement("span");
-    itemName.innerText = element.name;
+    itemName.innerText = truncateMe(element.name);
     itemName.className = "file-name";
     if(element.isShared){
         itemName.classList.add('shared-item');
@@ -333,8 +334,6 @@ function dropDown(target, cors){
     dropDownMenu.style.position = "absolute";
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
-
-    console.log(target);
 
     if(target.id !=='files-list') {
         dropDownMenu.appendChild(downloadBtn);
@@ -560,6 +559,15 @@ function unShareItem(id){
 
 //***************************************//
 
+//********************Click on "Ellipsis" handler********************
 
 
 
+function truncateMe(text) {
+
+    if (text.length > 12) {
+        console.log(text, 'truncated to!  ', text.substr(0, 10) + "...");
+        return text.substr(0, 10) + "...";
+    }
+    else return text
+}
