@@ -4,12 +4,11 @@
   "description": "Grin O. FileX",
   "main": "index.js",
   "scripts": {
-    "start": "npm-run-all -p dev serv",
+    "start": "npm-run-all -p build serv",
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development --open",
     "serv": "nodemon --inspect -w server/ server/app.js",
-    "watch": "webpack  --mode production  --watch ",
-    "asd": "webpack  --mode development  --watch "
+    "watch": "webpack  --mode production  --watch "
   },
   "keywords": [
     "webpack",
