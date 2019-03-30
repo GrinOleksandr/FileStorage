@@ -12,6 +12,7 @@ ListOfFiles.addEventListener('contextmenu',(ev)=>{
         y: ev.clientY
     };
     closeContextMenu();
+    invertSelection();
     dropDown(ev.currentTarget, myCors);
 
 });
@@ -109,9 +110,9 @@ function ajaxSendFiles(){
 }
 //**********************************************************************//
 function invertSelection(){
-    if(document.querySelectorAll('.selected-item')){
-        document.querySelectorAll('.selected-item').forEach(function(item){
-            item.classList.remove('selected-item');
+    if(document.querySelectorAll('.item-selected')){
+        document.querySelectorAll('.item-selected').forEach(function(item){
+            item.classList.remove('item-selected');
         })
     }
 }
@@ -167,6 +168,7 @@ function addItemFromServer(element) {
     newItem.addEventListener('contextmenu',(ev)=> {
         ev.preventDefault();
         ev.stopPropagation();
+        invertSelection();
         selectItem(ev.currentTarget);
         closeContextMenu(ev);
         let cors = {
@@ -176,11 +178,14 @@ function addItemFromServer(element) {
         dropDown(ev.currentTarget, cors);
     });
     newItem.dataset.id = element.fileId;
+    newItem.dataset.fileName = element.name;
     if(element.isShared){
         newItem.dataset.isShared = "true";
     }
 
+
     let itemName = document.createElement("span");
+
     itemName.innerText = truncateMe(element.name);
     itemName.className = "file-name";
     if(element.isShared){
@@ -259,7 +264,7 @@ function dropDown(target, cors){
     downloadBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        let fileName = target.querySelector('.file-name').innerText;
+        let fileName = target.dataset.fileName;
         downloadFile(fileName, fileId);
     });
 
