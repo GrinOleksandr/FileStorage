@@ -39,6 +39,10 @@ rootFolder.addEventListener('click', function(){
 });
 filePath.appendChild(rootFolder);
 
+
+
+
+
 //***********************************UPLOAD***********************************//
 //upload via drag&drop
 const DropZone = document.getElementById("upload-container");
