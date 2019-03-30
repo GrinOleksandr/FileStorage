@@ -11,11 +11,13 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     suid = require('rand-token').suid,
     fileRouter = express.Router();
 
+fileRouter.use(fileUpload());
 fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    FileStorageDb.find({parent : parsedUrl.query.folder})
+    console.log('MY USER !@!#@!#@#@!', req.user.username);
+    FileStorageDb.find({parent : parsedUrl.query.folder, owner: req.user.username})
         .select('-_id -__v')
         .exec(function (err, Result) {
             let responseString = JSON.stringify(Result);
@@ -40,7 +42,7 @@ fileRouter.use('/download', function (req, res) {
     });
 
 });
-fileRouter.use(fileUpload());
+
 fileRouter.use('/upload', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     if (Object.keys(req.files).length === 0) {
@@ -70,7 +72,7 @@ fileRouter.use('/upload', function (req, res) {
             addFileToDataBase(uploadedFile);
         }
     }
-    console.log('***File uploaded' , req.user.username);
+    console.log('***File uploaded' , 'owner', req.user.username);
     res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': "*"});
     res.end('File uploaded!');
 });

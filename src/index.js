@@ -117,7 +117,7 @@ function invertSelection(){
 }
 
 function renderFileStructure (folder = "/") {
-    fetch(`http://127.0.0.1:8000/file/listfiles?folder=${folder}`, {
+    fetch(`/file/listfiles?folder=${folder}`, {
         method: 'POST'
     }).then(function (response) {
         return response.text()
