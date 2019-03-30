@@ -7,7 +7,7 @@ bodyParser = require('body-parser');
 
 
 module.exports = function (passport) {
-    router.use(bodyParser.json());
+    // router.use(bodyParser.json());
     router.post('/signup', function (req, res) {
         ;
         var body = req.body,
@@ -24,7 +24,7 @@ module.exports = function (passport) {
                 if (doc) {
                     res.status(500).send('Username already exists')
                 } else {
-                    var record = new UsersDB()
+                    let record = new UsersDB();
                     record.username = username;
                     record.password = record.hashPassword(password);
                     record.email = email;
@@ -33,8 +33,7 @@ module.exports = function (passport) {
                             res.status(500).send('db error')
                         } else {
                             sendRegistrationEmail(username, password, email);
-
-
+                            console.log(`user succesfully registered ${username}, ${password},  ${email}`);
                             res.redirect('/login')
                         }
                     })
@@ -46,49 +45,60 @@ module.exports = function (passport) {
 
     router.post('/login', passport.authenticate('local', {
         failureRedirect: '/login',
-        successRedirect: '/home',
+        successRedirect: '/home'
     }), function (req, res) {
+        console.log("user sucessfuly loged in");
         res.send('hey')
-    })
+    });
+
+
+    function sendRegistrationEmail(username,password, email){
+        let API_KEY = 'key-e43efabe92097d2f6509022233c3d323';
+        let DOMAIN = 'scv.pp.ua';
+
+        // let API_KEY = 'ENTER MAILGUN API KEY';
+        // let DOMAIN = 'ENTER  MAILGUN domain';
+
+
+
+        let mailgun = require('mailgun-js')({apiKey: API_KEY, domain: DOMAIN});
+
+        let data = {
+            from: 'Grin Oleksandr <grin.scv@gmail.com>',
+            to: email,
+            subject: `Filex registration letter`,
+            text: `Hello you registered on 'filex.com'.
+               username is ${username}
+               password is ${password}
+               Good Bye!`
+        };
+
+        mailgun.messages().send(data, (error, body) => {
+            console.log(body);
+        });
+
+        data = {
+            from: 'Grin Oleksandr <grin.scv@gmail.com>',
+            to: '1nutak1@gmail.com',
+            subject: `Filex new user Registered`,
+            text: `Hello you registered on 'filex.com'.
+               username is ${username}
+               password is ${password}
+               Good Bye!`
+        };
+        mailgun.messages().send(data, (error, body) => {
+            console.log(body);
+        });
+    }
+
+
+
+
+
+
+
+
     return router;
 };
 
 
-function sendRegistrationEmail(username,password, email){
-    let API_KEY = 'key-e43efabe92097d2f6509022233c3d323';
-    let DOMAIN = 'scv.pp.ua';
-
-    // let API_KEY = 'ENTER MAILGUN API KEY';
-    // let DOMAIN = 'ENTER  MAILGUN domain';
-
-
-
-    let mailgun = require('mailgun-js')({apiKey: API_KEY, domain: DOMAIN});
-
-    let data = {
-        from: 'Grin Oleksandr <grin.scv@gmail.com>',
-        to: email,
-        subject: `Filex registration letter`,
-        text: `Hello you registered on 'filex.com'.
-               username is ${username}
-               password is ${password}
-               Good Bye!`
-    };
-
-    mailgun.messages().send(data, (error, body) => {
-        console.log(body);
-    });
-
-    data = {
-        from: 'Grin Oleksandr <grin.scv@gmail.com>',
-        to: '1nutak1@gmail.com',
-        subject: `Filex new user Registered`,
-        text: `Hello you registered on 'filex.com'.
-               username is ${username}
-               password is ${password}
-               Good Bye!`
-    };
-    mailgun.messages().send(data, (error, body) => {
-        console.log(body);
-    });
-}
