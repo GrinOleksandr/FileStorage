@@ -26,7 +26,6 @@ const DB = require('./DB/db.js'),
 require('./passport')(passport);
 mongoose.Promise = global.Promise;
 
-
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -43,11 +42,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-
-
-
 let loggedin = function (req, res, next) {
     if (req.isAuthenticated()) {
         next()
@@ -55,7 +49,6 @@ let loggedin = function (req, res, next) {
         res.redirect('/login')
     }
 };
-
 
 app.use("/file", fileRouter);
 
@@ -73,26 +66,20 @@ app.get('/home',loggedin , function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/home.html'));
 });
 
-
 app.get('/signup', function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/signup.html'));
 });
 
 app.use('/auth', auth);
 
-app.get('/profile', loggedin, function (req, res, next) {
-    res.render('profile', {
-        user: req.user
-    })
-});
-
-
 app.get('/logout', function (req, res) {
     req.logout();
     res.redirect('/')
 });
 
-
+app.get('/shared', function (req, res, next) {
+    res.sendFile(path.join(__dirname+'./../public/shared.html'));
+});
 
 
 
