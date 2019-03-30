@@ -66,6 +66,10 @@ app.get('/login', function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/login.html'));
 });
 
+app.get('/home', function (req, res, next) {
+    res.sendFile(path.join(__dirname+'./../public/home.html'));
+});
+
 
 app.get('/signup', function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/signup.html'));
