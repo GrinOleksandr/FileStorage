@@ -169,7 +169,7 @@ function addItemFromServer(element) {
         ev.preventDefault();
         ev.stopPropagation();
         invertSelection();
-        selectItem(ev.currentTarget);
+        // selectItem(ev.currentTarget);
         closeContextMenu(ev);
         let cors = {
             x: ev.clientX,
