@@ -53,6 +53,7 @@ fileRouter.use('/upload', function (req, res) {
             if (item.mimetype) {
                 item.fileId = suid(16);
                 item.parent = parsedUrl.query.parent;
+                item.owner = req.user.username;
                 uploadFile(item);
                 addFileToDataBase(item);
             }
@@ -64,11 +65,12 @@ fileRouter.use('/upload', function (req, res) {
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = suid(16);
             uploadedFile.parent = parsedUrl.query.parent;
+            uploadedFile.owner = req.user.username;
             uploadFile(uploadedFile);
             addFileToDataBase(uploadedFile);
         }
     }
-    console.log('***File uploaded');
+    console.log('***File uploaded' , req.user.username);
     res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': "*"});
     res.end('File uploaded!');
 });
@@ -87,7 +89,7 @@ fileRouter.use('/createfolder', function (req, res) {
         mimetype: "folder",
         link: `${this.fileId}${suid(16)}`,
         uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
-        owner: "SashaGrin",
+        owner: req.user.username,
         access: "SashaGrin",
         parent: parsedUrl.query.parent,
         isShared: false
@@ -178,6 +180,7 @@ function uploadFile(file) {
     });
 }
 function addFileToDataBase(target) {
+
     console.log(target);
     let name = target.name || "unnamed",
         fileId = target.fileId || "",
@@ -189,7 +192,7 @@ function addFileToDataBase(target) {
         isFolder = target.isFolder || false,
         parent = target.parent || "/",
         isShared = target.isShared || false;
-
+console.log(target);
     FileStorageDb.create(
         {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder, isShared},
         function (err) {
