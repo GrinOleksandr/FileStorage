@@ -27,7 +27,7 @@ require('./passport')(passport);
 mongoose.Promise = global.Promise;
 
 
-
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
@@ -55,6 +55,9 @@ let loggedin = function (req, res, next) {
         res.redirect('/login')
     }
 };
+
+
+app.use("/file", fileRouter);
 
 /* GET home page. */
 app.get('/',loggedin, function (req, res, next) {
@@ -120,19 +123,18 @@ app.get('/logout', function (req, res) {
 
 
 // Serve static files
-app.use(express.static(path.join(__dirname, '../public')));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname+'../public'));
-});
+
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname+'../public'));
+// });
 
 ///////// Routes setup Setup
-app.get("/testtest", function(req,res){
-    res.end('dfdfsfdsfdsfsd');
-});
-app.use(bodyParser.json());
-app.use("/file", fileRouter);
-app.use("/user", userRouter);
+// app.get("/testtest", function(req,res){
+//     res.end('dfdfsfdsfdsfsd');
+// });
+// app.use(bodyParser.json());
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 

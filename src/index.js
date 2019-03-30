@@ -70,8 +70,8 @@ DropZone.addEventListener('drop', function(e){
     ajaxSendFiles();
 });
 
-let createFolderBtn = document.getElementById('create-folder');
-createFolderBtn.addEventListener('click',Modal);
+// let createFolderBtn = document.getElementById('create-folder');
+// createFolderBtn.addEventListener('click',Modal);
 
 //upload via input field
 const FileInput = document.getElementById("file-input");
