@@ -147,6 +147,7 @@ function addItemFromServer(element) {
     newItem.addEventListener('click', (ev) =>{
         ev.preventDefault();
         ev.stopPropagation();
+        closeContextMenu();
         selectItem(ev.currentTarget);
     });
      if(element.isFolder) {
