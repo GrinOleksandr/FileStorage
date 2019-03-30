@@ -69,7 +69,7 @@ app.get('/login', function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/login.html'));
 });
 
-app.get('/home', function (req, res, next) {
+app.get('/home',loggedin , function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/home.html'));
 });
 
