@@ -1,5 +1,6 @@
 'use strict';
 const DB = require('./DB/db.js'),
+    UsersDB = require('./DB/usersDB'),
     config = require('./config'),
     express = require('express'),
     app =express(),
@@ -17,10 +18,101 @@ const DB = require('./DB/db.js'),
     mongoose = require('mongoose'),
     path = require('path'),
     passport = require('passport'),
-    expressSession = require('express-session');
+    expressSession = require('express-session'),
+    cookieParser = require('cookie-parser'),
+    auth = require('./router/auth.js')(passport),
+    session = require('express-session');
 
-
+require('./passport')(passport);
 mongoose.Promise = global.Promise;
+
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(cookieParser());
+
+app.use(session({
+    secret: 'thesecret',
+    saveUninitialized: false,
+    resave: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
+
+
+
+let loggedin = function (req, res, next) {
+    if (req.isAuthenticated()) {
+        next()
+    } else {
+        res.redirect('/login')
+    }
+};
+
+/* GET home page. */
+app.get('/',loggedin, function (req, res, next) {
+    res.sendFile(path.join(__dirname+'./../public/home.html'));
+});
+
+
+app.get('/login', function (req, res, next) {
+    res.sendFile(path.join(__dirname+'./../public/login.html'));
+});
+
+
+app.get('/signup', function (req, res, next) {
+    res.sendFile(path.join(__dirname+'./../public/signup.html'));
+});
+
+app.use('/auth', auth);
+
+app.get('/profile', loggedin, function (req, res, next) {
+    res.render('profile', {
+        user: req.user
+    })
+});
+
+
+app.get('/logout', function (req, res) {
+    req.logout();
+    res.redirect('/')
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Serve static files

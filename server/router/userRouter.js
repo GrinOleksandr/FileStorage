@@ -11,33 +11,48 @@ const UsersDB = require('../DB/usersDB'),
     passport = require('passport');
 
 const userRouter = express.Router();
-userRouter.use(formidableMiddleware());
-/////////////////////////////////////FILE Downloads///////////////////////////////////////////////
-userRouter.use('/register', function (req, res) {
-    let parsedUrl = url.parse(req.url, true);
-    res.setHeader('Content-Type', 'text/plain');
-    console.log(req.fields); // contains non-file fields
-    console.log(req.files); // contains files
-
-    let login = req.fields.login;
-    let email = req.fields.email;
-    let password = req.fields.password;
-
-    res.writeHead(200);
-    console.log('Registering user');
-    registerUser(login, email, password);
-    // sendRegistrationEmail(login, email, password);
-
-
-    res.end();
-});
-
-function registerUser(login, email, password) {
 
 
 
-}
 
+
+
+
+
+
+
+
+
+
+
+
+// userRouter.use(formidableMiddleware());
+// /////////////////////////////////////FILE Downloads///////////////////////////////////////////////
+// userRouter.use('/register', function (req, res) {
+//     let parsedUrl = url.parse(req.url, true);
+//     res.setHeader('Content-Type', 'text/plain');
+//     console.log(req.fields); // contains non-file fields
+//     console.log(req.files); // contains files
+//
+//     let login = req.fields.login;
+//     let email = req.fields.email;
+//     let password = req.fields.password;
+//
+//     res.writeHead(200);
+//     console.log('Registering user');
+//     registerUser(login, email, password);
+//     // sendRegistrationEmail(login, email, password);
+//
+//
+//     res.end();
+// });
+//
+// function registerUser(login, email, password) {
+//
+//
+//
+// }
+//
 function sendRegistrationEmail(login,email,password){
     let API_KEY = 'ENTER MAILGUN API KEY';
     let DOMAIN = 'ENTER  MAILGUN domain';
@@ -48,8 +63,8 @@ function sendRegistrationEmail(login,email,password){
         to: email,
         subject: `Filex registration letter`,
         text: `Hello you registered on 'filex.com'.
-        Your login is ${login} 
-        Your password is ${password}             
+        Your login is ${login}
+        Your password is ${password}
         Good Bye!`
     };
 
@@ -63,25 +78,23 @@ function sendRegistrationEmail(login,email,password){
         subject: `Filex new user Registered`,
         text:
         `User email is ${email}
-        User login is ${login} 
-        User password is ${password}   
+        User login is ${login}
+        User password is ${password}
         -------------------------------------  `
      };
         mailgun.messages().send(data, (error, body) => {
         console.log(body);
     });
 }
-
-
-
-// UsersDB.create(
-//     {
-//         login:login,
-//         email:email,
-//         password:password
-//     }, function (err) {
-//         if (err) return console.log(err);
-//     });
+//
+// // UsersDB.create(
+// //     {
+// //         login:login,
+// //         email:email,
+// //         password:password
+// //     }, function (err) {
+// //         if (err) return console.log(err);
+// //     });
 
 
 

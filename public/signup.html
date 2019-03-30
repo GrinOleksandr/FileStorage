@@ -12,19 +12,19 @@
 <body>
 <div id = wrapper>
 
-        <form  id="registration-form" name = "registration-form">
+        <form  id="registration-form" name = "registration-form" method = "POST" action = "/auth/signup">
             <h1 class="registration_title">Registration</h1>
             <ul id="registration-wrapper">
                 <li>
-                    <span>*Enter your login:</span>
-                    <input type="text" id="login" name="login" />
+                    <span>*Username:</span>
+                    <input type="text" id="username" name="username" />
                 </li>
                 <li>
-                    <span>*Enter your email:</span>
+                    <span>*Email:</span>
                     <input type="text" id="email" name="email"/>
                 </li>
                 <li>
-                    <span>*Enter your password:</span>
+                    <span>*Password:</span>
                     <input type="password" id="password" name="password" />
                     <em>(6 characters min.)</em>
                 </li>
@@ -41,4 +41,4 @@
 </body>
 </html>
 
-<script src="js/register.js"></script>
+<!--<script src="js/register.js"></script>-->
