@@ -169,7 +169,9 @@ function addItemFromServer(element) {
     newItem.addEventListener('contextmenu',(ev)=> {
         ev.preventDefault();
         ev.stopPropagation();
-        invertSelection();
+        if(!ev.currentTarget.classList.contains("item-selected")) {
+            invertSelection();
+        }
         // selectItem(ev.currentTarget);
         closeContextMenu(ev);
         let cors = {
