@@ -1,11 +1,15 @@
-let parsedUrl = (new URL(document.location)).searchParams;
+let parsedUrl = new URL(window.location.href);
 let link = parsedUrl.params.get("file");
-console.log(parsedUrl);
+// let params = new URL(document.location);
+// let name = params.get('file');
 console.log(link);
+// console.log(parsedUrl);
+// console.log(name);
 
-document.addEventListener("DOMContentLoaded", function() {
-    handleSharedFileDownloadAtempt(link)
-});
+// document.addEventListener("DOMContentLoaded", function() {
+//     handleSharedFileDownloadAtempt(link)
+
+// });
 
 
 
