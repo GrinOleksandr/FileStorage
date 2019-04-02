@@ -11,7 +11,8 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     suid = require('rand-token').suid,
     fileRouter = express.Router(),
     TokenGenerator = require('uuid-token-generator'),
-    tokgen = new TokenGenerator();
+    tokgen = new TokenGenerator(),
+    archiver = require('archiver');
 
 fileRouter.use(fileUpload());
 fileRouter.use(bodyParser.json());
@@ -44,7 +45,31 @@ fileRouter.use('/download', function (req, res) {
     });
 
 });
-fileRouter.use('/downloadshared', function (req, res) {
+fileRouter.use('/downloadsharedfile', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    FileStorageDb.find({fileId: parsedUrl.query.file}, function (err, file) {
+        if (err) return console.log(err);
+        console.log('filefile',file);
+        if (file && file[0].isShared) {
+            fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.end(data);
+            });
+        }
+    });
+
+});
+fileRouter.use('/downloadsharedfolder', function (req, res) {
+    let output = fs.createWriteStream(__dirname + '/temp.zip');
+    let archive = archiver('zip', {
+        zlib: { level: 9 } // Sets the compression level.
+    });
+
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -160,7 +185,6 @@ fileRouter.use('/getelement', function(req, res) {
             res.end(responseString);
         });
 });
-
 fileRouter.use('/getsharedfile', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     console.log('Requested shared file!: ', parsedUrl.query.file);

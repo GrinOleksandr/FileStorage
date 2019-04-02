@@ -1,7 +1,9 @@
 let params = (new URL(document.location)).searchParams;
 let file = params.get('file');
 let fileNameField = document.getElementById('shared-file');
-let downloadBtn = document.getElementById('downloadSharedFile');
+let downloadSharedFileBtn = document.getElementById('downloadSharedFile');
+let filesContainer = document.getElementById('shared-file-info-wrapper');
+
 
 
 
@@ -9,7 +11,6 @@ let downloadBtn = document.getElementById('downloadSharedFile');
 
 document.addEventListener("DOMContentLoaded", function() {
     handleSharedFileDownloadAtempt(file)
-
 });
 
 
@@ -37,16 +38,22 @@ function handleSharedFileDownloadAtempt(link){
 
 function renderShareFilePage(requestedFile){
     console.log("requesting file!", requestedFile);
-    fileNameField.innerText = requestedFile.name;
-    downloadBtn.addEventListener('click', () =>{
-        console.log('donwloasdiads');
-        downloadFile(requestedFile.name, requestedFile.fileId)
-    })
+    if(requestedFile.isShared) {
+        if (requestedFile.isFolder) {
+
+        }
+        fileNameField.innerText = requestedFile.name;
+        downloadSharedFileBtn.addEventListener('click', () => {
+            console.log('donwloasdiads');
+            downloadSharedFile(requestedFile.name, requestedFile.fileId)
+        })
+    }
+    else filesContainer.innerHTML = "<h3>Access denied</h3>";
 }
 
-function downloadFile(fileName, fileId){
+function downloadSharedFile(fileName, fileId){
     console.log(fileId);
-    fetch(`/file/downloadshared?file=${fileId}`, {
+    fetch(`/file/downloadsharedfile?file=${fileId}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
