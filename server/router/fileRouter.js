@@ -44,7 +44,24 @@ fileRouter.use('/download', function (req, res) {
     });
 
 });
+fileRouter.use('/downloadshared', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    FileStorageDb.find({name: parsedUrl.query.id}, function (err, file) {
+        if (err) return console.log(err);
+        if (file && file.isShared) {
+            fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.end(data);
+            });
+        }
+    });
 
+});
 fileRouter.use('/upload', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     if (Object.keys(req.files).length === 0) {

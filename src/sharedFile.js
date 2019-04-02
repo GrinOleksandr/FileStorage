@@ -1,6 +1,8 @@
 let params = (new URL(document.location)).searchParams;
 let file = params.get('file');
 let fileNameField = document.getElementById('shared-file');
+let downloadBtn = document.getElementById('downloadSharedFile');
+
 
 
 
@@ -36,5 +38,21 @@ function handleSharedFileDownloadAtempt(link){
 function renderShareFilePage(requestedFile){
     console.log("requesting file!", requestedFile);
     fileNameField.innerText = requestedFile.name;
-
+    downloadBtn.addEventListener('click', () =>{
+        downloadFile(requestedFile.name, requestedFile.fileId)
+    })
 }
+
+function downloadFile(fileName, fileId){
+    fetch(`/file/downloadshared?file=${fileId}`, {
+        method: 'GET',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    })
+        .then(response => response.blob())
+        .then((blob) => saveAs(blob, fileName))
+        .catch(error => console.log("Данные не получены: " + error));
+}
+
+
