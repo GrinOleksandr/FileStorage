@@ -150,9 +150,10 @@ fileRouter.use('/getsharedfile', function(req, res) {
     FileStorageDb.find({link : parsedUrl.query.file})
         .select('-_id -__v')
         .exec(function (err, Result) {
-            let responseString = JSON.stringify(Result);
-            console.log('Requested shared file!: ', Result);
-            res.end(responseString);
+            if(Result[0].isShared) {
+                let responseString = JSON.stringify(Result);
+                res.end(responseString);
+            }
         });
 });
 
