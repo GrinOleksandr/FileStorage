@@ -7,7 +7,7 @@ let ExtractTextPlugin = require("extract-text-webpack-plugin");
 let conf = {
     entry: {
         main: './src/index.js',
-        shareFile: './src/shareFile.js',
+        sharedFile: './src/sharedFile.js',
 
     },
     output: {

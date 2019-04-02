@@ -37,7 +37,8 @@
     "rand-token": "^0.4.0",
     "socket.io": "^1.7.2",
     "tmp": "0.0.33",
-    "type-is": "^1.6.16"
+    "type-is": "^1.6.16",
+    "uuid-token-generator": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

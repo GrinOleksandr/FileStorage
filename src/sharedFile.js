@@ -1,5 +1,7 @@
-let parsedUrl = new URL(window.location.href);
-let link = parsedUrl.searchParams.get("link");
+let parsedUrl = (new URL(document.location)).searchParams;
+let link = parsedUrl.params.get("file");
+console.log(parsedUrl);
+console.log(link);
 
 document.addEventListener("DOMContentLoaded", function() {
     handleSharedFileDownloadAtempt(link)
@@ -9,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function handleSharedFileDownloadAtempt(link){
 
-    fetch(`/file/getsharedfile?link=${link}`, {
+    fetch(`/file/getsharedfile?file=${link}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"

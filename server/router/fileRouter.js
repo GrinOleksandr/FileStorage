@@ -141,15 +141,17 @@ fileRouter.use('/getelement', function(req, res) {
             let responseString = JSON.stringify(Result);
             res.end(responseString);
         });
-})
+});
 
 fileRouter.use('/getsharedfile', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
+    console.log('Requested shared file!: ', parsedUrl.query.file);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    FileStorageDb.find({link : parsedUrl.query.link})
+    FileStorageDb.find({link : parsedUrl.query.file})
         .select('-_id -__v')
         .exec(function (err, Result) {
             let responseString = JSON.stringify(Result);
+            console.log('Requested shared file!: ', Result);
             res.end(responseString);
         });
 });

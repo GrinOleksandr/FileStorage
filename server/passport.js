@@ -27,7 +27,7 @@ module.exports = function (passport) {
                             id: doc._id
                         })
                     } else {
-                        c
+
                         done(null, false)
                     }
                 } else {
