@@ -51,7 +51,8 @@ fileRouter.use('/downloadshared', function (req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     FileStorageDb.find({fileId: parsedUrl.query.file}, function (err, file) {
         if (err) return console.log(err);
-        if (file && file.isShared) {
+        console.log('filefile',file);
+        if (file && file[0].isShared) {
             fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
                 if (err) {
                     return res.status(500).send(err);
