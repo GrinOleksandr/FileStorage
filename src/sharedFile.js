@@ -39,11 +39,13 @@ function renderShareFilePage(requestedFile){
     console.log("requesting file!", requestedFile);
     fileNameField.innerText = requestedFile.name;
     downloadBtn.addEventListener('click', () =>{
+        console.log('donwloasdiads');
         downloadFile(requestedFile.name, requestedFile.fileId)
     })
 }
 
 function downloadFile(fileName, fileId){
+    console.log(fileId);
     fetch(`/file/downloadshared?file=${fileId}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',

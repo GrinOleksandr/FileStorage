@@ -31,7 +31,7 @@ fileRouter.use('/download', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    FileStorageDb.find({name: parsedUrl.query.id}, function (err, file) {
+    FileStorageDb.find({fileId: parsedUrl.query.id}, function (err, file) {
         if (err) return console.log(err);
         if (file) {
             fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
@@ -49,7 +49,7 @@ fileRouter.use('/downloadshared', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    FileStorageDb.find({name: parsedUrl.query.id}, function (err, file) {
+    FileStorageDb.find({fileId: parsedUrl.query.file}, function (err, file) {
         if (err) return console.log(err);
         if (file && file.isShared) {
             fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
