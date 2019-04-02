@@ -9,14 +9,16 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     fs = require('fs'),
     mongoose = require('mongoose'),
     suid = require('rand-token').suid,
-    fileRouter = express.Router();
+    fileRouter = express.Router(),
+    TokenGenerator = require('uuid-token-generator'),
+    tokgen = new TokenGenerator();
 
 fileRouter.use(fileUpload());
 fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('MY USER !@!#@!#@#@!', req.user.username);
+    console.log('MY USER', req.user.username);
     FileStorageDb.find({parent : parsedUrl.query.folder, owner: req.user.username})
         .select('-_id -__v')
         .exec(function (err, Result) {
@@ -53,7 +55,7 @@ fileRouter.use('/upload', function (req, res) {
         uploadedFiles.forEach(function (item) {
             console.log("****INCOMING FILE  ", item);
             if (item.mimetype) {
-                item.fileId = suid(16);
+                item.fileId = tokgen.generate();
                 item.parent = parsedUrl.query.parent;
                 item.owner = req.user.username;
                 uploadFile(item);
@@ -65,7 +67,7 @@ fileRouter.use('/upload', function (req, res) {
         let uploadedFile = req.files.fileInput;
         console.log("****INCOMING FILE  ", uploadedFile);
         if (uploadedFile.mimetype) {
-            uploadedFile.fileId = suid(16);
+            uploadedFile.fileId = tokgen.generate();
             uploadedFile.parent = parsedUrl.query.parent;
             uploadedFile.owner = req.user.username;
             uploadFile(uploadedFile);
@@ -86,7 +88,7 @@ fileRouter.use('/createfolder', function (req, res) {
     res.writeHead(200);
     let folder = {
         name: parsedUrl.query.name,
-        fileId: suid(16),
+        fileId: tokgen.generate(),
         isFolder: true,
         mimetype: "folder",
         link: `${this.fileId}${suid(16)}`,
@@ -133,14 +135,25 @@ fileRouter.use('/delete', function (req, res) {
 fileRouter.use('/getelement', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('rendering filestructure for: ', parsedUrl.query.folder );
     FileStorageDb.find({fileId : parsedUrl.query.id})
         .select('-_id -__v')
         .exec(function (err, Result) {
             let responseString = JSON.stringify(Result);
             res.end(responseString);
         });
+})
+
+fileRouter.use('/getsharedfile', function(req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
+    FileStorageDb.find({link : parsedUrl.query.link})
+        .select('-_id -__v')
+        .exec(function (err, Result) {
+            let responseString = JSON.stringify(Result);
+            res.end(responseString);
+        });
 });
+
 fileRouter.use('/move', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
@@ -187,7 +200,7 @@ function addFileToDataBase(target) {
     let name = target.name || "unnamed",
         fileId = target.fileId || "",
         mimetype = target.mimetype || "",
-        link = target.link || `${target.fileId}${suid(16)}`,
+        link = target.link || tokgen.generate(),
         uploadDate = moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner = target.owner || "SashaGrin",
         access = target.access || [],

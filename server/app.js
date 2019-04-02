@@ -57,7 +57,6 @@ app.get('/',loggedin, function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/home.html'));
 });
 
-
 app.get('/login', function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/login.html'));
 });
@@ -80,6 +79,8 @@ app.get('/logout', function (req, res) {
 app.get('/shared', function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/shared.html'));
 });
+
+
 
 
 

@@ -7,8 +7,8 @@ let ExtractTextPlugin = require("extract-text-webpack-plugin");
 let conf = {
     entry: {
         main: './src/index.js',
-        register: './src/register.js',
-        login: './src/login.js'
+        shareFile: './src/shareFile.js',
+
     },
     output: {
         path: path.resolve(__dirname, 'public/js/'),

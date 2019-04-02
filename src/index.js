@@ -592,3 +592,15 @@ function truncateMe(text) {
     }
     else return text
 }
+
+function handleSharedFileownload(fileName, fileId){
+    fetch(`/file/download?id=${fileId}`, {
+        method: 'GET',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    })
+        .then(response => response.blob())
+        .then((blob) => saveAs(blob, fileName))
+        .catch(error => console.log("Данные не получены: " + error));
+}
