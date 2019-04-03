@@ -112,7 +112,7 @@ fileRouter.use('/upload', function (req, res) {
     else {
         let uploadedFile = req.files.fileInput;
         console.log('FILESFILES!!!!', req.files);
-        console.log("****INCOMING FILE faaaaaaaaaa ", req.files.fileInput.size);
+        console.log("****INCOMING FILE faaaaaaaaaa ", uploadedFile.data.length);
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = tokgen.generate();
             uploadedFile.parent = parsedUrl.query.parent;
@@ -213,7 +213,6 @@ fileRouter.use('/getsharedfileinfo', function(req, res) {
 
         });
 });
-
 fileRouter.use('/move', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
@@ -258,6 +257,7 @@ function addFileToDataBase(target) {
 
     console.log(target);
     let name = target.name || "unnamed",
+        size = target.size,
         fileId = target.fileId || "",
         mimetype = target.mimetype || "",
         link = target.link || tokgen.generate(),
@@ -269,7 +269,7 @@ function addFileToDataBase(target) {
         isShared = target.isShared || false;
 console.log(target);
     FileStorageDb.create(
-        {name, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder, isShared},
+        {name, size, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder, isShared},
         function (err) {
             if (err) return console.log(err);
         })

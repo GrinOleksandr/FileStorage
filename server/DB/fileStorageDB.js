@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const fileStorageSchema = new mongoose.Schema({
     name : String,
+    size: Number,
     fileId:String,
     mimetype : String,
     link: String,
@@ -13,5 +14,5 @@ const fileStorageSchema = new mongoose.Schema({
     isFolder: Boolean
 });
 
-let fileStorageDB = mongoose.model('FileStorage1234223', fileStorageSchema );
+let fileStorageDB = mongoose.model('FileStorage123334223', fileStorageSchema );
 module.exports = fileStorageDB ;
