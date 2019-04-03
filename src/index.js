@@ -364,20 +364,20 @@ function dropDown(target, cors){
         itemInfo.className = 'item-info-block';
         if(!target.dataset.isFolder) {
             itemInfo.innerHTML =
-                `<p><span>Name:</span> ${target.dataset.fileName}</p>
-         <p><span>Size:</span> ${target.dataset.size}</p>
-         <p><span>Uploaded on:</span> ${target.dataset.uploadDate}</p>
-         <p><span>Owner:</span> ${target.dataset.owner}</p>
-         <p><span>Shared to:</span> ${target.dataset.sharedTo || ""}</p>`
+                `<p><span>Name:</span> "${target.dataset.fileName}"</p>
+         <p><span>Size:</span> "${target.dataset.size}"</p>
+         <p><span>Uploaded on:</span> "${target.dataset.uploadDate}"</p>
+         <p><span>Owner:</span> "${target.dataset.owner}"</p>
+         <p><span>Shared to:</span> "${target.dataset.sharedTo || ""}"</p>`
         }
 
         else {
             itemInfo.innerHTML =
-                `<p><span>Name:</span> ${target.dataset.fileName}</p>
+                `<p><span>Name:</span>"${target.dataset.fileName}"</p>
          
-         <p><span>Uploaded on:</span> ${target.dataset.uploadDate}</p>
-         <p><span>Owner:</span> ${target.dataset.owner}</p>
-         <p><span>Shared to:</span> ${target.dataset.sharedTo || ""}</p>`
+         <p><span>Uploaded on:</span> "${target.dataset.uploadDate}"</p>
+         <p><span>Owner:</span> "${target.dataset.owner}"</p>
+         <p><span>Shared to:</span>" ${target.dataset.sharedTo || ""}"</p>`
         }
 
         document.getElementById('infoOfFile').appendChild(itemInfo);
