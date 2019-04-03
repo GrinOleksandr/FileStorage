@@ -14,6 +14,16 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     tokgen = new TokenGenerator(),
     archiver = require('archiver');
 
+
+
+
+
+
+
+
+
+
+
 fileRouter.use(fileUpload());
 fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', function(req, res) {
@@ -35,7 +45,8 @@ fileRouter.use('/download', function (req, res) {
     FileStorageDb.find({fileId: parsedUrl.query.id}, function (err, file) {
         if (err) return console.log(err);
         if (file) {
-            fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
+            console.log('file found: ', file[0].fileId);
+            fs.readFile(`${config.fileStoragePath}${file[0].fileId}`, function (err, data) {
                 if (err) {
                     return res.status(500).send(err);
                 }
@@ -54,7 +65,7 @@ fileRouter.use('/downloadsharedfile', function (req, res) {
         if (err) return console.log(err);
         console.log('filefile',file);
         if (file && file[0].isShared) {
-            fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
+            fs.readFile(`${config.fileStoragePath}${file[0].fileId}`, function (err, data) {
                 if (err) {
                     return res.status(500).send(err);
                 }
@@ -78,7 +89,7 @@ fileRouter.use('/downloadsharedfolder', function (req, res) {
         if (err) return console.log(err);
         console.log('filefile',file);
         if (file && file[0].isShared) {
-            fs.readFile(`${config.fileStoragePath}${file.name}`, function (err, data) {
+            fs.readFile(`${config.fileStoragePath}${file[0].fileId}`, function (err, data) {
                 if (err) {
                     return res.status(500).send(err);
                 }
@@ -302,8 +313,6 @@ function digAndShare(id){
             });
         console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
-
-
 }
 
 function shareItem(idToShare) {
@@ -341,8 +350,65 @@ function unShareItem(id) {
     console.log('root element access closed', id)
 }
 
+// function digAndArchive(id){
+//     let childrenArray = [];
+//     lookForChildren(id);
+//     function lookForChildren(id){
+//         childrenArray.push(id);
+//         FileStorageDb.find({parent : id})
+//             .select('-_id -__v')
+//             .exec(function (err, result) {
+//                 if(result.length) {
+//                     result.forEach(function(item){
+//                         console.log('i am child!: ', item);
+//                         lookForChildren(item.fileId);
+//                     })
+//                 }
+//                 console.log('my children is: ', result);
+//             });
+//         console.log('********* PARSEd CHILREN!: ', childrenArray)
+//     }
 
 
+//
+//     //ARCHIVER!!
+//      let archive = archiver('zip', {
+//         zlib: { level: 9 } // Sets the compression level.
+//     });
+//     let output = fs.createWriteStream(__dirname + '/temp.zip');
+//
+//     archive.pipe(output);
+//
+//     let getStream = function(fileName){
+//         return fs.readFileSync(fileName);
+//     };
+//
+// //these are the files, want to put into zip archive
+//     let fileNames = ['mock1.data', 'mock2.data', 'mock3.data'];
+//
+//     for(i=0; i<fileNames.length; i++){
+//         let path = __dirname + '/'+fileNames[i];
+//         archive.append(getStream(path), { name: fileNames[i]});
+//     }
+//
+//     archive.finalize(function(err, bytes) {
+//         if (err) {
+//             throw err;
+//         }
+//
+//         console.log(bytes + ' total bytes');
+//     });
+//
+// //////////////////////
+//
+//
+//
+//
+// }
+//
+// function archiveThisItem(id , name){
+//     archive.file(id, { name: name });
+// }
 
 
 module.exports = fileRouter;
