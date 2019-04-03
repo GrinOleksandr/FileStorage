@@ -76,25 +76,16 @@ fileRouter.use('/downloadsharedfile', function (req, res) {
 
 });
 fileRouter.use('/downloadsharedfolder', function (req, res) {
-    let output = fs.createWriteStream(__dirname + '/temp.zip');
-    let archive = archiver('zip', {
-        zlib: { level: 9 } // Sets the compression level.
-    });
 
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    FileStorageDb.find({fileId: parsedUrl.query.file}, function (err, file) {
+    FileStorageDb.find({fileId: parsedUrl.query.folder}, function (err, file) {
         if (err) return console.log(err);
         console.log('filefile',file);
-        if (file && file[0].isShared) {
-            fs.readFile(`${config.fileStoragePath}${file[0].fileId}`, function (err, data) {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-                res.end(data);
-            });
+        if (file && file[0].isShared && file[0].isFolder) {
+            digAndArchive(file[0].fileId);
         }
     });
 
@@ -203,10 +194,12 @@ fileRouter.use('/getsharedfile', function(req, res) {
     FileStorageDb.find({link : parsedUrl.query.file})
         .select('-_id -__v')
         .exec(function (err, Result) {
+            console.log(Result);
             if(Result[0].isShared) {
                 let responseString = JSON.stringify(Result);
                 res.end(responseString);
             }
+            else res.end("Access denied")
         });
 });
 
@@ -350,28 +343,59 @@ function unShareItem(id) {
     console.log('root element access closed', id)
 }
 
-// function digAndArchive(id){
-//     let childrenArray = [];
-//     lookForChildren(id);
-//     function lookForChildren(id){
-//         childrenArray.push(id);
-//         FileStorageDb.find({parent : id})
-//             .select('-_id -__v')
-//             .exec(function (err, result) {
-//                 if(result.length) {
-//                     result.forEach(function(item){
-//                         console.log('i am child!: ', item);
-//                         lookForChildren(item.fileId);
-//                     })
-//                 }
-//                 console.log('my children is: ', result);
-//             });
-//         console.log('********* PARSEd CHILREN!: ', childrenArray)
-//     }
+function digAndArchive(id) {
+    let childrenArray = [];
+    lookForChildren(id);
+
+    function lookForChildren(id) {
+        childrenArray.push(id);
+        FileStorageDb.find({parent: id})
+            .select('-_id -__v')
+            .exec(function (err, result) {
+                if (result.length) {
+                    result.forEach(function (item) {
+                        console.log('i am child!: ', item);
+                        lookForChildren(item.fileId);
+                    })
+                }
+                console.log('my children is: ', result);
+            });
+        console.log('********* PARSEd CHILREN!: ', childrenArray);
+        console.log('trying to archive');
+        let archive = archiver('zip', {
+            zlib: {level: 9} // Sets the compression level.
+        });
+        let output = fs.createWriteStream(`${config.fileStoragePath}temp.zip`);
+
+        archive.pipe(output);
+
+        let getStream = function (fileName) {
+            return fs.readFileSync(fileName);
+        };
+
+//these are the files, want to put into zip archive
+//         let fileNames = ['mock1.data', 'mock2.data', 'mock3.data'];
+
+        for (let i = 0; i < childrenArray.length; i++) {
+            let path = `${config.fileStoragePath}childrenArray[i].fileId`;
+            archive.append(getStream(path), {name: childrenArray[i].name});
+        }
+
+        archive.finalize(function (err, bytes) {
+            if (err) {
+                throw err;
+            }
+
+            console.log(bytes + ' total bytes');
+        });
+
+
+    }
+}
 
 
 //
-//     //ARCHIVER!!
+    //ARCHIVER!!
 //      let archive = archiver('zip', {
 //         zlib: { level: 9 } // Sets the compression level.
 //     });
@@ -398,7 +422,7 @@ function unShareItem(id) {
 //
 //         console.log(bytes + ' total bytes');
 //     });
-//
+
 // //////////////////////
 //
 //
