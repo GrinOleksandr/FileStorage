@@ -111,7 +111,8 @@ fileRouter.use('/upload', function (req, res) {
     }
     else {
         let uploadedFile = req.files.fileInput;
-        console.log("****INCOMING FILE  ", uploadedFile);
+        console.log('FILESFILES!!!!', req.files);
+        console.log("****INCOMING FILE faaaaaaaaaa ", req.files.fileInput.size);
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = tokgen.generate();
             uploadedFile.parent = parsedUrl.query.parent;
