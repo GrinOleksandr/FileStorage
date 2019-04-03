@@ -188,7 +188,7 @@ fileRouter.use('/getelement', function(req, res) {
             res.end(responseString);
         });
 });
-fileRouter.use('/getsharedfile', function(req, res) {
+fileRouter.use('/getsharedfileinfo', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     console.log('Requested shared file!: ', parsedUrl.query.file);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
@@ -196,11 +196,20 @@ fileRouter.use('/getsharedfile', function(req, res) {
         .select('-_id -__v')
         .exec(function (err, Result) {
             console.log(Result);
+            console.log('faaaaaaaaaaaaaaaaa',Result[0]);
             if(Result[0].isShared) {
-                let responseString = JSON.stringify(Result);
-                res.end(responseString);
+                if(Result[0].isFolder) {
+                    res.end("Folder");
+                }
+
+                else {
+                    let responseString = JSON.stringify(Result);
+                    res.end(responseString);
+                }
             }
             else res.end("Access denied")
+
+
         });
 });
 

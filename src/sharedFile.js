@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function handleSharedFileDownloadAtempt(link){
     console.log('link', link);
-       fetch(`/file/getsharedfile?file=${link}`, {
+       fetch(`/file/getsharedfileinfo?file=${link}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
@@ -30,7 +30,9 @@ function handleSharedFileDownloadAtempt(link){
             console.log('resp', textOfResponse);
             if(textOfResponse === "Access denied"){
                 filesContainer.innerHTML = `<h1>****Access denied****</h1>`
-
+            }
+            else if(textOfResponse === "Folder"){
+                filesContainer.innerHTML = `<h1>****Register to share folder****</h1>`
             }
             return JSON.parse(textOfResponse);
         })
