@@ -402,6 +402,7 @@ function dropDown(target, cors){
             dropDownMenu.appendChild(unShareBtn);
         }
         else  dropDownMenu.appendChild(shareBtn);
+        dropDownMenu.appendChild(showInfo);
     }
     else {
         dropDownMenu.appendChild(mkDirBtn);
