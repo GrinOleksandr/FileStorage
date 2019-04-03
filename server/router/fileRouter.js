@@ -12,7 +12,8 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     fileRouter = express.Router(),
     TokenGenerator = require('uuid-token-generator'),
     tokgen = new TokenGenerator(),
-    archiver = require('archiver');
+    archiver = require('archiver'),
+     zipdir = require('zip-dir');
 
 
 
@@ -75,21 +76,21 @@ fileRouter.use('/downloadsharedfile', function (req, res) {
     });
 
 });
-fileRouter.use('/downloadsharedfolder', function (req, res) {
-
-    let parsedUrl = url.parse(req.url, true);
-    res.setHeader('Content-Type', 'text/plain');
-    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    FileStorageDb.find({fileId: parsedUrl.query.folder}, function (err, file) {
-        if (err) return console.log(err);
-        console.log('filefile',file);
-        if (file && file[0].isShared && file[0].isFolder) {
-            digAndArchive(file[0].fileId);
-        }
-    });
-
-});
+// fileRouter.use('/downloadsharedfolder', function (req, res) {
+//
+//     let parsedUrl = url.parse(req.url, true);
+//     res.setHeader('Content-Type', 'text/plain');
+//     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     FileStorageDb.find({fileId: parsedUrl.query.folder}, function (err, file) {
+//         if (err) return console.log(err);
+//         console.log('filefile',file);
+//         if (file && file[0].isShared && file[0].isFolder) {
+//             digAndArchive(file[0].fileId, file[0].name);
+//         }
+//     });
+//
+// });
 fileRouter.use('/upload', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     if (Object.keys(req.files).length === 0) {
@@ -343,55 +344,95 @@ function unShareItem(id) {
     console.log('root element access closed', id)
 }
 
-function digAndArchive(id) {
-    let childrenArray = [];
-    lookForChildren(id);
+// function digAndArchive(id, initialFolderName) {
+//     let childrenArray = [];
+//     let folderPath = `${config.fileStoragePath}`;
+//
+//     lookForChildren(id);
+//     // zipdir(`${config.fileStoragePath}${initialFolderName}`, { saveTo: `${config.fileStoragePath}${initialFolderName}.zip` }, function (err, buffer) {
+//     //     if(err){
+//     //         console.log(err);
+//     //     }
+//     //     else console.log('WOOHOO!zipped!  ' );
+//     // });
+//
+//
+//
+//
+//
+//     function lookForChildren(id) {
+//         childrenArray.push(id);
+//         FileStorageDb.find({fileId: id})
+//             .select('-_id -__v')
+//             .exec(function (err, result) {
+//                 createFileStructure(result[0])
+//                 if(result[0].isFolder){
+//                     folderPath += `/${result[0].name}`;
+//                     lookForChildren(result[0].fileId)
+//                 }
+//                 });
+//         FileStorageDb.find({parent: id})
+//             .select('-_id -__v')
+//             .exec(function (err, result) {
+//                 if (result.length) {
+//                     // folderPath += `/${item.name}
+//                     result.forEach(function (item) {
+//                         console.log('i am child!: ', item);
+//                         createFileStructure(item)
+//                     });
+//                     result.forEach(function (item) {
+//                         console.log('i am child!: ', item);
+//                         lookForChildren(item.fileId);
+//                     })
+//                 }
+//                 console.log('my children is: ', result);
+//             });
+//         console.log('********* PARSEd CHILREN!: ', childrenArray);
+//         // console.log('trying to archive');
+//         // let archive = archiver('zip', {
+//         //     zlib: {level: 9} // Sets the compression level.
+//         // });
+//         // let output = fs.createWriteStream(`${config.fileStoragePath}temp.zip`);
+//         //
+//         // archive.pipe(output);
+//         //
+//         // let getStream = function (fileName) {
+//         //     return fs.readFileSync(fileName);
+//         // };
+//
+// //these are the files, want to put into zip archive
+// //         let fileNames = ['mock1.data', 'mock2.data', 'mock3.data'];
+//
+//         // for (let i = 0; i < childrenArray.length; i++) {
+//         //     let path = `${config.fileStoragePath}childrenArray[i].fileId`;
+//         //     archive.append(getStream(path), {name: childrenArray[i].name});
+//         // }
+//         //
+//         // archive.finalize(function (err, bytes) {
+//         //     if (err) {
+//         //         throw err;
+//         //     }
+//         //
+//         //     console.log(bytes + ' total bytes');
+//         // });
+//     }
+//
+//     function createFileStructure(item) {
+//         console.log("my result", item);
+//         if (item.isFolder) {
+//             folderPath += `/${item.name}`;
+//             fs.mkdir(folderPath, { recursive: true }, (err) => {
+//                 if (err) throw err;
+//             });
+//         }
+//         else{fs.copyFile(`${config.fileStoragePath}${item.fileId}`, `${folderPath}/${item.name}`, (err) => {
+//             if (err) throw err;
+//             console.log(`${config.fileStoragePath}${item.fileId} was copied to ${folderPath}/${item.name}`);
+//         });
+//         }
+//     }
+// }
 
-    function lookForChildren(id) {
-        childrenArray.push(id);
-        FileStorageDb.find({parent: id})
-            .select('-_id -__v')
-            .exec(function (err, result) {
-                if (result.length) {
-                    result.forEach(function (item) {
-                        console.log('i am child!: ', item);
-                        lookForChildren(item.fileId);
-                    })
-                }
-                console.log('my children is: ', result);
-            });
-        console.log('********* PARSEd CHILREN!: ', childrenArray);
-        console.log('trying to archive');
-        let archive = archiver('zip', {
-            zlib: {level: 9} // Sets the compression level.
-        });
-        let output = fs.createWriteStream(`${config.fileStoragePath}temp.zip`);
-
-        archive.pipe(output);
-
-        let getStream = function (fileName) {
-            return fs.readFileSync(fileName);
-        };
-
-//these are the files, want to put into zip archive
-//         let fileNames = ['mock1.data', 'mock2.data', 'mock3.data'];
-
-        for (let i = 0; i < childrenArray.length; i++) {
-            let path = `${config.fileStoragePath}childrenArray[i].fileId`;
-            archive.append(getStream(path), {name: childrenArray[i].name});
-        }
-
-        archive.finalize(function (err, bytes) {
-            if (err) {
-                throw err;
-            }
-
-            console.log(bytes + ' total bytes');
-        });
-
-
-    }
-}
 
 
 //
