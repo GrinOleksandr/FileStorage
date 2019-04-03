@@ -3,6 +3,7 @@ let file = params.get('file');
 let fileNameField = document.getElementById('shared-file');
 let downloadSharedFileBtn = document.getElementById('downloadSharedFile');
 let filesContainer = document.getElementById('shared-file-info-wrapper');
+let fileSize = document.getElementById('fileSize');
 
 
 
@@ -58,6 +59,7 @@ function renderShareFilePage(requestedFile){
             })
         }
         fileNameField.innerText = requestedFile.name;
+        fileSize.innerText = requestedFile.size;
         downloadSharedFileBtn.addEventListener('click', () => {
             console.log('donwloasdiads');
             downloadSharedFile(requestedFile.name, requestedFile.fileId)

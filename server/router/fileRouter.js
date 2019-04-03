@@ -13,7 +13,8 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     TokenGenerator = require('uuid-token-generator'),
     tokgen = new TokenGenerator(),
     archiver = require('archiver'),
-     zipdir = require('zip-dir');
+     zipdir = require('zip-dir'),
+    filesize = require('file-size');
 
 
 
@@ -257,7 +258,7 @@ function addFileToDataBase(target) {
 
     console.log(target);
     let name = target.name || "unnamed",
-        size = target.size,
+        size = filesize(target.size).human();
         fileId = target.fileId || "",
         mimetype = target.mimetype || "",
         link = target.link || tokgen.generate(),

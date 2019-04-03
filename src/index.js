@@ -144,6 +144,7 @@ function addItemFromServer(element) {
     let newItem = document.createElement("li");
     newItem.className = "file-container";
     newItem.dataset.parent = element.parent;
+    newItem.dataset.size = element.size;
     newItem.addEventListener('click', (ev) =>{
         ev.preventDefault();
         ev.stopPropagation();

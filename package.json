@@ -25,6 +25,7 @@
     "express-fileupload": "^1.1.4",
     "express-formidable": "^1.2.0",
     "express-session": "^1.15.6",
+    "file-size": "^1.0.0",
     "filestorage": "^1.7.1",
     "jquery": "^3.1.1",
     "mailgun": "^0.5.0",
