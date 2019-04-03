@@ -358,13 +358,13 @@ function dropDown(target, cors){
         ev.preventDefault();
         ev.stopPropagation();
         closeContextMenu();
-
+        document.getElementById('infoOfFile').innerHTML= "";
 
         let itemInfo = document.createElement('div');
         itemInfo.className = 'item-info-block';
         if(!target.dataset.isFolder) {
             itemInfo.innerHTML =
-                `<p><span>Name:</span> ${target.dataset.name}</p>
+                `<p><span>Name:</span> ${target.dataset.fileName}</p>
          <p><span>Size:</span> ${target.dataset.size}</p>
          <p><span>Uploaded on:</span> ${target.dataset.uploadDate}</p>
          <p><span>Owner:</span> ${target.dataset.owner}</p>
@@ -373,7 +373,7 @@ function dropDown(target, cors){
 
         else {
             itemInfo.innerHTML =
-                `<p><span>Name:</span> ${target.dataset.name}</p>
+                `<p><span>Name:</span> ${target.dataset.fileName}</p>
          
          <p><span>Uploaded on:</span> ${target.dataset.uploadDate}</p>
          <p><span>Owner:</span> ${target.dataset.owner}</p>
