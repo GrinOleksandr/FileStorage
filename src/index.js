@@ -145,6 +145,13 @@ function addItemFromServer(element) {
     newItem.className = "file-container";
     newItem.dataset.parent = element.parent;
     newItem.dataset.size = element.size;
+    newItem.dataset.sharedTo = element.access;
+    newItem.dataset.id = element.fileId;
+    newItem.dataset.fileName = element.name;
+    newItem.dataset.owner = element.owner;
+    newItem.dataset.uploadDate = element.uploadDate;
+    newItem.dataset.isFolder = element.isFolder;
+
     newItem.addEventListener('click', (ev) =>{
         ev.preventDefault();
         ev.stopPropagation();
@@ -181,8 +188,7 @@ function addItemFromServer(element) {
         };
         dropDown(ev.currentTarget, cors);
     });
-    newItem.dataset.id = element.fileId;
-    newItem.dataset.fileName = element.name;
+
     if(element.isShared){
         newItem.dataset.isShared = "true";
     }
@@ -344,6 +350,40 @@ function dropDown(target, cors){
         unShareItem(fileId);
         closeContextMenu();
     });
+
+    let showInfo = document.createElement('li');
+    showInfo.className = "dropDownItem";
+    showInfo.innerText = "Show Info";
+    showInfo.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        closeContextMenu();
+
+
+        let itemInfo = document.createElement('div');
+        itemInfo.className = 'item-info-block';
+        if(!target.dataset.isFolder) {
+            itemInfo.innerHTML =
+                `<p><span>Name:</span> ${target.dataset.name}</p>
+         <p><span>Size:</span> ${target.dataset.size}</p>
+         <p><span>Uploaded on:</span> ${target.dataset.uploadDate}</p>
+         <p><span>Owner:</span> ${target.dataset.owner}</p>
+         <p><span>Shared to:</span> ${target.dataset.sharedTo || ""}</p>`
+        }
+
+        else {
+            itemInfo.innerHTML =
+                `<p><span>Name:</span> ${target.dataset.name}</p>
+         
+         <p><span>Uploaded on:</span> ${target.dataset.uploadDate}</p>
+         <p><span>Owner:</span> ${target.dataset.owner}</p>
+         <p><span>Shared to:</span> ${target.dataset.sharedTo || ""}</p>`
+        }
+
+        document.getElementById('infoOfFile').appendChild(itemInfo);
+    });
+
+
 
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
