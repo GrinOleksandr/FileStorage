@@ -33,15 +33,12 @@ document.addEventListener("DOMContentLoaded", function(){
             'Access-Control-Allow-Origin': "*"
         }
     }).then(function (response) {
+
         return response.text()
     })
         .then(function (textOfResponse) {
-            return JSON.parse(textOfResponse);
-        })
-        .then(function (data) {
-            if (data) {
-                accountInfoSpan.innerText(data);
-            }
+            console.log(textOfResponse);
+            accountInfoSpan.innerHTML = textOfResponse;
         })
         .catch(error => error);
 });

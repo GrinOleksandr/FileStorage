@@ -32,6 +32,7 @@ fileRouter.use('/listfiles', function(req, res) {
         });
 });
 fileRouter.use('/getusername', function(req, res) {
+    console.log('RETRIEVING USER!!', req.user.username);
               res.end(req.user.username);
 });
 fileRouter.use('/getfilessharedtome', function(req, res) {
