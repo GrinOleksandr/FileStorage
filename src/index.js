@@ -326,7 +326,7 @@ function dropDown(target, cors){
     });
 
     function unShare(ev, file){
-        Modal(ev, `Remove one of current users ${file.access} :`, "Remove access", function(userToRemove) {
+        Modal(ev, `Remove one of current users ${ev.target.dataset.sharedTo} :`, "Remove access", function(userToRemove) {
             unShareItem(file, userToRemove)
         })
     }
