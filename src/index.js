@@ -167,13 +167,13 @@ function addItemFromServer(element) {
     });
      if(element.isFolder) {
          newItem.addEventListener('dblclick', function(ev){
-             openFolder(element.name, element.fileId , element.access)
+             openFolder(element.name, element.fileId , sharedTo)
          });
      }
 
     function openFolder(name, id , access) {
         state.currentFolder = id;
-        console.log('access rights', access)
+        console.log('access rights', state.currentFolderAccessRights);
         state.currentFolderAccessRights = access;
         renderFileStructure(id);
         addToFilePath(element);
