@@ -43,7 +43,7 @@ fileRouter.use('/getfilessharedtome', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     console.log('MY USER', req.user.username);
-    if(parsedUrl.query.folder) {
+    if(parsedUrl.query.folder === "/") {
         FileStorageDb.find({parent : parsedUrl.query.folder, access: req.user.username})
             .select('-_id -__v')
             .exec(function (err, Result) {

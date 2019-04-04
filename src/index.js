@@ -42,8 +42,9 @@ filePath.appendChild(rootFolder);
 
 let showSharedFilesBtn = document.getElementById('ShowSharedFilesBtn');
 showSharedFilesBtn.addEventListener('click', function(ev){
-    renderFileStructure()
-})
+    console.log('getting shared files!');
+    getFilesSharedToMe();
+});
 
 //***********************************UPLOAD***********************************//
 //upload via drag&drop
@@ -652,7 +653,7 @@ function handleSharedFileownload(fileName, fileId){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-function getFilesSharedToMe (folder) {
+function getFilesSharedToMe (folder = "/") {
     fetch(`/file/getfilessharedtome?folder=${folder}`, {
         method: 'POST'
     }).then(function (response) {
