@@ -1,6 +1,7 @@
 let state = {
     currentFolder: "/",
     currentPath:"/",
+    currentFolderAccessRights:[],
     clipBoard:[]
 };
 
@@ -102,7 +103,7 @@ renderFileStructure();
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let formData = new FormData(DropZone);
-    fetch(`/file/upload?parent=${state.currentFolder}`, {
+    fetch(`/file/upload?parent=${state.currentFolder}&access${state.currentFolderAccessRights}`, {
         method: 'POST',
         headers:{
             accept:'application/json'
@@ -166,12 +167,14 @@ function addItemFromServer(element) {
     });
      if(element.isFolder) {
          newItem.addEventListener('dblclick', function(ev){
-             openFolder(element.name, element.fileId)
+             openFolder(element.name, element.fileId , element.access)
          });
      }
 
-    function openFolder(name, id) {
+    function openFolder(name, id , access) {
         state.currentFolder = id;
+        console.log('access rights', access)
+        state.currentFolderAccessRights = access;
         renderFileStructure(id);
         addToFilePath(element);
     }
@@ -550,7 +553,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     inputField.addEventListener('keypress', function(ev){
         console.log(ev);
         if(ev.key === 'Enter'){
-            callback(inputField.value);
+            callback(inputField.value , state.currentFolderAccessRights);
             closeModal();
             renderFileStructure(state.currentFolder);
         }
@@ -593,8 +596,8 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
 
 }
 
-function createNewFolderOnServer(name){
-    fetch(`/file/createfolder?name=${name}&parent=${state.currentFolder}`, {
+function createNewFolderOnServer(name , accessRights){
+    fetch(`/file/createfolder?name=${name}&parent=${state.currentFolder}&access=${accessRights}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
