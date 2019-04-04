@@ -326,7 +326,7 @@ function dropDown(target, cors){
     });
 
     function unShare(ev, file){
-        Modal(ev, `Remove one of current users ${file.access.toString()} :`, "Remove access", function(userToRemove) {
+        Modal(ev, `Remove one of current users ${file.access} :`, "Remove access", function(userToRemove) {
             unShareItem(file, userToRemove)
         })
     }
@@ -667,8 +667,8 @@ function shareItem(id, userToAdd){
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
-function unShareItem(file, userToRemove){
-    fetch(`/file/unshare?id=${id}&user=$userToRemove}`, {
+function unShareItem(id, userToRemove){
+    fetch(`/file/unshare?id=${id}&user=${userToRemove}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
