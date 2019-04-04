@@ -128,7 +128,7 @@ fileRouter.use('/upload', function (req, res) {
     else {
         let uploadedFile = req.files.fileInput;
         console.log('FILESFILES!!!!', req.files);
-        console.log("****INCOMING FILE faaaaaaaaaa ", uploadedFile.data.length);
+        console.log("****INCOMING FILE faaaaaaaaaa ", parsedUrl.query.access);
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = tokgen.generate();
             uploadedFile.parent = parsedUrl.query.parent;
@@ -162,6 +162,7 @@ fileRouter.use('/createfolder', function (req, res) {
         parent: parsedUrl.query.parent,
         isShared: false
     };
+    console.log("********************TRUE ACCESS RIGHTS ON FOLER",parsedUrl.query.access.split(","));
 
     console.log('folder created' ,folder);
 

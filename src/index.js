@@ -103,7 +103,7 @@ renderFileStructure();
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
     let formData = new FormData(DropZone);
-    fetch(`/file/upload?parent=${state.currentFolder}&access${state.currentFolderAccessRights}`, {
+    fetch(`/file/upload?parent=${state.currentFolder}&access=${state.currentFolderAccessRights}`, {
         method: 'POST',
         headers:{
             accept:'application/json'
@@ -125,6 +125,7 @@ function invertSelection(){
 }
 
 function renderFileStructure (folder = "/") {
+    console.log('CURENT FOLER AXECSSF',state);
     fetch(`/file/listfiles?folder=${folder}`, {
         method: 'POST'
     }).then(function (response) {
@@ -553,7 +554,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     inputField.addEventListener('keypress', function(ev){
         console.log(ev);
         if(ev.key === 'Enter'){
-            callback(inputField.value , state.currentFolderAccessRights);
+            callback(inputField.value);
             closeModal();
             renderFileStructure(state.currentFolder);
         }
@@ -596,8 +597,9 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
 
 }
 
-function createNewFolderOnServer(name , accessRights){
-    fetch(`/file/createfolder?name=${name}&parent=${state.currentFolder}&access=${accessRights}`, {
+function createNewFolderOnServer(name){
+    console.log(state.currentFolderAccessRights);
+    fetch(`/file/createfolder?name=${name}&parent=${state.currentFolder}&access=${state.currentFolderAccessRights}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
@@ -730,6 +732,7 @@ function handleSharedFileownload(fileName, fileId){
 }
 
 function getFilesSharedToMe (folder = "/") {
+
     fetch(`/file/getfilessharedtome?folder=${folder}`, {
         method: 'POST'
     }).then(function (response) {
