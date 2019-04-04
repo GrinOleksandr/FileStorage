@@ -412,7 +412,7 @@ function shareItem(idToShare, user, owner) {
         .exec(function (err, Result) {
             accessString = Result[0].access;
             trueOwner = Result[0].owner;
-            if(owner === trueOwner) {
+            if(owner === trueOwner && owner !== user) {
                 if(accessString.indexOf(user) === -1) {
                     console.log("***********REAL RESULT ACCESS!", accessString);
                     console.log("***********PUSHING TO NEW STRING NEW STRING!!", user);
