@@ -39,6 +39,28 @@ fileRouter.use('/listfiles', function(req, res) {
             res.end(responseString);
         });
 });
+fileRouter.use('/getfilessharedtome', function(req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
+    console.log('MY USER', req.user.username);
+    if(parsedUrl.query.folder) {
+        FileStorageDb.find({parent : parsedUrl.query.folder, access: req.user.username})
+            .select('-_id -__v')
+            .exec(function (err, Result) {
+                let responseString = JSON.stringify(Result);
+                res.end(responseString);
+            });
+    }
+    else {
+        FileStorageDb.find({access: req.user.username})
+            .select('-_id -__v')
+            .exec(function (err, Result) {
+                let responseString = JSON.stringify(Result);
+                res.end(responseString);
+            });
+    }
+
+});
 fileRouter.use('/download', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
@@ -263,7 +285,7 @@ function addFileToDataBase(target) {
         mimetype = target.mimetype || "",
         link = target.link || tokgen.generate(),
         uploadDate = moment().format('MMMM Do YYYY, h:mm:ss a'),
-        owner = target.owner || "SashaGrin",
+        owner = target.owner || "",
         access = target.access || [],
         isFolder = target.isFolder || false,
         parent = target.parent || "/",

@@ -40,6 +40,11 @@ rootFolder.addEventListener('click', function(){
 });
 filePath.appendChild(rootFolder);
 
+let showSharedFilesBtn = document.getElementById('ShowSharedFilesBtn');
+showSharedFilesBtn.addEventListener('click', function(ev){
+    renderFileStructure()
+})
+
 //***********************************UPLOAD***********************************//
 //upload via drag&drop
 const DropZone = document.getElementById("upload-container");
@@ -644,5 +649,22 @@ function handleSharedFileownload(fileName, fileId){
     })
         .then(response => response.blob())
         .then((blob) => saveAs(blob, fileName))
+        .catch(error => console.log("Данные не получены: " + error));
+}
+
+function getFilesSharedToMe (folder) {
+    fetch(`/file/getfilessharedtome?folder=${folder}`, {
+        method: 'POST'
+    }).then(function (response) {
+        return response.text()
+    })
+        .then(function (textOfResponse) {
+            return JSON.parse(textOfResponse);
+        })
+        .then(function (array) {
+
+            ListOfFiles.innerHTML = "";
+            addAllToList(array)
+        })
         .catch(error => console.log("Данные не получены: " + error));
 }
