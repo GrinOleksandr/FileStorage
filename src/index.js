@@ -303,7 +303,7 @@ function dropDown(target, cors){
 
     let shareBtn = document.createElement('li');
     shareBtn.className = "dropDownItem";
-    shareBtn.innerText = "Rename";
+    shareBtn.innerText = "Share";
     shareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
@@ -318,7 +318,7 @@ function dropDown(target, cors){
 
     let unShareBtn = document.createElement('li');
     unShareBtn.className = "dropDownItem";
-    unShareBtn.innerText = "Rename";
+    unShareBtn.innerText = "Remove access";
     unShareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
