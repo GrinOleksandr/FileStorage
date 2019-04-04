@@ -669,6 +669,7 @@ function shareItem(id, userToAdd){
         .catch(error => console.log("Данные не получены: " + error));
 }
 function unShareItem(id, userToRemove){
+    console.log('REMOVING ACCESSS',id, userToRemove );
     fetch(`/file/unshare?id=${id}&user=${userToRemove}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',

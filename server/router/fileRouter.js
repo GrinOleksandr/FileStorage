@@ -456,17 +456,18 @@ function unShareItem(id, user, owner) {
         .exec(function (err, Result) {
             accessString = Result[0].access;
             trueOwner = Result[0].owner;
+            if(owner === trueOwner){
+                let newAccessString = accessString.filter(function(item){
+                    return item !== user
+                });
+                console.log('Access', newAccessString);
+                FileStorageDb.updateOne({fileId: id}, {access: newAccessString}, function (err) {
+                    if (err) return console.log(err);
+                });
+                console.log('root element shared', id)
+            }
         });
-    if(owner === trueOwner){
-        let newAccessString = accessString.filter(function(item){
-            return item !== user
-        });
-        console.log('Access', newAccessString);
-        FileStorageDb.updateOne({fileId: id}, {access: newAccessString}, function (err) {
-            if (err) return console.log(err);
-        });
-        console.log('root element shared', id)
-    }
+
 }
 
 
