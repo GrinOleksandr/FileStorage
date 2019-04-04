@@ -404,6 +404,7 @@ function digAndShare(id, user, owner){
     }
 }
 function shareItem(idToShare, user, owner) {
+    console.log('realy sharing',idToShare, user, owner );
     let accessString = [];
     let trueOwner = "";
     FileStorageDb.find({fileId : idToShare})
@@ -412,14 +413,14 @@ function shareItem(idToShare, user, owner) {
             accessString = Result[0].access;
             trueOwner = Result[0].owner;
         });
-    if(owner === trueOwner) {
+    // if(owner === trueOwner) {
         let newAccessString = accessString.push(user);
         console.log('Access', newAccessString);
         FileStorageDb.updateOne({fileId: idToShare}, {access: newAccessString}, function (err) {
             if (err) return console.log(err);
         });
         console.log('root element shared', idToShare)
-    }
+    // }
 }
 function digAndUnShare(id, user, owner){
     let childrenArray = [];

@@ -151,7 +151,7 @@ function addItemFromServer(element) {
     newItem.className = "file-container";
     newItem.dataset.parent = element.parent;
     newItem.dataset.size = element.size;
-    newItem.dataset.sharedTo = element.access;
+    newItem.dataset.sharedTo = element.access.toString();
     newItem.dataset.id = element.fileId;
     newItem.dataset.fileName = element.name;
     newItem.dataset.owner = element.owner;
