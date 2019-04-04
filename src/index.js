@@ -322,11 +322,12 @@ function dropDown(target, cors){
     unShareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        unShare(ev, fileId);
+        unShare(ev, fileId, target.dataset.sharedTo);
     });
 
-    function unShare(ev, file){
-        Modal(ev, `Remove one of current users ${ev.target.dataset.sharedTo} :`, "Remove access", function(userToRemove) {
+    function unShare(ev, file, sharedTo ){
+        console.log('*****************TARGET', sharedTo);
+        Modal(ev, `Remove one of current users ${sharedTo} :`, "Remove access", function(userToRemove) {
             unShareItem(file, userToRemove)
         })
     }
