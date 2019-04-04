@@ -343,7 +343,7 @@ function dropDown(target, cors){
     shareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        shareItem(fileId);
+        shareItemByLink(fileId);
         closeContextMenu();
     });
 
@@ -353,7 +353,7 @@ function dropDown(target, cors){
     unShareBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        unShareItem(fileId);
+        unShareItemByLink(fileId);
         closeContextMenu();
     });
 
@@ -609,8 +609,8 @@ function closeContextMenu() {
     }
 }
 
-function shareItem(id){
-    fetch(`/file/share?id=${id}`, {
+function shareItemByLink(id){
+    fetch(`/file/sharebylink?id=${id}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
@@ -621,8 +621,8 @@ function shareItem(id){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-function unShareItem(id){
-    fetch(`/file/unshare?id=${id}`, {
+function unShareItemByLink(id){
+    fetch(`/file/unsharebylink?id=${id}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"

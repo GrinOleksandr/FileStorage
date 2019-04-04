@@ -13,16 +13,8 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     TokenGenerator = require('uuid-token-generator'),
     tokgen = new TokenGenerator(),
     archiver = require('archiver'),
-     zipdir = require('zip-dir'),
+    zipdir = require('zip-dir'),
     filesize = require('file-size');
-
-
-
-
-
-
-
-
 
 
 
@@ -248,24 +240,24 @@ fileRouter.use('/move', function (req, res) {
 
     res.end();
 });
-fileRouter.use('/share', function (req, res) {
+fileRouter.use('/sharebylink', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
     console.log("sharing  ",parsedUrl.query.id);
     res.writeHead(200);
-    digAndShare(parsedUrl.query.id);
+    digAndShareByLink(parsedUrl.query.id);
     res.end();
 });
-fileRouter.use('/unshare', function (req, res) {
+fileRouter.use('/unsharebylink', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
     console.log("unsharing  ",parsedUrl.query.id);
     res.writeHead(200);
-    digAndUnShare(parsedUrl.query.id);
+    digAndUnShareByLink(parsedUrl.query.id);
     res.end();
 });
 
@@ -312,14 +304,7 @@ function move(fileId, newParent){
         if (err) return console.log(err);
     })
 }
-
-function makeMeShared(id){
-    FileStorageDb.updateOne({fileId:id}, {isShared:true}, function (err) {
-        if (err) return console.log(err);
-    })
-}
-
-function digAndShare(id){
+function digAndShareByLink(id){
         let childrenArray = [];
         lookForChildren(id);
     function lookForChildren(id){
@@ -341,15 +326,13 @@ function digAndShare(id){
         console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
 }
-
 function shareItem(idToShare) {
     FileStorageDb.updateOne({fileId: idToShare}, {isShared: true}, function (err) {
         if (err) return console.log(err);
     });
     console.log('root element shared', idToShare)
 }
-
-function digAndUnShare(id){
+function digAndUnShareByLink(id){
     let childrenArray = [];
     lookForChildren(id);
     function lookForChildren(id){
@@ -369,7 +352,6 @@ function digAndUnShare(id){
         console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
 }
-
 function unShareItem(id) {
     FileStorageDb.updateOne({fileId: id}, {isShared: false}, function (err) {
         if (err) return console.log(err);
