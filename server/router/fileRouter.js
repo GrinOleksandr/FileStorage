@@ -260,6 +260,26 @@ fileRouter.use('/unsharebylink', function (req, res) {
     digAndUnShareByLink(parsedUrl.query.id);
     res.end();
 });
+fileRouter.use('/share', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    console.log("sharing  ",parsedUrl.query.id, parsedUrl.query.user ,req.user.username);
+    res.writeHead(200);
+    digAndShare(parsedUrl.query.id, parsedUrl.query.user ,req.user.username );
+    res.end();
+});
+fileRouter.use('/unshare', function (req, res) {
+    let parsedUrl = url.parse(req.url, true);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    console.log("unsharing  ",parsedUrl.query.id, parsedUrl.query.user ,req.user.username);
+    res.writeHead(200);
+    digAndUnShare(parsedUrl.query.id, parsedUrl.query.user ,req.user.username);
+    res.end();
+});
 
 
 function uploadFile(file) {
@@ -309,7 +329,7 @@ function digAndShareByLink(id){
         lookForChildren(id);
     function lookForChildren(id){
         childrenArray.push(id);
-        shareItem(id);
+        shareItemByLink(id);
         FileStorageDb.find({parent : id})
             .select('-_id -__v')
             .exec(function (err, result) {
@@ -326,7 +346,7 @@ function digAndShareByLink(id){
         console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
 }
-function shareItem(idToShare) {
+function shareItemByLink(idToShare) {
     FileStorageDb.updateOne({fileId: idToShare}, {isShared: true}, function (err) {
         if (err) return console.log(err);
     });
@@ -337,7 +357,7 @@ function digAndUnShareByLink(id){
     lookForChildren(id);
     function lookForChildren(id){
         childrenArray.push(id);
-        unShareItem(id);
+        unShareItemByLink(id);
         FileStorageDb.find({parent : id})
             .select('-_id -__v')
             .exec(function (err, result) {
@@ -352,12 +372,97 @@ function digAndUnShareByLink(id){
         console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
 }
-function unShareItem(id) {
+function unShareItemByLink(id) {
     FileStorageDb.updateOne({fileId: id}, {isShared: false}, function (err) {
         if (err) return console.log(err);
     });
     console.log('root element access closed', id)
 }
+
+
+
+function digAndShare(id, user, owner){
+    let childrenArray = [];
+    lookForChildren(id);
+    function lookForChildren(id){
+        childrenArray.push(id);
+        shareItem(id, user, owner);
+        FileStorageDb.find({parent : id})
+            .select('-_id -__v')
+            .exec(function (err, result) {
+
+                if(result.length) {
+                    result.forEach(function(item){
+                        console.log('i am child!: ', item);
+                        lookForChildren(item.fileId);
+                    })
+                }
+                console.log('my children is: ', result);
+
+            });
+        console.log('********* PARSEd CHILREN!: ', childrenArray)
+    }
+}
+function shareItem(idToShare, user, owner) {
+    let accessString = [];
+    let trueOwner = "";
+    FileStorageDb.find({fileId : idToShare})
+        .select('-_id -__v')
+        .exec(function (err, Result) {
+            accessString = Result[0].access;
+            trueOwner = Result[0].access;
+        });
+    if(owner === trueOwner) {
+        let newAccessString = accessString.push(user);
+        console.log('Access', newAccessString);
+        FileStorageDb.updateOne({fileId: idToShare}, {access: newAccessString}, function (err) {
+            if (err) return console.log(err);
+        });
+        console.log('root element shared', idToShare)
+    }
+}
+function digAndUnShare(id, user, owner){
+    let childrenArray = [];
+    lookForChildren(id);
+    function lookForChildren(id){
+        childrenArray.push(id);
+        unShareItem(id, user, owner);
+        FileStorageDb.find({parent : id})
+            .select('-_id -__v')
+            .exec(function (err, result) {
+                if(result.length) {
+                    result.forEach(function(item){
+                        console.log('i am child!: ', item);
+                        lookForChildren(item.fileId);
+                    })
+                }
+                console.log('my children is: ', result);
+            });
+        console.log('********* PARSEd CHILREN!: ', childrenArray)
+    }
+}
+function unShareItem(id, user, owner) {
+    let accessString = [];
+    let trueOwner = "";
+    FileStorageDb.find({fileId : id})
+        .select('-_id -__v')
+        .exec(function (err, Result) {
+            accessString = Result[0].access;
+            trueOwner = Result[0].owner
+        });
+    if(owner === trueOwner){
+        let newAccessString = accessString.filter(function(item){
+            return item !== user
+        });
+        console.log('Access', newAccessString);
+        FileStorageDb.updateOne({fileId: id}, {access: newAccessString}, function (err) {
+            if (err) return console.log(err);
+        });
+        console.log('root element shared', id)
+    }
+}
+
+
 
 // function digAndArchive(id, initialFolderName) {
 //     let childrenArray = [];

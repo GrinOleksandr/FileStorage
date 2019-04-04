@@ -299,6 +299,51 @@ function dropDown(target, cors){
         })
     }
 
+
+
+    let shareBtn = document.createElement('li');
+    shareBtn.className = "dropDownItem";
+    shareBtn.innerText = "Rename";
+    shareBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        share(ev, fileId);
+    });
+
+    function share(ev, file){
+        Modal(ev, "Share to", "Share", function(userToAdd) {
+            shareItem(file.fileId, userToAdd)
+        })
+    }
+
+    let unShareBtn = document.createElement('li');
+    unShareBtn.className = "dropDownItem";
+    unShareBtn.innerText = "Rename";
+    unShareBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        unShare(ev, fileId);
+    });
+
+    function unShare(ev, file){
+        Modal(ev, `Remove one of current users ${file.access.toString()} :`, "Remove access", function(userToRemove) {
+            unShareItem(file.fileId, userToRemove)
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     let deleteBtn = document.createElement('li');
     deleteBtn.className = "dropDownItem";
     deleteBtn.innerText = "Delete";
@@ -337,20 +382,20 @@ function dropDown(target, cors){
         closeContextMenu();
     });
 
-    let shareBtn = document.createElement('li');
-    shareBtn.className = "dropDownItem";
-    shareBtn.innerText = "Enable access by link";
-    shareBtn.addEventListener('click', (ev)=>{
+    let shareByLinkBtn = document.createElement('li');
+    shareByLinkBtn.className = "dropDownItem";
+    shareByLinkBtn.innerText = "Enable access by link";
+    shareByLinkBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
         shareItemByLink(fileId);
         closeContextMenu();
     });
 
-    let unShareBtn = document.createElement('li');
-    unShareBtn.className = "dropDownItem";
-    unShareBtn.innerText = "Disable access by link";
-    unShareBtn.addEventListener('click', (ev)=>{
+    let unShareByLinkBtn = document.createElement('li');
+    unShareByLinkBtn.className = "dropDownItem";
+    unShareByLinkBtn.innerText = "Disable access by link";
+    unShareByLinkBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
         unShareItemByLink(fileId);
@@ -374,7 +419,7 @@ function dropDown(target, cors){
          <p><span>Size:</span> "${target.dataset.size}"</p>
          <p><span>Uploaded on:</span> "${target.dataset.uploadDate}"</p>
          <p><span>Owner:</span> "${target.dataset.owner}"</p>
-         <p><span>Shared to:</span> "${target.dataset.sharedTo || ""}"</p>`
+         <p><span>Shared to:</span> "${target.dataset.sharedTo.toString || ""}"</p>`
         }
 
         else {
@@ -404,10 +449,12 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(renameBtn);
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
+        dropDownMenu.appendChild(shareBtn);
+        dropDownMenu.appendChild(unShareBtn);
         if(target.dataset.isShared === "true"){
-            dropDownMenu.appendChild(unShareBtn);
+            dropDownMenu.appendChild(unShareByLinkBtn);
         }
-        else  dropDownMenu.appendChild(shareBtn);
+        else  dropDownMenu.appendChild(shareByLinkBtn);
         dropDownMenu.appendChild(showInfo);
     }
     else {
@@ -498,18 +545,18 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     let crateFolderWrapper = document.createElement('div');
     crateFolderWrapper.className = "modal-wrapper";
 
-    let nameField = document.createElement('input');
-    nameField.addEventListener('keypress', function(ev){
+    let inputField = document.createElement('input');
+    inputField.addEventListener('keypress', function(ev){
         console.log(ev);
         if(ev.key === 'Enter'){
-            callback(nameField.value);
+            callback(inputField.value);
             closeModal();
             renderFileStructure(state.currentFolder);
         }
     });
-    nameField.type= "text";
-    nameField.className = "modal-fileName";
-    nameField.focus();
+    inputField.type= "text";
+    inputField.className = "modal-fileName";
+    inputField.focus();
 
     let cancelBtn = document.createElement('button');
     cancelBtn.innerText= "cancel";
@@ -520,7 +567,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     createBtn.innerText = buttonText;
     createBtn.className = "modal-createButton";
     createBtn.addEventListener('click', ()=>{
-        callback(nameField.value);
+        callback(inputField.value);
         closeModal();
         renderFileStructure(state.currentFolder);
     });
@@ -536,7 +583,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     title.innerText = modalTitle;
 
     crateFolderWrapper.appendChild(title);
-    crateFolderWrapper.appendChild(nameField);
+    crateFolderWrapper.appendChild(inputField);
     modalButtonsWrapper.appendChild(cancelBtn);
     modalButtonsWrapper.appendChild(createBtn);
     crateFolderWrapper.appendChild(modalButtonsWrapper);
@@ -609,8 +656,19 @@ function closeContextMenu() {
     }
 }
 
-function shareItemByLink(id){
-    fetch(`/file/sharebylink?id=${id}`, {
+function shareItem(id, userToAdd){
+    fetch(`/file/share?id=${id}&user=${userToAdd}`, {
+        method: 'POST',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then((data)=>{
+        renderFileStructure(state.currentFolder);
+    })
+        .catch(error => console.log("Данные не получены: " + error));
+}
+function unShareItem(file, userToRemove){
+    fetch(`/file/unshare?id=${id}&user=$userToRemove}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
@@ -621,8 +679,22 @@ function shareItemByLink(id){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
+
+
 function unShareItemByLink(id){
     fetch(`/file/unsharebylink?id=${id}`, {
+        method: 'POST',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then((data)=>{
+        renderFileStructure(state.currentFolder);
+    })
+        .catch(error => console.log("Данные не получены: " + error));
+}
+
+function shareItemByLink(id){
+    fetch(`/file/sharebylink?id=${id}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
@@ -669,3 +741,6 @@ function getFilesSharedToMe (folder = "/") {
         })
         .catch(error => console.log("Данные не получены: " + error));
 }
+
+
+
