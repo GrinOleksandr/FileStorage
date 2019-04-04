@@ -1,7 +1,7 @@
 let state = {
     currentFolder: "/",
     currentPath:"/",
-    currentFolderAccessRights:[],
+    currentFolderAccessRights:"",
     clipBoard:[]
 };
 
@@ -167,13 +167,13 @@ function addItemFromServer(element) {
     });
      if(element.isFolder) {
          newItem.addEventListener('dblclick', function(ev){
-             openFolder(element.name, element.fileId , sharedTo)
+             openFolder(element.name, element.fileId , element.access.toString())
          });
      }
 
     function openFolder(name, id , access) {
         state.currentFolder = id;
-        console.log('access rights', state.currentFolderAccessRights);
+        console.log('access rights', access);
         state.currentFolderAccessRights = access;
         renderFileStructure(id);
         addToFilePath(element);
@@ -604,8 +604,7 @@ function createNewFolderOnServer(name , accessRights){
         }
     }).then((data)=>{
         renderFileStructure(state.currentFolder);
-    })
-        .catch(error => console.log("Данные не получены: " + error));
+    }).catch(error => console.log("Данные не получены: " + error));
 }
 
 function renderFilePath(folderId = "/") {

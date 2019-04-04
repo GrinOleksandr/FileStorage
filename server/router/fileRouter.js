@@ -119,7 +119,7 @@ fileRouter.use('/upload', function (req, res) {
                 item.fileId = tokgen.generate();
                 item.parent = parsedUrl.query.parent;
                 item.owner = req.user.username;
-                item.access = parsedUrl.query.access;
+                item.access = parsedUrl.query.access.split(",");
                 uploadFile(item);
                 addFileToDataBase(item);
             }
@@ -132,7 +132,7 @@ fileRouter.use('/upload', function (req, res) {
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = tokgen.generate();
             uploadedFile.parent = parsedUrl.query.parent;
-            uploadedFile.access = parsedUrl.query.access;
+            uploadedFile.access = parsedUrl.query.access.split(",");
             uploadedFile.owner = req.user.username;
             uploadFile(uploadedFile);
             addFileToDataBase(uploadedFile);
@@ -158,7 +158,7 @@ fileRouter.use('/createfolder', function (req, res) {
         link: `${this.fileId}${suid(16)}`,
         uploadDate: moment().format('MMMM Do YYYY, h:mm:ss a'),
         owner: req.user.username,
-        access: parsedUrl.query.access,
+        access: parsedUrl.query.access.split(","),
         parent: parsedUrl.query.parent,
         isShared: false
     };
