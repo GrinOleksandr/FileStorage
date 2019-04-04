@@ -31,6 +31,9 @@ fileRouter.use('/listfiles', function(req, res) {
             res.end(responseString);
         });
 });
+fileRouter.use('/getusername', function(req, res) {
+              res.end(req.user.username);
+});
 fileRouter.use('/getfilessharedtome', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});

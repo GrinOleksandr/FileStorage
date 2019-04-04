@@ -25,6 +25,29 @@ ListOfFiles.addEventListener('click',(ev)=>{
     invertSelection();
 });
 
+let accountInfoSpan = document.getElementById('account-info');
+document.addEventListener("DOMContentLoaded", function(){
+    fetch(`/file/getusername`, {
+        method: 'get',
+        headers:{'Content-Type': 'text/plain',
+            'Access-Control-Allow-Origin': "*"
+        }
+    }).then(function (response) {
+        return response.text()
+    })
+        .then(function (textOfResponse) {
+            return JSON.parse(textOfResponse);
+        })
+        .then(function (data) {
+            if (data) {
+                accountInfoSpan.innerText(data);
+            }
+        })
+        .catch(error => error);
+});
+
+
+
 const filePath = document.getElementById('filePath');
 filePath.querySelector("span").addEventListener('click',()=> {
     renderFileStructure("/");
@@ -454,12 +477,17 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(renameBtn);
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
-        dropDownMenu.appendChild(shareBtn);
-        dropDownMenu.appendChild(unShareBtn);
+        if(!target.dataset.isFolder){
+            dropDownMenu.appendChild(shareBtn);
+            dropDownMenu.appendChild(unShareBtn);
+        }
+
         if(target.dataset.isShared === "true"){
             dropDownMenu.appendChild(unShareByLinkBtn);
         }
-        else  dropDownMenu.appendChild(shareByLinkBtn);
+        else {
+            dropDownMenu.appendChild(shareByLinkBtn);
+        }
         dropDownMenu.appendChild(showInfo);
     }
     else {
