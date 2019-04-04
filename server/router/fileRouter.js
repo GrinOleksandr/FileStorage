@@ -410,7 +410,7 @@ function shareItem(idToShare, user, owner) {
         .select('-_id -__v')
         .exec(function (err, Result) {
             accessString = Result[0].access;
-            trueOwner = Result[0].access;
+            trueOwner = Result[0].owner;
         });
     if(owner === trueOwner) {
         let newAccessString = accessString.push(user);
@@ -448,7 +448,7 @@ function unShareItem(id, user, owner) {
         .select('-_id -__v')
         .exec(function (err, Result) {
             accessString = Result[0].access;
-            trueOwner = Result[0].owner
+            trueOwner = Result[0].owner;
         });
     if(owner === trueOwner){
         let newAccessString = accessString.filter(function(item){

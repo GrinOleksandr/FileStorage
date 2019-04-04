@@ -312,7 +312,7 @@ function dropDown(target, cors){
 
     function share(ev, file){
         Modal(ev, "Share to", "Share", function(userToAdd) {
-            shareItem(file.fileId, userToAdd)
+            shareItem(file, userToAdd)
         })
     }
 
@@ -327,7 +327,7 @@ function dropDown(target, cors){
 
     function unShare(ev, file){
         Modal(ev, `Remove one of current users ${file.access.toString()} :`, "Remove access", function(userToRemove) {
-            unShareItem(file.fileId, userToRemove)
+            unShareItem(file, userToRemove)
         })
     }
 
