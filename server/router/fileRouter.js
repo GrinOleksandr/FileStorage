@@ -413,15 +413,17 @@ function shareItem(idToShare, user, owner) {
             accessString = Result[0].access;
             trueOwner = Result[0].owner;
             if(owner === trueOwner) {
-                console.log("***********REAL RESULT ACCESS!", accessString);
-                console.log("***********PUSHING TO NEW STRING NEW STRING!!", user);
-                accessString.push(user);
-                console.log("***********REAL NEW STRING!!", accessString);
-                console.log('Access', accessString);
-                FileStorageDb.updateOne({fileId: idToShare}, {access: accessString}, function (err) {
-                    if (err) return console.log(err);
-                });
-                console.log('root element shared', idToShare)
+                if(accessString.indexOf(user) === -1) {
+                    console.log("***********REAL RESULT ACCESS!", accessString);
+                    console.log("***********PUSHING TO NEW STRING NEW STRING!!", user);
+                    accessString.push(user);
+                    console.log("***********REAL NEW STRING!!", accessString);
+                    console.log('Access', accessString);
+                    FileStorageDb.updateOne({fileId: idToShare}, {access: accessString}, function (err) {
+                        if (err) return console.log(err);
+                    });
+                    console.log('root element shared', idToShare)
+                }
             }
         });
 
