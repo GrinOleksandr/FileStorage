@@ -36,7 +36,7 @@ app.use(cookieParser());
 
 let expiryDate = new Date( Date.now() + 60 * 60 * 1000 ); // 1 hour
 app.use(session({
-    secret: 'husgFt46r5ftg.',
+    secret: 'husgFt4$6r5ftg.',
     saveUninitialized: false,
     resave: false,
     cookie: {
@@ -76,7 +76,7 @@ app.get('/signup', function (req, res, next) {
 
 app.use('/auth', auth);
 
-app.get('/logout', function (req, res) {
+app.get('/logout', loggedin , function (req, res) {
     req.logout();
     res.redirect('/')
 });

@@ -9,7 +9,7 @@ bodyParser = require('body-parser');
 module.exports = function (passport) {
     // router.use(bodyParser.json());
     router.post('/signup', function (req, res) {
-        ;
+
         var body = req.body,
             username = body.username,
             password = body.password,

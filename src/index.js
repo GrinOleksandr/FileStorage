@@ -2,7 +2,8 @@ let state = {
     currentFolder: "/",
     currentPath:"/",
     currentFolderAccessRights:"",
-    clipBoard:[]
+    clipBoard:[],
+    currentUser:""
 };
 
 const ListOfFiles = document.getElementById('files-list');
@@ -30,6 +31,7 @@ const ProgressIndicator = document.getElementById('progressIndicator');
 
 let accountInfoSpan = document.getElementById('account-info');
 document.addEventListener("DOMContentLoaded", function(){
+
     indicateLoading();
     fetch(`/file/getusername`, {
         method: 'get',
@@ -43,11 +45,12 @@ document.addEventListener("DOMContentLoaded", function(){
         .then(function (textOfResponse) {
             console.log(textOfResponse);
             accountInfoSpan.innerText = textOfResponse;
+            state.currentUser = textOfResponse;
+            renderFileStructure();
             removeLoadingIndicator();
         })
         .catch(error => error);
 });
-
 
 const filePath = document.getElementById('filePath');
 filePath.querySelector("span").addEventListener('click',()=> {
@@ -69,6 +72,7 @@ let showSharedFilesBtn = document.getElementById('showSharedFilesBtn');
 showSharedFilesBtn.addEventListener('click', function(ev){
     console.log('getting shared files!');
     getFilesSharedToMe();
+    renderFilePath();
     activateViewButton(ev.target);
 });
 
@@ -76,6 +80,7 @@ let showMyFilesBtn = document.getElementById('showMyFilesBtn');
 showMyFilesBtn.addEventListener('click', function(ev){
     console.log('getting shared files!');
     renderFileStructure();
+    renderFilePath();
     activateViewButton(ev.target);
 });
 
@@ -166,6 +171,7 @@ function invertSelection(){
 }
 
 function renderFileStructure (folder = "/") {
+
     indicateLoading();
     console.log('CURENT FOLER AXECSSF',state);
     fetch(`/file/listfiles?folder=${folder}`, {
@@ -191,6 +197,9 @@ function addAllToList(array) {
 }
 
 function addItemFromServer(element) {
+    // if((state.currentUser !== element.owner) || (element.access.some(function(item){return item === state.currentUser})) ){
+    //     return
+    // }
     console.log(element);
     let newItem = document.createElement("li");
     newItem.className = "file-container";
@@ -347,7 +356,7 @@ function dropDown(target, cors){
 
     function unShare(ev, file, sharedTo ){
         console.log('*****************TARGET', sharedTo);
-        Modal(ev, `Remove one of current users: </br>  ${sharedTo} `, "Remove access", function(userToRemove) {
+        Modal(ev, `Remove one of current users:      ${sharedTo} `, "Remove access", function(userToRemove) {
             unShareItem(file, userToRemove)
         })
     }
@@ -439,29 +448,40 @@ function dropDown(target, cors){
     let showInfo = document.createElement('li');
     showInfo.className = "dropDownItem";
     showInfo.innerText = "Show Info";
-    showInfo.addEventListener('click', (ev)=>{
+    showInfo.addEventListener('click', (ev)=> {
         ev.preventDefault();
         ev.stopPropagation();
         closeContextMenu();
-        document.getElementById('infoOfFile').innerHTML= "";
+        document.getElementById('infoOfFile').innerHTML = "";
 
         let itemInfo = document.createElement('div');
         itemInfo.className = 'item-info-block';
-        if(!target.dataset.isFolder) {
-            itemInfo.innerHTML =
-                `<p><span>Name:</span> "${target.dataset.fileName}"</p>
+        if(target.dataset.owner === state.currentUser) {
+            if (!target.dataset.isFolder) {
+                itemInfo.innerHTML =
+                    `<p><span>Name:</span> "${target.dataset.fileName}"</p>
          <p><span>Size:</span> "${target.dataset.size}"</p>
          <p><span>Uploaded on:</span> "${target.dataset.uploadDate}"</p>
          <p><span>Owner:</span> "${target.dataset.owner}"</p>
          <p><span>Shared to:</span> "${target.dataset.sharedTo.toString || ""}"</p>`
-        }
+            } else {
 
-        else {
-            itemInfo.innerHTML =
-                `<p><span>Name:</span>"${target.dataset.fileName}"</p>
+                itemInfo.innerHTML =
+                    `<p><span>Name:</span>"${target.dataset.fileName}"</p>
          <p><span>Uploaded on:</span> "${target.dataset.uploadDate}"</p>
          <p><span>Owner:</span> "${target.dataset.owner}"</p>
          <p><span>Shared to:</span>" ${target.dataset.sharedTo || ""}"</p>`
+            }
+        }
+        else {
+            if (!target.dataset.isFolder) {
+                itemInfo.innerHTML =
+                    `<p><span>Name:</span> "${target.dataset.fileName}"</p>
+          <p><span>Size:</span> "${target.dataset.size}"</p>`
+            } else {
+                itemInfo.innerHTML =
+                    `<p><span>Name:</span>"${target.dataset.fileName}"</p>`
+            }
         }
 
         document.getElementById('infoOfFile').appendChild(itemInfo);
@@ -476,22 +496,35 @@ function dropDown(target, cors){
     dropDownMenu.style.cursor = "default";
 
     if(target.id !=='files-list') {
-        dropDownMenu.appendChild(downloadBtn);
-        dropDownMenu.appendChild(renameBtn);
-        dropDownMenu.appendChild(deleteBtn);
-        dropDownMenu.appendChild(moveToClipboard);
-        if(target.dataset.isFolder === "false"){
-            dropDownMenu.appendChild(shareBtn);
-            dropDownMenu.appendChild(unShareBtn);
-        }
+        if(target.dataset.owner === state.currentUser) {
 
-        if(target.dataset.isShared === "true"){
-            dropDownMenu.appendChild(unShareByLinkBtn);
+            dropDownMenu.appendChild(renameBtn);
+            dropDownMenu.appendChild(deleteBtn);
+            dropDownMenu.appendChild(moveToClipboard);
+            if (target.dataset.isFolder === "false") {
+                dropDownMenu.appendChild(downloadBtn);
+                if (target.dataset.isShared === "true") {
+                    dropDownMenu.appendChild(unShareByLinkBtn);
+                } else {
+                    dropDownMenu.appendChild(shareByLinkBtn);
+                }
+
+                dropDownMenu.appendChild(shareBtn);
+                dropDownMenu.appendChild(unShareBtn);
+            }
+                dropDownMenu.appendChild(showInfo);
         }
         else {
-            dropDownMenu.appendChild(shareByLinkBtn);
+            if (target.dataset.isFolder === "false") {
+                dropDownMenu.appendChild(downloadBtn);
+                dropDownMenu.appendChild(showInfo);
+            }
+
+            else {
+                dropDownMenu.appendChild(showInfo);
+            }
+
         }
-        dropDownMenu.appendChild(showInfo);
     }
     else {
         dropDownMenu.appendChild(mkDirBtn);

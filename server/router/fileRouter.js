@@ -14,13 +14,43 @@ const FileStorageDb = require('../DB/fileStorageDB.js'),
     tokgen = new TokenGenerator(),
     archiver = require('archiver'),
     zipdir = require('zip-dir'),
-    filesize = require('file-size');
+    filesize = require('file-size'),
+    passport = require('passport'),
+    expressSession = require('express-session'),
+    cookieParser = require('cookie-parser'),
+    auth = require('../router/auth.js')(passport),
+    session = require('express-session');
 
+
+require('../passport')(passport);
+fileRouter.use(cookieParser());
+
+
+let expiryDate = new Date( Date.now() + 60 * 60 * 1000 ); // 1 hour
+fileRouter.use(session({
+    secret: 'husgFt4$6r5ftg.',
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+        expires: expiryDate
+    }
+}));
+
+fileRouter.use(passport.initialize());
+fileRouter.use(passport.session());
+
+let loggedin = function (req, res, next) {
+    if (req.isAuthenticated()) {
+        next()
+    } else {
+        res.redirect('/login')
+    }
+};
 
 
 fileRouter.use(fileUpload());
 fileRouter.use(bodyParser.json());
-fileRouter.use('/listfiles', function(req, res) {
+fileRouter.use('/listfiles', loggedin,function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     console.log('MY USER', req.user.username);
@@ -31,11 +61,11 @@ fileRouter.use('/listfiles', function(req, res) {
             res.end(responseString);
         });
 });
-fileRouter.use('/getusername', function(req, res) {
+fileRouter.use('/getusername', loggedin,function(req, res) {
     console.log('RETRIEVING USER!!', req.user.username);
               res.end(req.user.username);
 });
-fileRouter.use('/getfilessharedtome', function(req, res) {
+fileRouter.use('/getfilessharedtome', loggedin, function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     console.log('MY USER', req.user.username);
@@ -57,7 +87,7 @@ fileRouter.use('/getfilessharedtome', function(req, res) {
     }
 
 });
-fileRouter.use('/download', function (req, res) {
+fileRouter.use('/download', loggedin, function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -76,7 +106,7 @@ fileRouter.use('/download', function (req, res) {
     });
 
 });
-fileRouter.use('/downloadsharedfile', function (req, res) {
+fileRouter.use('/downloadsharedfile', loggedin, function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -95,22 +125,7 @@ fileRouter.use('/downloadsharedfile', function (req, res) {
     });
 
 });
-// fileRouter.use('/downloadsharedfolder', function (req, res) {
-//
-//     let parsedUrl = url.parse(req.url, true);
-//     res.setHeader('Content-Type', 'text/plain');
-//     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     FileStorageDb.find({fileId: parsedUrl.query.folder}, function (err, file) {
-//         if (err) return console.log(err);
-//         console.log('filefile',file);
-//         if (file && file[0].isShared && file[0].isFolder) {
-//             digAndArchive(file[0].fileId, file[0].name);
-//         }
-//     });
-//
-// });
-fileRouter.use('/upload', function (req, res) {
+fileRouter.use('/upload', loggedin,function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     if (Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
@@ -146,7 +161,7 @@ fileRouter.use('/upload', function (req, res) {
     res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': "*"});
     res.end('File uploaded!');
 });
-fileRouter.use('/createfolder', function (req, res) {
+fileRouter.use('/createfolder', loggedin, function (req, res) {
     console.log("folder creation");
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
@@ -174,7 +189,7 @@ fileRouter.use('/createfolder', function (req, res) {
 
     res.end();
 });
-fileRouter.use('/rename', function (req, res) {
+fileRouter.use('/rename', loggedin, function (req, res) {
     console.log("renaming");
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
@@ -187,7 +202,7 @@ fileRouter.use('/rename', function (req, res) {
 
     res.end();
 });
-fileRouter.use('/delete', function (req, res) {
+fileRouter.use('/delete', loggedin, function (req, res) {
     console.log("deleting");
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
@@ -201,7 +216,7 @@ fileRouter.use('/delete', function (req, res) {
     res.end();
     console.log('item deleted')
 });
-fileRouter.use('/getelement', function(req, res) {
+fileRouter.use('/getelement', loggedin, function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     FileStorageDb.find({fileId : parsedUrl.query.id})
@@ -232,7 +247,7 @@ fileRouter.use('/getsharedfileinfo', function(req, res) {
             });
     }
 });
-fileRouter.use('/move', function (req, res) {
+fileRouter.use('/move', loggedin, function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -244,7 +259,7 @@ fileRouter.use('/move', function (req, res) {
 
     res.end();
 });
-fileRouter.use('/sharebylink', function (req, res) {
+fileRouter.use('/sharebylink', loggedin, function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -254,7 +269,7 @@ fileRouter.use('/sharebylink', function (req, res) {
     digAndShareByLink(parsedUrl.query.id);
     res.end();
 });
-fileRouter.use('/unsharebylink', function (req, res) {
+fileRouter.use('/unsharebylink', loggedin, function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -264,7 +279,7 @@ fileRouter.use('/unsharebylink', function (req, res) {
     digAndUnShareByLink(parsedUrl.query.id);
     res.end();
 });
-fileRouter.use('/share', function (req, res) {
+fileRouter.use('/share', loggedin,function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -274,7 +289,7 @@ fileRouter.use('/share', function (req, res) {
     digAndShare(parsedUrl.query.id, parsedUrl.query.user ,req.user.username );
     res.end();
 });
-fileRouter.use('/unshare', function (req, res) {
+fileRouter.use('/unshare',loggedin, function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -382,9 +397,6 @@ function unShareItemByLink(id) {
     });
     console.log('root element access closed', id)
 }
-
-
-
 function digAndShare(id, user, owner){
     let childrenArray = [];
     lookForChildren(id);
@@ -475,140 +487,6 @@ function unShareItem(id, user, owner) {
         });
 
 }
-
-
-
-// function digAndArchive(id, initialFolderName) {
-//     let childrenArray = [];
-//     let folderPath = `${config.fileStoragePath}`;
-//
-//     lookForChildren(id);
-//     // zipdir(`${config.fileStoragePath}${initialFolderName}`, { saveTo: `${config.fileStoragePath}${initialFolderName}.zip` }, function (err, buffer) {
-//     //     if(err){
-//     //         console.log(err);
-//     //     }
-//     //     else console.log('WOOHOO!zipped!  ' );
-//     // });
-//
-//
-//
-//
-//
-//     function lookForChildren(id) {
-//         childrenArray.push(id);
-//         FileStorageDb.find({fileId: id})
-//             .select('-_id -__v')
-//             .exec(function (err, result) {
-//                 createFileStructure(result[0])
-//                 if(result[0].isFolder){
-//                     folderPath += `/${result[0].name}`;
-//                     lookForChildren(result[0].fileId)
-//                 }
-//                 });
-//         FileStorageDb.find({parent: id})
-//             .select('-_id -__v')
-//             .exec(function (err, result) {
-//                 if (result.length) {
-//                     // folderPath += `/${item.name}
-//                     result.forEach(function (item) {
-//                         console.log('i am child!: ', item);
-//                         createFileStructure(item)
-//                     });
-//                     result.forEach(function (item) {
-//                         console.log('i am child!: ', item);
-//                         lookForChildren(item.fileId);
-//                     })
-//                 }
-//                 console.log('my children is: ', result);
-//             });
-//         console.log('********* PARSEd CHILREN!: ', childrenArray);
-//         // console.log('trying to archive');
-//         // let archive = archiver('zip', {
-//         //     zlib: {level: 9} // Sets the compression level.
-//         // });
-//         // let output = fs.createWriteStream(`${config.fileStoragePath}temp.zip`);
-//         //
-//         // archive.pipe(output);
-//         //
-//         // let getStream = function (fileName) {
-//         //     return fs.readFileSync(fileName);
-//         // };
-//
-// //these are the files, want to put into zip archive
-// //         let fileNames = ['mock1.data', 'mock2.data', 'mock3.data'];
-//
-//         // for (let i = 0; i < childrenArray.length; i++) {
-//         //     let path = `${config.fileStoragePath}childrenArray[i].fileId`;
-//         //     archive.append(getStream(path), {name: childrenArray[i].name});
-//         // }
-//         //
-//         // archive.finalize(function (err, bytes) {
-//         //     if (err) {
-//         //         throw err;
-//         //     }
-//         //
-//         //     console.log(bytes + ' total bytes');
-//         // });
-//     }
-//
-//     function createFileStructure(item) {
-//         console.log("my result", item);
-//         if (item.isFolder) {
-//             folderPath += `/${item.name}`;
-//             fs.mkdir(folderPath, { recursive: true }, (err) => {
-//                 if (err) throw err;
-//             });
-//         }
-//         else{fs.copyFile(`${config.fileStoragePath}${item.fileId}`, `${folderPath}/${item.name}`, (err) => {
-//             if (err) throw err;
-//             console.log(`${config.fileStoragePath}${item.fileId} was copied to ${folderPath}/${item.name}`);
-//         });
-//         }
-//     }
-// }
-
-
-
-//
-    //ARCHIVER!!
-//      let archive = archiver('zip', {
-//         zlib: { level: 9 } // Sets the compression level.
-//     });
-//     let output = fs.createWriteStream(__dirname + '/temp.zip');
-//
-//     archive.pipe(output);
-//
-//     let getStream = function(fileName){
-//         return fs.readFileSync(fileName);
-//     };
-//
-// //these are the files, want to put into zip archive
-//     let fileNames = ['mock1.data', 'mock2.data', 'mock3.data'];
-//
-//     for(i=0; i<fileNames.length; i++){
-//         let path = __dirname + '/'+fileNames[i];
-//         archive.append(getStream(path), { name: fileNames[i]});
-//     }
-//
-//     archive.finalize(function(err, bytes) {
-//         if (err) {
-//             throw err;
-//         }
-//
-//         console.log(bytes + ' total bytes');
-//     });
-
-// //////////////////////
-//
-//
-//
-//
-// }
-//
-// function archiveThisItem(id , name){
-//     archive.file(id, { name: name });
-// }
-
 
 module.exports = fileRouter;
 
