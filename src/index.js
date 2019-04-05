@@ -30,6 +30,7 @@ const ProgressIndicator = document.getElementById('progressIndicator');
 
 let accountInfoSpan = document.getElementById('account-info');
 document.addEventListener("DOMContentLoaded", function(){
+    indicateLoading();
     fetch(`/file/getusername`, {
         method: 'get',
         headers:{'Content-Type': 'text/plain',
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function(){
         .then(function (textOfResponse) {
             console.log(textOfResponse);
             accountInfoSpan.innerText = textOfResponse;
+            removeLoadingIndicator();
         })
         .catch(error => error);
 });
@@ -164,6 +166,7 @@ function invertSelection(){
 }
 
 function renderFileStructure (folder = "/") {
+    indicateLoading();
     console.log('CURENT FOLER AXECSSF',state);
     fetch(`/file/listfiles?folder=${folder}`, {
         method: 'POST'
@@ -175,6 +178,7 @@ function renderFileStructure (folder = "/") {
         })
         .then(function (array) {
             addAllToList(array)
+            removeLoadingIndicator();
         })
         .catch(error => console.log("Данные не получены: " + error));
 }
@@ -504,6 +508,7 @@ function cutItem() {
 }
 
 function pasteItem() {
+    indicateLoading();
     let newParent = state.currentFolder;
     let selectedItems = state.clipBoard;
     if (selectedItems.length) {
@@ -517,16 +522,19 @@ function pasteItem() {
                     }
                 }).then((data) => {
                     renderFileStructure(state.currentFolder);
+                    removeLoadingIndicator();
                 })
                     .catch(error => console.log("Данные не получены: " + error));
             } else alert(`Sorry, you can't move a folder to its own child or grandchild`);
         });
 
         state.clipBoard = [];
+        removeLoadingIndicator();
     }
 }
 
 function renameOnServer(file, newName) {
+    indicateLoading();
     fetch(`/file/rename?id=${file}&newname=${newName}`, {
         method: 'POST',
         headers: {
@@ -534,12 +542,14 @@ function renameOnServer(file, newName) {
             'Access-Control-Allow-Origin': "*"
         }
     }).then((data) => {
+        removeLoadingIndicator();
         renderFileStructure(state.currentFolder);
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
 
 function deleteFromServer(fileId) {
+    indicateLoading();
     fetch(`/file/delete?id=${fileId}`, {
         method: 'POST',
         headers: {
@@ -548,11 +558,13 @@ function deleteFromServer(fileId) {
         }
     }).then((data) => {
         renderFileStructure(state.currentFolder);
+        removeLoadingIndicator();
     })
         .catch(error => console.log("Удаление не прошло: " + error));
 }
 
 function downloadFile(fileName, fileId){
+    indicateLoading();
     fetch(`/file/download?id=${fileId}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
@@ -560,7 +572,10 @@ function downloadFile(fileName, fileId){
         }
     })
         .then(response => response.blob())
-        .then((blob) => saveAs(blob, fileName))
+        .then((blob) => {
+            saveAs(blob, fileName);
+            removeLoadingIndicator();
+        })
         .catch(error => console.log("Данные не получены: " + error));
 }
 
@@ -625,6 +640,7 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
 }
 
 function createNewFolderOnServer(name){
+    indicateLoading();
     console.log(state.currentFolderAccessRights);
     fetch(`/file/createfolder?name=${name}&parent=${state.currentFolder}&access=${state.currentFolderAccessRights}`, {
         method: 'POST',
@@ -633,6 +649,7 @@ function createNewFolderOnServer(name){
         }
     }).then((data)=>{
         renderFileStructure(state.currentFolder);
+        removeLoadingIndicator();
     }).catch(error => console.log("Данные не получены: " + error));
 }
 
@@ -646,6 +663,7 @@ function renderFilePath(folderId = "/") {
         filePath.appendChild(rootFolder);
         state.currentPath = "/";
         newPath.forEach(function (item) {
+            indicateLoading();
             fetch(`http://127.0.0.1:8000/file/getelement?id=${item}`, {
                 method: 'POST'
             }).then(function (response) {
@@ -656,7 +674,8 @@ function renderFilePath(folderId = "/") {
                 })
                 .then(function (data) {
                     if (data) {
-                        addToFilePath(data[0])
+                        addToFilePath(data[0]);
+                        removeLoadingIndicator();
                     }
                 })
                 .catch(error => error);
@@ -689,6 +708,7 @@ function closeContextMenu() {
 }
 
 function shareItem(id, userToAdd){
+    indicateLoading();
     fetch(`/file/share?id=${id}&user=${userToAdd}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
@@ -696,10 +716,12 @@ function shareItem(id, userToAdd){
         }
     }).then((data)=>{
         renderFileStructure(state.currentFolder);
+        removeLoadingIndicator();
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
 function unShareItem(id, userToRemove){
+    indicateLoading();
     console.log('REMOVING ACCESSS',id, userToRemove );
     fetch(`/file/unshare?id=${id}&user=${userToRemove}`, {
         method: 'POST',
@@ -708,11 +730,13 @@ function unShareItem(id, userToRemove){
         }
     }).then((data)=>{
         renderFileStructure(state.currentFolder);
+        removeLoadingIndicator();
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
 
 function unShareItemByLink(id){
+    indicateLoading();
     fetch(`/file/unsharebylink?id=${id}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
@@ -720,18 +744,20 @@ function unShareItemByLink(id){
         }
     }).then((data)=>{
         renderFileStructure(state.currentFolder);
+        removeLoadingIndicator();
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
 
 function shareItemByLink(id){
+    indicateLoading();
     fetch(`/file/sharebylink?id=${id}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
             'Access-Control-Allow-Origin': "*"
         }
-    }).then((data)=>{
-        // renderFileStructure(state.currentFolder);
+    }).then(()=>{
+        removeLoadingIndicator();
     })
         .catch(error => console.log("Данные не получены: " + error));
 }
@@ -745,6 +771,7 @@ function truncateMe(text) {
 }
 
 function handleSharedFileownload(fileName, fileId){
+    indicateLoading();
     fetch(`/file/download?id=${fileId}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
@@ -752,12 +779,15 @@ function handleSharedFileownload(fileName, fileId){
         }
     })
         .then(response => response.blob())
-        .then((blob) => saveAs(blob, fileName))
+        .then((blob) => {
+            saveAs(blob, fileName);
+            removeLoadingIndicator();
+        })
         .catch(error => console.log("Данные не получены: " + error));
 }
 
 function getFilesSharedToMe (folder = "/") {
-
+    indicateLoading();
     fetch(`/file/getfilessharedtome?folder=${folder}`, {
         method: 'POST'
     }).then(function (response) {
@@ -770,6 +800,7 @@ function getFilesSharedToMe (folder = "/") {
 
             ListOfFiles.innerHTML = "";
             addAllToList(array)
+            removeLoadingIndicator();
         })
         .catch(error => console.log("Данные не получены: " + error));
 }
