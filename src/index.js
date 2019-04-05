@@ -311,6 +311,7 @@ function dropDown(target, cors){
     downloadBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
+        closeContextMenu();
         let fileName = target.dataset.fileName;
         downloadFile(fileName, fileId);
     });
