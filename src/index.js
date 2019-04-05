@@ -25,6 +25,9 @@ ListOfFiles.addEventListener('click',(ev)=>{
     invertSelection();
 });
 
+const ProgressIndicator = document.getElementById('progressIndicator');
+
+
 let accountInfoSpan = document.getElementById('account-info');
 document.addEventListener("DOMContentLoaded", function(){
     fetch(`/file/getusername`, {
@@ -42,7 +45,6 @@ document.addEventListener("DOMContentLoaded", function(){
         })
         .catch(error => error);
 });
-
 
 
 const filePath = document.getElementById('filePath');
@@ -137,6 +139,7 @@ FileInput.addEventListener('change', function(e){
 renderFileStructure();
 /////SUBMITTING via AJAX
 function ajaxSendFiles(){
+    indicateLoading();
     let formData = new FormData(DropZone);
     fetch(`/file/upload?parent=${state.currentFolder}&access=${state.currentFolderAccessRights}`, {
         method: 'POST',
@@ -146,6 +149,7 @@ function ajaxSendFiles(){
         body:formData
     }).then(function (response) {
         renderFileStructure(state.currentFolder);
+        removeLoadingIndicator();
         return response.text();
     })
         .catch(error => console.log("Данные не отправленны: " + error));
@@ -276,38 +280,12 @@ function addItemFromServer(element) {
     let fileIcon = document.createElement("span");
     fileIcon.className = "file-icon";
     fileIcon.style.backgroundImage = `url(${chooseIcon(element.mimetype)})`;
-        // `url(./img/file-type-icons/doc.png)`;
-    // let itemMimeType = document.createElement("span");
-    // itemMimeType.innerText = `type: ${element.mimetype}`;
-    //
-    // let itemLink = document.createElement("span");
-    // itemLink.innerText = `link: ${element.link}`;
-    //
-    // let itemUploadDate = document.createElement("span");
-    // itemUploadDate.innerText = `date: ${element.uploadDate}`;
-    //
-    // let itemOwner = document.createElement("span");
-    // itemOwner.innerText =`owner: ${element.owner}`;
-    //
-    // let itemAccess = document.createElement("span");
-    // itemAccess.innerText =`access: ${element.access}` ;
-    //
-    // let itemParent = document.createElement("span");
-    // itemParent.innerText =`parent: ${element.parent}` ;
-    //
-    // let itemFolder = document.createElement("span");
-    // itemFolder.innerText = `folder: ${element.folder}`;
-
+    if(element.access.toString()) {
+        fileIcon.style.backgroundColor = "#c67d10b0";
+    }
     newItem.appendChild(fileIcon);
     newItem.appendChild(itemName);
 
-    // newItem.appendChild(itemMimeType);
-    // newItem.appendChild(itemLink);
-    // newItem.appendChild(itemUploadDate);
-    // newItem.appendChild(itemOwner);
-    // newItem.appendChild(itemAccess);
-    // newItem.appendChild(itemParent);
-    // newItem.appendChild(itemFolder);
     ListOfFiles.appendChild(newItem);
 }
 
@@ -365,7 +343,7 @@ function dropDown(target, cors){
 
     function unShare(ev, file, sharedTo ){
         console.log('*****************TARGET', sharedTo);
-        Modal(ev, `Remove one of current users ${sharedTo} :`, "Remove access", function(userToRemove) {
+        Modal(ev, `Remove one of current users: </br>  ${sharedTo} `, "Remove access", function(userToRemove) {
             unShareItem(file, userToRemove)
         })
     }
@@ -428,8 +406,6 @@ function dropDown(target, cors){
         ev.stopPropagation();
         ev.preventDefault();
     });
-
-
 
     let shareByLinkBtn = document.createElement('li');
     shareByLinkBtn.className = "dropDownItem";
@@ -736,8 +712,6 @@ function unShareItem(id, userToRemove){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-
-
 function unShareItemByLink(id){
     fetch(`/file/unsharebylink?id=${id}`, {
         method: 'POST',
@@ -815,6 +789,18 @@ function selectText(node) {
         selection.addRange(range);
     } else {
         console.warn("Could not select text in node: Unsupported browser.");
+    }
+}
+
+function indicateLoading(){
+    if(!ProgressIndicator.classList.contains('indicatorActive')){
+        ProgressIndicator.classList.add('indicatorActive');
+    }
+}
+
+function removeLoadingIndicator(){
+    if(ProgressIndicator.classList.contains('indicatorActive')){
+        ProgressIndicator.classList.remove('indicatorActive');
     }
 }
 

@@ -148,7 +148,11 @@ input[type="search"] {
     height:800px;
     border:1px solid black;
     background-color: blue;
-    width: 25%;
+    width: 20%;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #files-list{
@@ -440,4 +444,16 @@ input[type="search"] {
 .activeViewButton {
     background: #0000ff33;
     text-decoration: underline;
+}
+
+.progressIndicator {
+    display:none;
+}
+
+.indicatorActive {
+    display:block;
+}
+
+#progressIndicator img{
+    width: 300px;
 }
