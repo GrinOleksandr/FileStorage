@@ -409,6 +409,10 @@ function dropDown(target, cors){
 
     fileLinkWrapper.appendChild(fileLinkSpan);
     fileLinkWrapper.appendChild(fileLinkBtn);
+    fileLinkWrapper.addEventListener('click',(ev)=>{
+        ev.stopPropagation();
+        ev.preventDefault();
+    });
 
 
 
@@ -419,7 +423,7 @@ function dropDown(target, cors){
     shareByLinkBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();
-        fileLinkSpan.classList.add('linkSpan-visible');
+        fileLinkWrapper.classList.add('linkwrap-visible');
         selectText('file-link__span');
 
         shareItemByLink(fileId);
@@ -470,7 +474,7 @@ function dropDown(target, cors){
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
     dropDownMenu.classList.toggle('dropdown-visible');
-    dropDownMenu.style.position = "absolute";
+    dropDownMenu.style.position = "fixed";
     dropDownMenu.style.top = `${cors.y}px`;
     dropDownMenu.style.left = `${cors.x}px`;
     dropDownMenu.style.cursor = "default";
