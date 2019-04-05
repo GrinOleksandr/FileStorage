@@ -65,7 +65,20 @@ let showSharedFilesBtn = document.getElementById('ShowSharedFilesBtn');
 showSharedFilesBtn.addEventListener('click', function(ev){
     console.log('getting shared files!');
     getFilesSharedToMe();
+    activateViewButton();
 });
+
+let showMyFilesBtn = document.getElementById('ShowSharedFilesBtn');
+showMyFilesBtn.addEventListener('click', function(ev){
+    console.log('getting shared files!');
+    renderFileStructure();
+    activateViewButton();
+});
+
+function activateViewButton(ev){
+    console.log(ev);
+}
+
 
 //***********************************UPLOAD***********************************//
 //upload via drag&drop

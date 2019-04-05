@@ -350,9 +350,10 @@ input[type="search"] {
 #filePath {
     width:100%;
     height:30px;
-    background-color: #E8E8E8;
+    background-color: yellow;
     font-size:20px;
     font-weight:700;
+    text-decoration: underline;
 }
 
 #filePath span{
@@ -402,4 +403,37 @@ input[type="search"] {
 
 .file-link__span {
     padding: 5px;
+}
+
+.viewsWrapper {
+    display: flex;
+    justify-content: space-between;
+
+    background: yellow;
+    border: 2px solid black;
+    font-size: 20px;
+
+    border-bottom: none;
+    position: absolute;
+    top: 53.8%;
+    left: 19.8%;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+}
+
+#ShowSharedFilesBtn {
+    border-top-right-radius: 18px;
+    padding: 7px 20px 7px 14px;
+    cursor:pointer;
+}
+
+#ShowMyFilesBtn {
+    padding: 7px 20px;
+    border-top-left-radius: 18px;
+    cursor:pointer;
+}
+
+.activeViewButton {
+    background: #0000ff33;
+    text-decoration: underline;
 }
