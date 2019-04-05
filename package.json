@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm-run-all -p build server",
     "build": "webpack --mode production",
-    "server": "server/app.js",
+    "server": "node server/app.js",
     "dev": "webpack-dev-server --mode development --open",
     "serv": "nodemon --inspect -w server/ server/app.js",
     "watch": "webpack  --mode production  --watch "
