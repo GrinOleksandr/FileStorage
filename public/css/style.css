@@ -55,10 +55,14 @@ a:hover                        { text-decoration:none; }
 }
 
 #info-block {
-    display:flex;
+    display: flex;
     justify-content: flex-end;
     align-items: center;
-    width:60%;
+    width: 300px;
+    background: yellow;
+    padding: 10px;
+    margin-right: 300px;
+    border-radius: 6px;
 }
 
 #search {
