@@ -396,7 +396,7 @@ function dropDown(target, cors){
 
     let fileLinkSpan = document.createElement('span');
     fileLinkSpan.className = "file-link__span";
-    fileLinkSpan.innerText = `http://http://localhost:8000/shared?file=${target.dataset.link}`;
+    fileLinkSpan.innerText = `http://localhost:8000/shared?file=${target.dataset.link}`;
 
     let shareByLinkBtn = document.createElement('li');
     shareByLinkBtn.className = "dropDownItem";
@@ -406,11 +406,10 @@ function dropDown(target, cors){
         ev.preventDefault();
         ev.stopPropagation();
         fileLinkSpan.classList.add('linkSpan-visible');
+        selectText('file-link__span');
         shareItemByLink(fileId);
 
     });
-
-
 
     let unShareByLinkBtn = document.createElement('li');
     unShareByLinkBtn.className = "dropDownItem";
@@ -766,5 +765,22 @@ function getFilesSharedToMe (folder = "/") {
         .catch(error => console.log("Данные не получены: " + error));
 }
 
+function selectText(node) {
+    node = document.getElementsByClassName(node)[0];
+
+    if (document.body.createTextRange) {
+        const range = document.body.createTextRange();
+        range.moveToElementText(node);
+        range.select();
+    } else if (window.getSelection) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    } else {
+        console.warn("Could not select text in node: Unsupported browser.");
+    }
+}
 
 
