@@ -58,7 +58,7 @@ a:hover                        { text-decoration:none; }
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    width: 300px;
+    min-width: 300px;
     background: yellow;
     padding: 10px;
     margin-right: 300px;
@@ -128,7 +128,24 @@ input[type="search"] {
 #account-info {
     display:block;
     margin:auto 30px;
+    font-size: 25px;
+    text-decoration: underline;
 }
+
+#info-block:first-child{
+    font-size: 20px;
+}
+
+#info-block a {
+    margin-right: 10px;
+    margin-left: 67px;
+    font-size: 17px;
+    text-decoration: none;
+    background: green;
+    padding: 7px;
+    border-radius: 5px;
+}
+
 #login-block {
     display:none;
 }
@@ -157,13 +174,16 @@ input[type="search"] {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
 }
 
 #files-list{
-    display: flex;
-    overflow: hidden;
-    flex-wrap: wrap;
+
     height: 100%;
+}
+
+#infoOfFile{
+    margin-bottom: 200px;
 }
 
 .file-container{
@@ -178,6 +198,7 @@ input[type="search"] {
     margin: 10px;
     cursor: pointer;
     font-size: 10px;
+    float: left;
 }
 
 #shared-files-list{
@@ -460,4 +481,15 @@ input[type="search"] {
 
 #progressIndicator img{
     width: 300px;
+}
+
+.item-info-block{
+    width: 200px;
+    background: #dfcdcd;
+    margin-bottom: 100px;
+}
+
+.item-info-block span {
+    font-weight: 700;
+
 }
