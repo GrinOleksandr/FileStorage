@@ -136,6 +136,7 @@ app.get('/shared', function (req, res, next) {
 
 ////////////////////////////////////////////////////////////////////////////////
 app.listen(config.port);
+
 console.log(`*****${moment().format('MMMM Do YYYY, h:mm:ss a')}`);
 console.log(`*****Server running at ${config.ip}:${config.port}`);
 
