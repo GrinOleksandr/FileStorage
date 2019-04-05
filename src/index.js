@@ -440,7 +440,8 @@ function dropDown(target, cors){
         ev.stopPropagation();
         fileLinkWrapper.classList.add('linkwrap-visible');
         selectText('file-link__span');
-
+        console.log("TARGET!!" , target);
+        target.querySelector('.file-name').style.background = "red";
         shareItemByLink(fileId);
     });
 

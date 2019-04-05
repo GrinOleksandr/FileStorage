@@ -302,6 +302,10 @@ input[type="search"] {
     position:relative;
 }
 
+.dropDownItem:hover {
+    background-color: #87a0e6;
+}
+
 /******************MODAL*************************/
 .modal {
     position: absolute;
@@ -373,7 +377,7 @@ input[type="search"] {
     justify-content: space-between;
     border-bottom-right-radius: 5px;
     border-top-right-radius: 5px;
-    pointer-events: none;
+    pointer-events: visible;
 
 
 }
