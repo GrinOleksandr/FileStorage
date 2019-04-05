@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function(){
     })
         .then(function (textOfResponse) {
             console.log(textOfResponse);
-            accountInfoSpan.innerHTML = textOfResponse;
+            accountInfoSpan.innerText = textOfResponse;
         })
         .catch(error => error);
 });
@@ -474,7 +474,7 @@ function dropDown(target, cors){
         dropDownMenu.appendChild(renameBtn);
         dropDownMenu.appendChild(deleteBtn);
         dropDownMenu.appendChild(moveToClipboard);
-        if(!target.dataset.isFolder){
+        if(target.dataset.isFolder === "false"){
             dropDownMenu.appendChild(shareBtn);
             dropDownMenu.appendChild(unShareBtn);
         }
