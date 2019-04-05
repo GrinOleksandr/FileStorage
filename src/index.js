@@ -393,10 +393,18 @@ function dropDown(target, cors){
         closeContextMenu();
     });
 
+    let fileLinkBtn = document.createElement('span');
+    fileLinkBtn.className = "fileLinkBtn";
+    fileLinkBtn.innerText = "Copy";
+    fileLinkBtn.addEventListener('click', ()=>document.execCommand('copy'));
 
     let fileLinkSpan = document.createElement('span');
     fileLinkSpan.className = "file-link__span";
     fileLinkSpan.innerText = `http://localhost:8000/shared?file=${target.dataset.link}`;
+    fileLinkSpan.appendChild(fileLinkBtn);
+
+
+
 
     let shareByLinkBtn = document.createElement('li');
     shareByLinkBtn.className = "dropDownItem";
@@ -407,9 +415,10 @@ function dropDown(target, cors){
         ev.stopPropagation();
         fileLinkSpan.classList.add('linkSpan-visible');
         selectText('file-link__span');
-        shareItemByLink(fileId);
 
+        shareItemByLink(fileId);
     });
+
 
     let unShareByLinkBtn = document.createElement('li');
     unShareByLinkBtn.className = "dropDownItem";
