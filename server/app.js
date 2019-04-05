@@ -1,24 +1,13 @@
 'use strict';
-const DB = require('./DB/db.js'),
-    UsersDB = require('./DB/usersDB'),
-    config = require('./config'),
+const config = require('./config'),
     express = require('express'),
     app =express(),
     bodyParser = require('body-parser'),
-    fileUpload = require('express-fileupload'),
     moment = require('moment'),
-    typeIs = require('type-is'),
-    tmp = require('tmp'),
-    util = require('util'),
     fileRouter = require('./router/fileRouter.js'),
-    userRouter = require('./router/userRouter.js'),
-    http = require('http'),
-    url = require('url'),
-    fs = require('fs'),
     mongoose = require('mongoose'),
     path = require('path'),
     passport = require('passport'),
-    expressSession = require('express-session'),
     cookieParser = require('cookie-parser'),
     auth = require('./router/auth.js')(passport),
     session = require('express-session');
@@ -84,52 +73,6 @@ app.get('/logout', loggedin , function (req, res) {
 app.get('/shared', function (req, res, next) {
     res.sendFile(path.join(__dirname+'./../public/shared.html'));
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Serve static files
-
-
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname+'../public'));
-// });
-
-///////// Routes setup Setup
-// app.get("/testtest", function(req,res){
-//     res.end('dfdfsfdsfdsfsd');
-// });
-// app.use(bodyParser.json());
-
-
-//////////////////////////////////////////////////////////////////////////////////////
 
 
 

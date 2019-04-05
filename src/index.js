@@ -43,7 +43,6 @@ document.addEventListener("DOMContentLoaded", function(){
         return response.text()
     })
         .then(function (textOfResponse) {
-            console.log(textOfResponse);
             accountInfoSpan.innerText = textOfResponse;
             state.currentUser = textOfResponse;
             renderFileStructure();
@@ -70,7 +69,6 @@ filePath.appendChild(rootFolder);
 
 let showSharedFilesBtn = document.getElementById('showSharedFilesBtn');
 showSharedFilesBtn.addEventListener('click', function(ev){
-    console.log('getting shared files!');
     getFilesSharedToMe();
     renderFilePath();
     activateViewButton(ev.target);
@@ -78,16 +76,14 @@ showSharedFilesBtn.addEventListener('click', function(ev){
 
 let showMyFilesBtn = document.getElementById('showMyFilesBtn');
 showMyFilesBtn.addEventListener('click', function(ev){
-    console.log('getting shared files!');
     renderFileStructure();
     renderFilePath();
     activateViewButton(ev.target);
 });
 
-function activateViewButton(target){
+function activateViewButton(target) {
     document.getElementsByClassName('activeViewButton')[0].classList.remove('activeViewButton');
     target.classList.add('activeViewButton');
-
 }
 
 
@@ -122,16 +118,12 @@ DropZone.addEventListener('drop', function(e){
     ajaxSendFiles();
 });
 
-// let createFolderBtn = document.getElementById('create-folder');
-// createFolderBtn.addEventListener('click',Modal);
-
 //upload via input field
 const FileInput = document.getElementById("file-input");
 FileInput.addEventListener('focus', ()=> DropZone.querySelector('label').classList.add('focus'));
 FileInput.addEventListener('blur', ()=> DropZone.querySelector('label').classList.remove('focus'));
 FileInput.addEventListener('change', function(e){
     e.preventDefault();
-    console.log("uploading files  ", this.files);
     if(this.files[0].isDirectory){
         console.log(`DIRECTORY!! : ${this.files[0]}`)
     }
@@ -171,9 +163,7 @@ function invertSelection(){
 }
 
 function renderFileStructure (folder = "/") {
-
     indicateLoading();
-    console.log('CURENT FOLER AXECSSF',state);
     fetch(`/file/listfiles?folder=${folder}`, {
         method: 'POST'
     }).then(function (response) {
@@ -197,10 +187,6 @@ function addAllToList(array) {
 }
 
 function addItemFromServer(element) {
-    // if((state.currentUser !== element.owner) || (element.access.some(function(item){return item === state.currentUser})) ){
-    //     return
-    // }
-    console.log(element);
     let newItem = document.createElement("li");
     newItem.className = "file-container";
     newItem.dataset.parent = element.parent;
@@ -213,37 +199,36 @@ function addItemFromServer(element) {
     newItem.dataset.isFolder = element.isFolder;
     newItem.dataset.link = element.link;
 
-    newItem.addEventListener('click', (ev) =>{
+    newItem.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         closeContextMenu();
         selectItem(ev.currentTarget);
     });
-     if(element.isFolder) {
-         newItem.addEventListener('dblclick', function(ev){
-             openFolder(element.name, element.fileId , element.access.toString())
-         });
-     }
+    if (element.isFolder) {
+        newItem.addEventListener('dblclick', function (ev) {
+            openFolder(element.name, element.fileId, element.access.toString())
+        });
+    }
 
-    function openFolder(name, id , access) {
+    function openFolder(name, id, access) {
         state.currentFolder = id;
-        console.log('access rights', access);
         state.currentFolderAccessRights = access;
         renderFileStructure(id);
         addToFilePath(element);
     }
 
-    function selectItem(target){
-        target.classList.add('item-selected');
-     }
+    function selectItem(target) {
+        target.classList.toggle('item-selected');
+    }
 
-    newItem.addEventListener('contextmenu',(ev)=> {
+    newItem.addEventListener('contextmenu', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        if(!ev.currentTarget.classList.contains("item-selected")) {
+        if (!ev.currentTarget.classList.contains("item-selected")) {
             invertSelection();
         }
-        // selectItem(ev.currentTarget);
+
         closeContextMenu(ev);
         let cors = {
             x: ev.clientX,
@@ -252,16 +237,15 @@ function addItemFromServer(element) {
         dropDown(ev.currentTarget, cors);
     });
 
-    if(element.isShared){
+    if (element.isShared) {
         newItem.dataset.isShared = "true";
     }
-
 
     let itemName = document.createElement("span");
 
     itemName.innerText = truncateMe(element.name);
     itemName.className = "file-name";
-    if(element.isShared){
+    if (element.isShared) {
         itemName.classList.add('shared-item');
     }
 
@@ -293,7 +277,7 @@ function addItemFromServer(element) {
     let fileIcon = document.createElement("span");
     fileIcon.className = "file-icon";
     fileIcon.style.backgroundImage = `url(${chooseIcon(element.mimetype)})`;
-    if(element.access.toString()) {
+    if (element.access.toString()) {
         fileIcon.style.backgroundColor = "#c67d10b0";
     }
     newItem.appendChild(fileIcon);
@@ -302,13 +286,13 @@ function addItemFromServer(element) {
     ListOfFiles.appendChild(newItem);
 }
 
-function dropDown(target, cors){
+function dropDown(target, cors) {
     closeContextMenu();
     let fileId = target.dataset.id;
     let downloadBtn = document.createElement('li');
     downloadBtn.className = "dropDownItem";
     downloadBtn.innerText = "Download";
-    downloadBtn.addEventListener('click', (ev)=>{
+    downloadBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         closeContextMenu();
@@ -319,14 +303,14 @@ function dropDown(target, cors){
     let renameBtn = document.createElement('li');
     renameBtn.className = "dropDownItem";
     renameBtn.innerText = "Rename";
-    renameBtn.addEventListener('click', (ev)=>{
+    renameBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         rename(ev, fileId);
     });
 
-    function rename(ev, file){
-        Modal(ev, "Rename", "Rename", function(newObjectName) {
+    function rename(ev, file) {
+        Modal(ev, "Rename", "Rename", function (newObjectName) {
             renameOnServer(file, newObjectName)
         })
     }
@@ -334,14 +318,14 @@ function dropDown(target, cors){
     let shareBtn = document.createElement('li');
     shareBtn.className = "dropDownItem";
     shareBtn.innerText = "Share";
-    shareBtn.addEventListener('click', (ev)=>{
+    shareBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         share(ev, fileId);
     });
 
-    function share(ev, file){
-        Modal(ev, "Share to", "Share", function(userToAdd) {
+    function share(ev, file) {
+        Modal(ev, "Share to", "Share", function (userToAdd) {
             shareItem(file, userToAdd)
         })
     }
@@ -349,15 +333,14 @@ function dropDown(target, cors){
     let unShareBtn = document.createElement('li');
     unShareBtn.className = "dropDownItem";
     unShareBtn.innerText = "Remove access";
-    unShareBtn.addEventListener('click', (ev)=>{
+    unShareBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         unShare(ev, fileId, target.dataset.sharedTo);
     });
 
-    function unShare(ev, file, sharedTo ){
-        console.log('*****************TARGET', sharedTo);
-        Modal(ev, `Remove one of current users:      ${sharedTo} `, "Remove access", function(userToRemove) {
+    function unShare(ev, file, sharedTo) {
+        Modal(ev, `Remove one of current users:      ${sharedTo} `, "Remove access", function (userToRemove) {
             unShareItem(file, userToRemove)
         })
     }
@@ -365,16 +348,24 @@ function dropDown(target, cors){
     let deleteBtn = document.createElement('li');
     deleteBtn.className = "dropDownItem";
     deleteBtn.innerText = "Delete";
-    deleteBtn.addEventListener('click', (ev)=>{
+    deleteBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        deleteFromServer(fileId);
+        let selectedItems = state.clipBoard;
+        if (selectedItems.length) {
+            selectedItems.forEach(function (item) {
+                deleteFromServer(item.dataset.id);
+            });
+
+            state.clipBoard = [];
+        } else deleteFromServer(fileId);
+
     });
 
     let moveToClipboard = document.createElement('li');
     moveToClipboard.className = "dropDownItem";
     moveToClipboard.innerText = "Move";
-    moveToClipboard.addEventListener('click', (ev)=>{
+    moveToClipboard.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         cutItem();
@@ -383,7 +374,7 @@ function dropDown(target, cors){
     let pasteBtn = document.createElement('li');
     pasteBtn.className = "dropDownItem";
     pasteBtn.innerText = "Paste";
-    pasteBtn.addEventListener('click', (ev)=>{
+    pasteBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         pasteItem();
@@ -393,13 +384,12 @@ function dropDown(target, cors){
     let mkDirBtn = document.createElement('li');
     mkDirBtn.className = "dropDownItem";
     mkDirBtn.innerText = "Create folder";
-    mkDirBtn.addEventListener('click', (ev)=>{
+    mkDirBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         Modal();
         closeContextMenu();
     });
-
 
     let fileLinkWrapper = document.createElement('span');
     fileLinkWrapper.className = "fileLinkWrapper";
@@ -407,7 +397,7 @@ function dropDown(target, cors){
     let fileLinkBtn = document.createElement('span');
     fileLinkBtn.className = "fileLinkBtn";
     fileLinkBtn.innerText = "Copy";
-    fileLinkBtn.addEventListener('click', ()=>{
+    fileLinkBtn.addEventListener('click', () => {
         document.execCommand('copy');
         closeContextMenu();
     });
@@ -419,7 +409,7 @@ function dropDown(target, cors){
 
     fileLinkWrapper.appendChild(fileLinkSpan);
     fileLinkWrapper.appendChild(fileLinkBtn);
-    fileLinkWrapper.addEventListener('click',(ev)=>{
+    fileLinkWrapper.addEventListener('click', (ev) => {
         ev.stopPropagation();
         ev.preventDefault();
     });
@@ -428,21 +418,19 @@ function dropDown(target, cors){
     shareByLinkBtn.className = "dropDownItem";
     shareByLinkBtn.innerText = "Enable access by link";
     shareByLinkBtn.appendChild(fileLinkWrapper);
-    shareByLinkBtn.addEventListener('click', (ev)=>{
+    shareByLinkBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         fileLinkWrapper.classList.add('linkwrap-visible');
         selectText('file-link__span');
-        console.log("TARGET!!" , target);
         target.querySelector('.file-name').style.background = "red";
         shareItemByLink(fileId);
     });
 
-
     let unShareByLinkBtn = document.createElement('li');
     unShareByLinkBtn.className = "dropDownItem";
     unShareByLinkBtn.innerText = "Disable access by link";
-    unShareByLinkBtn.addEventListener('click', (ev)=>{
+    unShareByLinkBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         unShareItemByLink(fileId);
@@ -452,7 +440,7 @@ function dropDown(target, cors){
     let showInfo = document.createElement('li');
     showInfo.className = "dropDownItem";
     showInfo.innerText = "Show Info";
-    showInfo.addEventListener('click', (ev)=> {
+    showInfo.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         closeContextMenu();
@@ -460,7 +448,7 @@ function dropDown(target, cors){
 
         let itemInfo = document.createElement('div');
         itemInfo.className = 'item-info-block';
-        if(target.dataset.owner === state.currentUser) {
+        if (target.dataset.owner === state.currentUser) {
             if (!target.dataset.isFolder) {
                 itemInfo.innerHTML =
                     `<p><span>Name:</span> "${target.dataset.fileName}"</p>
@@ -476,8 +464,7 @@ function dropDown(target, cors){
          <p><span>Owner:</span> "${target.dataset.owner}"</p>
          <p><span>Shared to:</span>" ${target.dataset.sharedTo || ""}"</p>`
             }
-        }
-        else {
+        } else {
             if (!target.dataset.isFolder) {
                 itemInfo.innerHTML =
                     `<p><span>Name:</span> "${target.dataset.fileName}"</p>
@@ -499,8 +486,8 @@ function dropDown(target, cors){
     dropDownMenu.style.left = `${cors.x}px`;
     dropDownMenu.style.cursor = "default";
 
-    if(target.id !=='files-list') {
-        if(target.dataset.owner === state.currentUser) {
+    if (target.id !== 'files-list') {
+        if (target.dataset.owner === state.currentUser) {
 
             dropDownMenu.appendChild(renameBtn);
             dropDownMenu.appendChild(deleteBtn);
@@ -516,23 +503,19 @@ function dropDown(target, cors){
                 dropDownMenu.appendChild(shareBtn);
                 dropDownMenu.appendChild(unShareBtn);
             }
-                dropDownMenu.appendChild(showInfo);
-        }
-        else {
+            dropDownMenu.appendChild(showInfo);
+        } else {
             if (target.dataset.isFolder === "false") {
                 dropDownMenu.appendChild(downloadBtn);
                 dropDownMenu.appendChild(showInfo);
-            }
-
-            else {
+            } else {
                 dropDownMenu.appendChild(showInfo);
             }
 
         }
-    }
-    else {
+    } else {
         dropDownMenu.appendChild(mkDirBtn);
-        if(state.clipBoard.length) {
+        if (state.clipBoard.length) {
             dropDownMenu.appendChild(pasteBtn);
         }
     }
@@ -616,11 +599,11 @@ function downloadFile(fileName, fileId){
         .catch(error => console.log("Данные не получены: " + error));
 }
 
-function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = createNewFolderOnServer){
+function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = createNewFolderOnServer) {
     let createFolderModal = document.createElement('div');
     createFolderModal.className = "modal";
-    createFolderModal.addEventListener('click', (ev)=>{
-        if(ev.target === createFolderModal){
+    createFolderModal.addEventListener('click', (ev) => {
+        if (ev.target === createFolderModal) {
             closeModal();
             renderFileStructure();
         }
@@ -630,33 +613,32 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     crateFolderWrapper.className = "modal-wrapper";
 
     let inputField = document.createElement('input');
-    inputField.addEventListener('keypress', function(ev){
-        console.log(ev);
-        if(ev.key === 'Enter'){
+    inputField.addEventListener('keypress', function (ev) {
+        if (ev.key === 'Enter') {
             callback(inputField.value);
             closeModal();
             renderFileStructure(state.currentFolder);
         }
     });
-    inputField.type= "text";
+    inputField.type = "text";
     inputField.className = "modal-fileName";
     inputField.focus();
 
     let cancelBtn = document.createElement('button');
-    cancelBtn.innerText= "cancel";
+    cancelBtn.innerText = "cancel";
     cancelBtn.className = "modal-cancelButton";
     cancelBtn.addEventListener('click', closeModal);
 
     let createBtn = document.createElement('button');
     createBtn.innerText = buttonText;
     createBtn.className = "modal-createButton";
-    createBtn.addEventListener('click', ()=>{
+    createBtn.addEventListener('click', () => {
         callback(inputField.value);
         closeModal();
         renderFileStructure(state.currentFolder);
     });
 
-    function closeModal(ev){
+    function closeModal(ev) {
         document.getElementsByClassName('modal')[0].remove();
     }
 
@@ -673,12 +655,10 @@ function Modal(ev, modalTitle = "New folder", buttonText = "create", callback = 
     crateFolderWrapper.appendChild(modalButtonsWrapper);
     createFolderModal.appendChild(crateFolderWrapper);
     document.getElementById("wrapper").appendChild(createFolderModal);
-
 }
 
 function createNewFolderOnServer(name){
     indicateLoading();
-    console.log(state.currentFolderAccessRights);
     fetch(`/file/createfolder?name=${name}&parent=${state.currentFolder}&access=${state.currentFolderAccessRights}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
@@ -759,7 +739,6 @@ function shareItem(id, userToAdd){
 }
 function unShareItem(id, userToRemove){
     indicateLoading();
-    console.log('REMOVING ACCESSS',id, userToRemove );
     fetch(`/file/unshare?id=${id}&user=${userToRemove}`, {
         method: 'POST',
         headers:{'Content-Type': 'text/plain',
@@ -805,22 +784,6 @@ function truncateMe(text) {
         return text.substr(0, 10) + "...";
     }
     else return text
-}
-
-function handleSharedFileownload(fileName, fileId){
-    indicateLoading();
-    fetch(`/file/download?id=${fileId}`, {
-        method: 'GET',
-        headers:{'Content-Type': 'text/plain',
-            'Access-Control-Allow-Origin': "*"
-        }
-    })
-        .then(response => response.blob())
-        .then((blob) => {
-            saveAs(blob, fileName);
-            removeLoadingIndicator();
-        })
-        .catch(error => console.log("Данные не получены: " + error));
 }
 
 function getFilesSharedToMe (folder = "/") {

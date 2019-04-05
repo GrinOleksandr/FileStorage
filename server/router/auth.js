@@ -14,7 +14,6 @@ module.exports = function (passport) {
             username = body.username,
             password = body.password,
             email = body.email;
-        console.log({username, password, email});
         UsersDB.findOne({
             username: username
         }, function (err, doc) {
@@ -33,7 +32,6 @@ module.exports = function (passport) {
                             res.status(500).send('db error')
                         } else {
                             sendRegistrationEmail(username, password, email);
-                            console.log(`user succesfully registered ${username}, ${password},  ${email}`);
                             res.redirect('/login')
                         }
                     })
@@ -47,7 +45,6 @@ module.exports = function (passport) {
         failureRedirect: '/login',
         successRedirect: '/home'
     }), function (req, res) {
-        console.log("user sucessfuly loged in");
         res.send('hey')
     });
 
