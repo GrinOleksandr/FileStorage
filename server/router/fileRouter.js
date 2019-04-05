@@ -215,25 +215,22 @@ fileRouter.use('/getsharedfileinfo', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     console.log('Requested shared file!: ', parsedUrl.query.file);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    FileStorageDb.find({link : parsedUrl.query.file})
-        .select('-_id -__v')
-        .exec(function (err, Result) {
-            console.log(Result);
-            console.log('faaaaaaaaaaaaaaaaa',Result[0]);
-            if(Result[0].isShared) {
-                if(Result[0].isFolder) {
-                    res.end("Folder");
-                }
-
-                else {
-                    let responseString = JSON.stringify(Result);
-                    res.end(responseString);
-                }
-            }
-            else res.end("Access denied")
-
-
-        });
+    if(parsedUrl.query.file) {
+        FileStorageDb.find({link: parsedUrl.query.file})
+            .select('-_id -__v')
+            .exec(function (err, Result) {
+                console.log(Result);
+                console.log('faaaaaaaaaaaaaaaaa', Result[0]);
+                if (Result[0] && Result[0].isShared) {
+                    if (Result[0].isFolder) {
+                        res.end("Folder");
+                    } else {
+                        let responseString = JSON.stringify(Result);
+                        res.end(responseString);
+                    }
+                } else res.end("Access denied")
+            });
+    }
 });
 fileRouter.use('/move', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
