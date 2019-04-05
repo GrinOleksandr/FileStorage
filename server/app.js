@@ -33,10 +33,15 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 
+
+let expiryDate = new Date( Date.now() + 60 * 60 * 1000 ); // 1 hour
 app.use(session({
-    secret: 'thesecret',
+    secret: 'husgFt46r5ftg.',
     saveUninitialized: false,
-    resave: false
+    resave: false,
+    cookie: {
+        expires: expiryDate
+    }
 }));
 
 app.use(passport.initialize());

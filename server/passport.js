@@ -18,7 +18,7 @@ module.exports = function (passport) {
                 done(err)
             } else {
                 if (doc) {
-                    var valid = doc.comparePassword(password, doc.password)
+                    var valid = doc.comparePassword(password, doc.password);
                     if (valid) {
 
                         // do not add password hash to session

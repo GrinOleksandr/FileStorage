@@ -179,6 +179,7 @@ function addItemFromServer(element) {
     newItem.dataset.owner = element.owner;
     newItem.dataset.uploadDate = element.uploadDate;
     newItem.dataset.isFolder = element.isFolder;
+    newItem.dataset.link = element.link;
 
     newItem.addEventListener('click', (ev) =>{
         ev.preventDefault();
@@ -323,8 +324,6 @@ function dropDown(target, cors){
         })
     }
 
-
-
     let shareBtn = document.createElement('li');
     shareBtn.className = "dropDownItem";
     shareBtn.innerText = "Share";
@@ -355,19 +354,6 @@ function dropDown(target, cors){
             unShareItem(file, userToRemove)
         })
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     let deleteBtn = document.createElement('li');
     deleteBtn.className = "dropDownItem";
@@ -417,6 +403,10 @@ function dropDown(target, cors){
         closeContextMenu();
     });
 
+    let fileLinkSpan = document.createElement('span');
+    fileLinkSpan.className = "file-link__span";
+    fileLinkSpan.innerText = `http://http://localhost:8000/shared?file=${target.dataset.link}`;
+
     let unShareByLinkBtn = document.createElement('li');
     unShareByLinkBtn.className = "dropDownItem";
     unShareByLinkBtn.innerText = "Disable access by link";
@@ -450,7 +440,6 @@ function dropDown(target, cors){
         else {
             itemInfo.innerHTML =
                 `<p><span>Name:</span>"${target.dataset.fileName}"</p>
-         
          <p><span>Uploaded on:</span> "${target.dataset.uploadDate}"</p>
          <p><span>Owner:</span> "${target.dataset.owner}"</p>
          <p><span>Shared to:</span>" ${target.dataset.sharedTo || ""}"</p>`
@@ -458,8 +447,6 @@ function dropDown(target, cors){
 
         document.getElementById('infoOfFile').appendChild(itemInfo);
     });
-
-
 
     let dropDownMenu = document.createElement('ul');
     dropDownMenu.className = "dropdown-menu";
