@@ -393,19 +393,24 @@ function dropDown(target, cors){
         closeContextMenu();
     });
 
-    let shareByLinkBtn = document.createElement('li');
-    shareByLinkBtn.className = "dropDownItem";
-    shareByLinkBtn.innerText = "Enable access by link";
-    shareByLinkBtn.addEventListener('click', (ev)=>{
-        ev.preventDefault();
-        ev.stopPropagation();
-        shareItemByLink(fileId);
-        closeContextMenu();
-    });
 
     let fileLinkSpan = document.createElement('span');
     fileLinkSpan.className = "file-link__span";
     fileLinkSpan.innerText = `http://http://localhost:8000/shared?file=${target.dataset.link}`;
+
+    let shareByLinkBtn = document.createElement('li');
+    shareByLinkBtn.className = "dropDownItem";
+    shareByLinkBtn.innerText = "Enable access by link";
+    shareByLinkBtn.appendChild(fileLinkSpan);
+    shareByLinkBtn.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        fileLinkSpan.classList.add('linkSpan-visible');
+        shareItemByLink(fileId);
+
+    });
+
+
 
     let unShareByLinkBtn = document.createElement('li');
     unShareByLinkBtn.className = "dropDownItem";
