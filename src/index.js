@@ -61,22 +61,24 @@ rootFolder.addEventListener('click', function(){
 });
 filePath.appendChild(rootFolder);
 
-let showSharedFilesBtn = document.getElementById('ShowSharedFilesBtn');
+let showSharedFilesBtn = document.getElementById('showSharedFilesBtn');
 showSharedFilesBtn.addEventListener('click', function(ev){
     console.log('getting shared files!');
     getFilesSharedToMe();
-    activateViewButton();
+    activateViewButton(ev.target);
 });
 
-let showMyFilesBtn = document.getElementById('ShowSharedFilesBtn');
+let showMyFilesBtn = document.getElementById('showMyFilesBtn');
 showMyFilesBtn.addEventListener('click', function(ev){
     console.log('getting shared files!');
     renderFileStructure();
-    activateViewButton();
+    activateViewButton(ev.target);
 });
 
-function activateViewButton(ev){
-    console.log(ev);
+function activateViewButton(target){
+    document.getElementsByClassName('activeViewButton')[0].classList.remove('activeViewButton');
+    target.classList.add('activeViewButton');
+
 }
 
 
