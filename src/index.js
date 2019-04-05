@@ -723,7 +723,7 @@ function shareItemByLink(id){
             'Access-Control-Allow-Origin': "*"
         }
     }).then((data)=>{
-        renderFileStructure(state.currentFolder);
+        // renderFileStructure(state.currentFolder);
     })
         .catch(error => console.log("Данные не получены: " + error));
 }

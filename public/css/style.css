@@ -299,6 +299,7 @@ input[type="search"] {
     align-items: center;
     font-weight: 700;
     cursor:pointer;
+    position:relative;
 }
 
 /******************MODAL*************************/
@@ -358,3 +359,16 @@ input[type="search"] {
     cursor:pointer;
 }
 
+.file-link__span {
+    visibility:hidden;
+    opacity:0.4;
+    position:absolute;
+    top:0;
+    left:100%;
+}
+
+.linkSpan-visible {
+    opacity:1;
+    visibility:visible;
+    transition:opacity 1s;
+}
