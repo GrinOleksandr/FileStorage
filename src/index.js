@@ -407,7 +407,10 @@ function dropDown(target, cors){
     let fileLinkBtn = document.createElement('span');
     fileLinkBtn.className = "fileLinkBtn";
     fileLinkBtn.innerText = "Copy";
-    fileLinkBtn.addEventListener('click', ()=>document.execCommand('copy'));
+    fileLinkBtn.addEventListener('click', ()=>{
+        document.execCommand('copy');
+        closeContextMenu();
+    });
 
     let fileLinkSpan = document.createElement('span');
     fileLinkSpan.className = "file-link__span";
