@@ -393,6 +393,10 @@ function dropDown(target, cors){
         closeContextMenu();
     });
 
+
+    let fileLinkWrapper = document.createElement('span');
+    fileLinkWrapper.className = "fileLinkWrapper";
+
     let fileLinkBtn = document.createElement('span');
     fileLinkBtn.className = "fileLinkBtn";
     fileLinkBtn.innerText = "Copy";
@@ -403,13 +407,15 @@ function dropDown(target, cors){
     fileLinkSpan.innerText = `http://localhost:8000/shared?file=${target.dataset.link}`;
     fileLinkSpan.appendChild(fileLinkBtn);
 
+    fileLinkWrapper.appendChild(fileLinkSpan);
+    fileLinkWrapper.appendChild(fileLinkBtn);
 
 
 
     let shareByLinkBtn = document.createElement('li');
     shareByLinkBtn.className = "dropDownItem";
     shareByLinkBtn.innerText = "Enable access by link";
-    shareByLinkBtn.appendChild(fileLinkSpan);
+    shareByLinkBtn.appendChild(fileLinkWrapper);
     shareByLinkBtn.addEventListener('click', (ev)=>{
         ev.preventDefault();
         ev.stopPropagation();

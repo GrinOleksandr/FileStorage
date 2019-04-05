@@ -360,15 +360,25 @@ input[type="search"] {
 }
 
 .file-link__span {
-    visibility:hidden;
-    opacity:0.4;
-    position:absolute;
-    top:0;
-    left:100%;
+    visibility: hidden;
+    opacity: 0.4;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background: white;
+    padding: 12px 0 12px 12px;
+    min-width: 382px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .linkSpan-visible {
     opacity:1;
     visibility:visible;
     transition:opacity 1s;
+}
+
+.fileLinkBtn {
+    width: 42px;
+    display: block;
 }
