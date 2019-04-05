@@ -5,7 +5,7 @@ const host = 'localhost',
 
 module.exports = {
     ip:"localhost",
-    port:8000,
+    port: process.env.PORT || 8000,
     mongoUrl: `mongodb+srv://filex:Filex123@testclusterscv-rokh7.mongodb.net/test`,
     fileStoragePath: `${__dirname}/filestorage/`
 };
