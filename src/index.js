@@ -351,9 +351,10 @@ function dropDown(target, cors) {
     deleteBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        let selectedItems = state.clipBoard;
+        let selectedItems = document.getElementsByClassName('item-selected');
         if (selectedItems.length) {
-            selectedItems.forEach(function (item) {
+            let tempArray = Array.from(selectedItems)
+            tempArray.forEach(function (item) {
                 deleteFromServer(item.dataset.id);
             });
 
@@ -701,23 +702,23 @@ function renderFilePath(folderId = "/") {
 }
 
 function addToFilePath(element) {
-        let path = state.currentPath;
+    let path = state.currentPath;
 
-        state.currentPath = `${path},${element.fileId}`;
+    state.currentPath = `${path},${element.fileId}`;
 
-        let item = document.createElement('span');
+    let item = document.createElement('span');
 
-        item.className = "file-path_item";
-        item.innerText = `${element.name}/`;
-        item.dataset.parent = element.fileId;
+    item.className = "file-path_item";
+    item.innerText = `${element.name}/`;
+    item.dataset.parent = element.fileId;
 
-        item.addEventListener('click', function () {
-            renderFileStructure(element.fileId);
-            renderFilePath(element.fileId);
+    item.addEventListener('click', function () {
+        renderFileStructure(element.fileId);
+        renderFilePath(element.fileId);
 
-        });
-        filePath.appendChild(item);
-    }
+    });
+    filePath.appendChild(item);
+}
 function closeContextMenu() {
     if (document.getElementsByClassName("dropdown-menu")[0]) {
         document.getElementsByClassName("dropdown-menu")[0].remove();

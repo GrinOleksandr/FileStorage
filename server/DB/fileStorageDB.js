@@ -14,5 +14,5 @@ const fileStorageSchema = new mongoose.Schema({
     isFolder: Boolean
 });
 
-let fileStorageDB = mongoose.model('myFileStorage', fileStorageSchema );
+let fileStorageDB = mongoose.model('FileStorage12333l4223', fileStorageSchema );
 module.exports = fileStorageDB ;
