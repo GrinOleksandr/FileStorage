@@ -54,7 +54,6 @@ fileRouter.use(bodyParser.json());
 fileRouter.use('/listfiles', loggedin,function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('MY USER', req.user.username);
     FileStorageDb.find({parent : parsedUrl.query.folder, owner: req.user.username})
         .select('-_id -__v')
         .exec(function (err, Result) {
@@ -63,13 +62,11 @@ fileRouter.use('/listfiles', loggedin,function(req, res) {
         });
 });
 fileRouter.use('/getusername', loggedin,function(req, res) {
-    console.log('RETRIEVING USER!!', req.user.username);
               res.end(req.user.username);
 });
 fileRouter.use('/getfilessharedtome', loggedin, function(req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
-    console.log('MY USER', req.user.username);
     if(parsedUrl.query.folder === "/") {
         FileStorageDb.find({parent : parsedUrl.query.folder, access: req.user.username})
             .select('-_id -__v')
@@ -96,7 +93,6 @@ fileRouter.use('/download', loggedin, function (req, res) {
     FileStorageDb.find({fileId: parsedUrl.query.id}, function (err, file) {
         if (err) return console.log(err);
         if (file) {
-            console.log('file found: ', file[0].fileId);
             fs.readFile(`${config.fileStoragePath}${file[0].fileId}`, function (err, data) {
                 if (err) {
                     return res.status(500).send(err);
@@ -114,7 +110,6 @@ fileRouter.use('/downloadsharedfile', loggedin, function (req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     FileStorageDb.find({fileId: parsedUrl.query.file}, function (err, file) {
         if (err) return console.log(err);
-        console.log('filefile',file);
         if (file && file[0].isShared) {
             fs.readFile(`${config.fileStoragePath}${file[0].fileId}`, function (err, data) {
                 if (err) {
@@ -134,7 +129,6 @@ fileRouter.use('/upload', loggedin,function (req, res) {
     else if (Array.isArray(req.files.fileInput)) {
         let uploadedFiles = req.files.fileInput;
         uploadedFiles.forEach(function (item) {
-            console.log("****INCOMING FILE  ", item);
             if (item.mimetype) {
                 item.fileId = tokgen.generate();
                 item.parent = parsedUrl.query.parent;
@@ -147,8 +141,6 @@ fileRouter.use('/upload', loggedin,function (req, res) {
     }
     else {
         let uploadedFile = req.files.fileInput;
-        console.log('FILESFILES!!!!', req.files);
-        console.log("****INCOMING FILE faaaaaaaaaa ", parsedUrl.query.access);
         if (uploadedFile.mimetype) {
             uploadedFile.fileId = tokgen.generate();
             uploadedFile.parent = parsedUrl.query.parent;
@@ -158,12 +150,10 @@ fileRouter.use('/upload', loggedin,function (req, res) {
             addFileToDataBase(uploadedFile);
         }
     }
-    console.log('***File uploaded' , 'owner', req.user.username);
     res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': "*"});
     res.end('File uploaded!');
 });
 fileRouter.use('/createfolder', loggedin, function (req, res) {
-    console.log("folder creation");
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
@@ -182,21 +172,15 @@ fileRouter.use('/createfolder', loggedin, function (req, res) {
         parent: parsedUrl.query.parent,
         isShared: false
     };
-    console.log("********************TRUE ACCESS RIGHTS ON FOLER",parsedUrl.query.access.split(","));
-
-    console.log('folder created' ,folder);
-
     addFileToDataBase(folder);
 
     res.end();
 });
 fileRouter.use('/rename', loggedin, function (req, res) {
-    console.log("renaming");
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("renaming",parsedUrl.query.id,  parsedUrl.query.newname);
     res.writeHead(200);
 
     rename(parsedUrl.query.id,  parsedUrl.query.newname);
@@ -204,18 +188,15 @@ fileRouter.use('/rename', loggedin, function (req, res) {
     res.end();
 });
 fileRouter.use('/delete', loggedin, function (req, res) {
-    console.log("deleting");
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("deleting",parsedUrl.query.id);
     res.writeHead(200);
 
     deleteItem(parsedUrl.query.id);
 
     res.end();
-    console.log('item deleted')
 });
 fileRouter.use('/getelement', loggedin, function(req, res) {
     let parsedUrl = url.parse(req.url, true);
@@ -229,14 +210,11 @@ fileRouter.use('/getelement', loggedin, function(req, res) {
 });
 fileRouter.use('/getsharedfileinfo', function(req, res) {
     let parsedUrl = url.parse(req.url, true);
-    console.log('Requested shared file!: ', parsedUrl.query.file);
     res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': "*"});
     if(parsedUrl.query.file) {
         FileStorageDb.find({link: parsedUrl.query.file})
             .select('-_id -__v')
             .exec(function (err, Result) {
-                console.log(Result);
-                console.log('faaaaaaaaaaaaaaaaa', Result[0]);
                 if (Result[0] && Result[0].isShared) {
                     if (Result[0].isFolder) {
                         res.end("Folder");
@@ -253,7 +231,6 @@ fileRouter.use('/move', loggedin, function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("moving",parsedUrl.query.id,  parsedUrl.query.to);
     res.writeHead(200);
 
     move(parsedUrl.query.id,  parsedUrl.query.to);
@@ -265,7 +242,6 @@ fileRouter.use('/sharebylink', loggedin, function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("sharing  ",parsedUrl.query.id);
     res.writeHead(200);
     digAndShareByLink(parsedUrl.query.id);
     res.end();
@@ -275,7 +251,6 @@ fileRouter.use('/unsharebylink', loggedin, function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("unsharing  ",parsedUrl.query.id);
     res.writeHead(200);
     digAndUnShareByLink(parsedUrl.query.id);
     res.end();
@@ -285,7 +260,6 @@ fileRouter.use('/share', loggedin,function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("sharing  ",parsedUrl.query.id, parsedUrl.query.user ,req.user.username);
     res.writeHead(200);
     digAndShare(parsedUrl.query.id, parsedUrl.query.user ,req.user.username );
     res.end();
@@ -295,7 +269,6 @@ fileRouter.use('/unshare',loggedin, function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("unsharing  ",parsedUrl.query.id, parsedUrl.query.user ,req.user.username);
     res.writeHead(200);
     digAndUnShare(parsedUrl.query.id, parsedUrl.query.user ,req.user.username);
     res.end();
@@ -309,8 +282,6 @@ function uploadFile(file) {
     });
 }
 function addFileToDataBase(target) {
-
-    console.log(target);
     let name = target.name || "unnamed",
         size = filesize(target.size).human();
         fileId = target.fileId || "",
@@ -322,7 +293,6 @@ function addFileToDataBase(target) {
         isFolder = target.isFolder || false,
         parent = target.parent || "/",
         isShared = target.isShared || false;
-console.log(target);
     FileStorageDb.create(
         {name, size, fileId, mimetype, link, uploadDate, owner, access, parent, isFolder, isShared},
         function (err) {
@@ -356,21 +326,16 @@ function digAndShareByLink(id){
 
                 if(result.length) {
                     result.forEach(function(item){
-                        console.log('i am child!: ', item);
                         lookForChildren(item.fileId);
                     })
                 }
-                console.log('my children is: ', result);
-
             });
-        console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
 }
 function shareItemByLink(idToShare) {
     FileStorageDb.updateOne({fileId: idToShare}, {isShared: true}, function (err) {
         if (err) return console.log(err);
     });
-    console.log('root element shared', idToShare)
 }
 function digAndUnShareByLink(id){
     let childrenArray = [];
@@ -383,20 +348,16 @@ function digAndUnShareByLink(id){
             .exec(function (err, result) {
                 if(result.length) {
                     result.forEach(function(item){
-                        console.log('i am child!: ', item);
                         lookForChildren(item.fileId);
                     })
                 }
-                console.log('my children is: ', result);
             });
-        console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
 }
 function unShareItemByLink(id) {
     FileStorageDb.updateOne({fileId: id}, {isShared: false}, function (err) {
         if (err) return console.log(err);
     });
-    console.log('root element access closed', id)
 }
 function digAndShare(id, user, owner){
     let childrenArray = [];
@@ -410,18 +371,13 @@ function digAndShare(id, user, owner){
 
                 if(result.length) {
                     result.forEach(function(item){
-                        console.log('i am child!: ', item);
                         lookForChildren(item.fileId);
                     })
                 }
-                console.log('my children is: ', result);
-
             });
-        console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
 }
 function shareItem(idToShare, user, owner) {
-    console.log('realy sharing',idToShare, user, owner );
     let accessString = [];
     let trueOwner = "";
     FileStorageDb.find({fileId : idToShare})
@@ -431,15 +387,10 @@ function shareItem(idToShare, user, owner) {
             trueOwner = Result[0].owner;
             if(owner === trueOwner && owner !== user) {
                 if(accessString.indexOf(user) === -1) {
-                    console.log("***********REAL RESULT ACCESS!", accessString);
-                    console.log("***********PUSHING TO NEW STRING NEW STRING!!", user);
                     accessString.push(user);
-                    console.log("***********REAL NEW STRING!!", accessString);
-                    console.log('Access', accessString);
                     FileStorageDb.updateOne({fileId: idToShare}, {access: accessString}, function (err) {
                         if (err) return console.log(err);
                     });
-                    console.log('root element shared', idToShare)
                 }
             }
         });
@@ -458,13 +409,10 @@ function digAndUnShare(id, user, owner){
             .exec(function (err, result) {
                 if(result.length) {
                     result.forEach(function(item){
-                        console.log('i am child!: ', item);
                         lookForChildren(item.fileId);
                     })
                 }
-                console.log('my children is: ', result);
             });
-        console.log('********* PARSEd CHILREN!: ', childrenArray)
     }
 }
 function unShareItem(id, user, owner) {
@@ -479,11 +427,9 @@ function unShareItem(id, user, owner) {
                 let newAccessString = accessString.filter(function(item){
                     return item !== user
                 });
-                console.log('Access', newAccessString);
                 FileStorageDb.updateOne({fileId: id}, {access: newAccessString}, function (err) {
                     if (err) return console.log(err);
                 });
-                console.log('root element shared', id)
             }
         });
 
