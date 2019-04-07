@@ -103,7 +103,7 @@ fileRouter.use('/download', loggedin, function (req, res) {
     });
 
 });
-fileRouter.use('/downloadsharedfile', loggedin, function (req, res) {
+fileRouter.use('/downloadsharedfile', function (req, res) {
     let parsedUrl = url.parse(req.url, true);
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin');

@@ -54,14 +54,12 @@ function renderShareFilePage(requestedFile){
         if (requestedFile.isFolder) {
             fileNameField.innerText = requestedFile.name;
             downloadSharedFileBtn.addEventListener('click', () => {
-                console.log('donwloasdiads');
                 downloadSharedFolder(requestedFile.name, requestedFile.fileId)
             })
         }
         fileNameField.innerText = requestedFile.name;
         fileSize.innerText = requestedFile.size;
         downloadSharedFileBtn.addEventListener('click', () => {
-            console.log('donwloasdiads');
             downloadSharedFile(requestedFile.name, requestedFile.fileId)
         })
     }
@@ -69,7 +67,7 @@ function renderShareFilePage(requestedFile){
 }
 
 function downloadSharedFile(fileName, fileId){
-    console.log(fileId);
+    console.log('donwloasdiads', fileName, fileId);
     fetch(`/file/downloadsharedfile?file=${fileId}`, {
         method: 'GET',
         headers:{'Content-Type': 'text/plain',
