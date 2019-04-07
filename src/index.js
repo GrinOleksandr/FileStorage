@@ -359,7 +359,11 @@ function dropDown(target, cors) {
             });
 
             state.clipBoard = [];
-        } else deleteFromServer(fileId);
+            renderFileStructure();
+        } else {
+            deleteFromServer(fileId);
+            renderFileStructure();
+        }
 
     });
 
@@ -401,6 +405,7 @@ function dropDown(target, cors) {
     fileLinkBtn.addEventListener('click', () => {
         document.execCommand('copy');
         closeContextMenu();
+        renderFileStructure();
     });
 
     let fileLinkSpan = document.createElement('span');
@@ -426,6 +431,7 @@ function dropDown(target, cors) {
         selectText('file-link__span');
         target.querySelector('.file-name').style.background = "red";
         shareItemByLink(fileId);
+
     });
 
     let unShareByLinkBtn = document.createElement('li');
@@ -733,7 +739,7 @@ function shareItem(id, userToAdd){
             'Access-Control-Allow-Origin': "*"
         }
     }).then((data)=>{
-        renderFileStructure(state.currentFolder);
+        renderFileStructure();
         removeLoadingIndicator();
     })
         .catch(error => console.log("Данные не получены: " + error));
@@ -746,7 +752,7 @@ function unShareItem(id, userToRemove){
             'Access-Control-Allow-Origin': "*"
         }
     }).then((data)=>{
-        renderFileStructure(state.currentFolder);
+        renderFileStructure();
         removeLoadingIndicator();
     })
         .catch(error => console.log("Данные не получены: " + error));

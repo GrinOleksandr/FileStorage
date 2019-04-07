@@ -454,21 +454,25 @@ input[type="search"] {
     border-top-left-radius: 20px;
 }
 
-#showSharedFilesBtn {
+.showSharedFilesBtn {
     border-top-right-radius: 18px;
     padding: 7px 20px 7px 14px;
     cursor:pointer;
+    background: #0000ff33;
+    text-decoration: underline;
 }
 
-#showMyFilesBtn {
+.showMyFilesBtn {
     padding: 7px 20px;
     border-top-left-radius: 18px;
     cursor:pointer;
+    background: #0000ff33;
+    text-decoration: underline;
 }
 
 .activeViewButton {
-    background: #0000ff33;
-    text-decoration: underline;
+   text-decoration:none;
+    background:none;
 }
 
 .progressIndicator {
